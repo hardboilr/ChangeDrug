@@ -1,25 +1,22 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/**
+ * @author Tobias & Sebastian
  */
 package Controllere;
 
+import Entities.Player;
 import Entities.World;
 import Interfaces.EngineInterface;
 import java.util.HashMap;
 
-/**
- *
- * @author Tobias
- */
+
 public class Engine implements EngineInterface {
     
     private HashMap countries;
+    private Player player;
     
     public Engine() {
         countries = World.createWorld();
-        
+        player = new Player("hardboilr",100,5000); //for now we instantiate our player here
     }
 
     @Override
@@ -30,6 +27,11 @@ public class Engine implements EngineInterface {
     @Override
     public void travel(String country) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    public void createPlayer()  {
+        
+        
     }
     
 }

@@ -14,4 +14,6 @@ public interface EngineInterface  {
     
     public void travel(String country);
     
+    public void createPlayer();
+    
 }

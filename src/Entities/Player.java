@@ -1,14 +1,18 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/**
+ * @author Tobias
  */
 package Entities;
 
-/**
- *
- * @author Tobias
- */
 public class Player {
+    
+    private String name;
+    private int life;
+    private double credits;
+    
+    public Player(String input1, int input2, double input3) {
+        this.name = input1;
+        this.life = input2;
+        this.credits = input3;
+    }
     
 }
