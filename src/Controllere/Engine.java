@@ -6,18 +6,18 @@
 package Controllere;
 
 import Entities.World;
-import Interfaces.ControlInterface;
+import Interfaces.EngineInterface;
 import java.util.HashMap;
 
 /**
  *
  * @author Tobias
  */
-public class GameEngine implements ControlInterface {
+public class Engine implements EngineInterface {
     
     private HashMap countries;
     
-    public GameEngine() {
+    public Engine() {
         countries = World.createWorld();
         
     }

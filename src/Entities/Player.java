@@ -5,16 +5,10 @@
  */
 package Entities;
 
-import java.util.HashMap;
-
 /**
  *
  * @author Tobias
  */
-public class World {
-
-    public static HashMap createWorld() {
-        return null;
-    }
-
+public class Player {
+    
 }

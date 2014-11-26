@@ -1,0 +1,5 @@
+27-11-14
+Sebastian: Oprette drug-objekt og opretter lande-objekter
+Tobias: GUI-mockup + initialize player, kig på interfacemetoder 
+
+  
