@@ -17,32 +17,23 @@ import java.util.Map;
 
 public class Engine implements EngineInterface {
     
-    private HashMap countries;
-    private Player player;
-    
     private Map countries;
+    private Player player;
     private String activeCountry;
-    private final List<Integer> upOrDown;
     private int randomUpOrDown;
         
     public Engine() {
         countries = World.createWorld();
-        upOrDown = new ArrayList<>();
-        upOrDown.add(-1);
-        upOrDown.add(1);
         randomUpOrDown = (int) (Math.random() * 1 + 0);
         
         player = new Player("hardboilr",100,5000); //for now we instantiate our player here
     }
 
-    @Override
-    public void setCountry(String input) {
-        this.activeCountry = input;
-    }
+
 
     @Override
-    public void travel() {
-
+    public void travel(String countryInput) {
+        this.activeCountry = countryInput;
         Country tempCountry = (Country) countries.get(activeCountry);
         List<Drug> tempList = tempCountry.getDrugs();
         countries.remove(activeCountry);
@@ -56,13 +47,13 @@ public class Engine implements EngineInterface {
 
     }
 
-    @Override
-    public double calculatePrice(double basePrice) {
+    
+    private double calculatePrice(double basePrice) {
 
         int randomPercent = (int) (Math.random() * 85 + 1);
         double priceModifier;
         priceModifier = (basePrice * randomPercent) / 100;
-        if (upOrDown.get(randomUpOrDown) > 0) {
+        if (randomUpOrDown == 1) {
             return basePrice + priceModifier;
         } else {
             return basePrice - priceModifier;
@@ -70,11 +61,11 @@ public class Engine implements EngineInterface {
 
     }
 
-    @Override
-    public int calculateAvailability(int baseAvail) {
+  
+    private int calculateAvailability(int baseAvail) {
         int randomPercent = (int) (Math.random() * 55 + 15);
         int availModifier = (int) (baseAvail * randomPercent) / 100;
-        if (upOrDown.get(randomUpOrDown) > 0) {
+        if (randomUpOrDown == 1) {
             return baseAvail + availModifier;
         } else {
             return baseAvail - availModifier;
