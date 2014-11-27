@@ -7,14 +7,19 @@ import Controllere.Engine;
 import Entities.Drug;
 import Entities.Player;
 import Interfaces.EngineInterface;
+import java.util.List;
 import java.util.Locale;
 import javax.swing.DefaultListModel;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
 
 public class GUI_Main extends javax.swing.JFrame {
 
     private EngineInterface engine;
     private DefaultListModel listmodel = new DefaultListModel();
-    
+
+    private int avail;
+
     public GUI_Main() {
         initComponents();
         this.setLocationRelativeTo(null);
@@ -22,33 +27,39 @@ public class GUI_Main extends javax.swing.JFrame {
         jList_countries.setModel(listmodel);
         fillCountryList();
         setLocationText();
+        jButton_buy.setEnabled(false);
+        jButton_sell.setEnabled(false);
     }
-    
-    private void setLocationText(){
+
+    private void setLocationText() {
         //char char1 = engine.getActiveCountry().charAt(0);
         jLabel_location.setText("Location: " + engine.getActiveCountry().toUpperCase().charAt(0)
-        + engine.getActiveCountry().substring(1));
+                + engine.getActiveCountry().substring(1));
     }
-    
-    private void fillCountryList(){
+
+    private void fillCountryList() {
         listmodel.clear();
         // fill countrylist
-        for(int i = 0; i < engine.getCountries().size(); i++){
+        System.out.println("1.List size is: " + engine.getCountries().size());
+        for (int i = 0; i < engine.getCountries().size(); i++) {
+            System.out.println("1.We are at index: " + i);
             listmodel.addElement(engine.getCountries().get(i));
         }
-        
+
         // fill market table
-        for(int i = 0; i < engine.travel().size(); i++){
-            Drug drug = (Drug) engine.travel().get(i);
+        System.out.println("2.List size is: " + engine.getCountries().size());
+        List<Drug> tempList = engine.travel();
+
+        for (int i = 0; i < tempList.size(); i++) {
+            Drug drug = tempList.get(i);
             String name = drug.getName();
-            Double price = drug.getBasePrice();
-            int avail = drug.getBaseAvail();
-            
+            Double price = drug.getModifiedPrice();
+            avail = drug.getModifiedAvail();
             jTable_market.setValueAt(name, i, 0);
-            jTable_market.setValueAt(avail,i, 1);
-            jTable_market.setValueAt(price,i, 2);
+            jTable_market.setValueAt(avail, i, 1);
+            jTable_market.setValueAt(price, i, 2);
         }
-        
+
     }
 
     /**
@@ -71,10 +82,12 @@ public class GUI_Main extends javax.swing.JFrame {
         jLabel_name = new javax.swing.JLabel();
         jLabel_TEXT_Life = new javax.swing.JLabel();
         jLabel_life = new javax.swing.JLabel();
+        jLabel_TEXT_money = new javax.swing.JLabel();
+        jLabel_money = new javax.swing.JLabel();
+        jLabel_selectionRight = new javax.swing.JLabel();
+        jLabel_selectionLeft = new javax.swing.JLabel();
         jLabel_TEXT_DaysLeft = new javax.swing.JLabel();
         jLabel_daysLeft = new javax.swing.JLabel();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
         jButton_newGame1 = new javax.swing.JButton();
         jPanel_market = new javax.swing.JPanel();
         jScrollPane_market = new javax.swing.JScrollPane();
@@ -100,10 +113,20 @@ public class GUI_Main extends javax.swing.JFrame {
 
         jButton_sell.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jButton_sell.setText("<< Sell ");
+        jButton_sell.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton_sellActionPerformed(evt);
+            }
+        });
         getContentPane().add(jButton_sell, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 300, 80, -1));
 
         jButton_buy.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jButton_buy.setText("Buy >>");
+        jButton_buy.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton_buyActionPerformed(evt);
+            }
+        });
         getContentPane().add(jButton_buy, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 260, 80, -1));
 
         jButton_highscore.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
@@ -151,6 +174,22 @@ public class GUI_Main extends javax.swing.JFrame {
         jLabel_life.setText("55%");
         jPanel_player.add(jLabel_life, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 80, -1, -1));
 
+        jLabel_TEXT_money.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabel_TEXT_money.setText("Money:");
+        jLabel_TEXT_money.setToolTipText("");
+        jPanel_player.add(jLabel_TEXT_money, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 140, -1, 20));
+
+        jLabel_money.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabel_money.setText("5000");
+        jLabel_money.setToolTipText("");
+        jPanel_player.add(jLabel_money, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 140, -1, 20));
+
+        jLabel_selectionRight.setIcon(new javax.swing.ImageIcon(getClass().getResource("/art/gui/selctionArrow_right.png"))); // NOI18N
+        jPanel_player.add(jLabel_selectionRight, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 80, -1, -1));
+
+        jLabel_selectionLeft.setIcon(new javax.swing.ImageIcon(getClass().getResource("/art/gui/selctionArrow_left.png"))); // NOI18N
+        jPanel_player.add(jLabel_selectionLeft, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 80, -1, -1));
+
         jLabel_TEXT_DaysLeft.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel_TEXT_DaysLeft.setText("Days left: ");
         jLabel_TEXT_DaysLeft.setToolTipText("");
@@ -159,13 +198,12 @@ public class GUI_Main extends javax.swing.JFrame {
         jLabel_daysLeft.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel_daysLeft.setText("14");
         jLabel_daysLeft.setToolTipText("");
+        jLabel_daysLeft.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                jLabel_daysLeftPropertyChange(evt);
+            }
+        });
         jPanel_player.add(jLabel_daysLeft, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 110, -1, 20));
-
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/art/gui/selctionArrow_right.png"))); // NOI18N
-        jPanel_player.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 80, -1, -1));
-
-        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/art/gui/selctionArrow_left.png"))); // NOI18N
-        jPanel_player.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 80, -1, -1));
 
         getContentPane().add(jPanel_player, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 60, 360, 180));
 
@@ -212,6 +250,11 @@ public class GUI_Main extends javax.swing.JFrame {
                 return types [columnIndex];
             }
         });
+        jTable_market.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTable_marketMouseClicked(evt);
+            }
+        });
         jScrollPane_market.setViewportView(jTable_market);
 
         jPanel_market.add(jScrollPane_market, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 40, 300, 260));
@@ -254,6 +297,11 @@ public class GUI_Main extends javax.swing.JFrame {
 
             public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
+            }
+        });
+        jTable_inventory.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTable_inventoryMouseClicked(evt);
             }
         });
         jScrollPane_inventory.setViewportView(jTable_inventory);
@@ -307,14 +355,50 @@ public class GUI_Main extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton_newGame1ActionPerformed
 
     private void jButton_travelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_travelActionPerformed
-        //System.out.println(listmodel.get);
         int index = jList_countries.getSelectedIndex();
-        System.out.println(listmodel.getElementAt(index));
-        engine.setActiveCountry((String)listmodel.getElementAt(index));
+        //System.out.println(listmodel.getElementAt(index));
+        engine.setActiveCountry((String) listmodel.getElementAt(index));
         setLocationText();
         engine.travel();
         fillCountryList();
+
+
     }//GEN-LAST:event_jButton_travelActionPerformed
+
+    private void jButton_buyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_buyActionPerformed
+        transaction(jTable_market, jTable_inventory);
+    }//GEN-LAST:event_jButton_buyActionPerformed
+
+    private void jButton_sellActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_sellActionPerformed
+        transaction(jTable_inventory, jTable_market);
+    }//GEN-LAST:event_jButton_sellActionPerformed
+
+    private void jTable_marketMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable_marketMouseClicked
+        jTable_inventory.clearSelection();
+        for (int i = 0; i < jTable_market.getRowCount(); i++) {
+            if (jTable_market.isRowSelected(i) == true) {
+                jButton_sell.setEnabled(false);
+                jButton_buy.setEnabled(true);
+            }
+        }
+    }//GEN-LAST:event_jTable_marketMouseClicked
+
+    private void jTable_inventoryMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable_inventoryMouseClicked
+        jTable_market.clearSelection();
+        for (int i = 0; i < jTable_inventory.getRowCount(); i++) {
+            if (jTable_inventory.isRowSelected(i) == true) {
+                jButton_buy.setEnabled(false);
+                jButton_sell.setEnabled(true);
+            }
+        }
+    }//GEN-LAST:event_jTable_inventoryMouseClicked
+
+    private void jLabel_daysLeftPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jLabel_daysLeftPropertyChange
+        if (jLabel_daysLeft.getText().equals("0")) {
+            //game is over
+            //close frame and open highscore frame
+        }
+    }//GEN-LAST:event_jLabel_daysLeftPropertyChange
 
     /**
      * @param args the command line arguments
@@ -351,6 +435,41 @@ public class GUI_Main extends javax.swing.JFrame {
         });
     }
 
+    public void transaction(javax.swing.JTable input1, javax.swing.JTable input2) {
+        int row = input1.getSelectedRow();
+        String marketName = (String) input1.getValueAt(row, 0);
+        int qty = (int) input1.getValueAt(row, 1);
+        double price = (double) input1.getValueAt(row, 2);
+        int subtract = qty - 1;
+
+        if (subtract >= 0) {
+            input1.setValueAt(subtract, row, 1);
+            for (int i = 0; i <= input2.getRowCount(); i++) {
+                String temp = (String) input2.getValueAt(i, 0);
+                String inventoryName = (String) input2.getValueAt(i, 0);
+                if (temp == null) {
+                    int add = 1;
+                    System.out.println("temp is null");
+                    input2.setValueAt(marketName, i, 0);
+                    input2.setValueAt(add, i, 1);
+                    input2.setValueAt(price, i, 2);
+                    break;
+                } else if (inventoryName == marketName) {
+                    System.out.println("Eksisterer i forvejen!");
+                    int newQty = (int) input2.getValueAt(i, 1) + 1;
+                    input2.setValueAt(newQty, i, 1);
+                    break;
+                }
+            }
+        }
+        if (subtract == 0) {
+            System.out.println("Nu fjerner jeg!");
+            ((DefaultTableModel) input1.getModel()).removeRow(row);
+            ((DefaultTableModel) input1.getModel()).addRow(new Object[]{});
+        }
+    }
+
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton_buy;
     private javax.swing.JButton jButton_highscore;
@@ -358,19 +477,21 @@ public class GUI_Main extends javax.swing.JFrame {
     private javax.swing.JButton jButton_newGame1;
     private javax.swing.JButton jButton_sell;
     private javax.swing.JButton jButton_travel;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel_TEXT_DaysLeft;
     private javax.swing.JLabel jLabel_TEXT_Life;
     private javax.swing.JLabel jLabel_TEXT_info;
     private javax.swing.JLabel jLabel_TEXT_market;
     private javax.swing.JLabel jLabel_TEXT_market1;
+    private javax.swing.JLabel jLabel_TEXT_money;
     private javax.swing.JLabel jLabel_TEXT_name;
     private javax.swing.JLabel jLabel_characterPic;
     private javax.swing.JLabel jLabel_daysLeft;
     private javax.swing.JLabel jLabel_life;
     private javax.swing.JLabel jLabel_location;
+    private javax.swing.JLabel jLabel_money;
     private javax.swing.JLabel jLabel_name;
+    private javax.swing.JLabel jLabel_selectionLeft;
+    private javax.swing.JLabel jLabel_selectionRight;
     private javax.swing.JList jList_countries;
     private javax.swing.JPanel jPanel_inventory;
     private javax.swing.JPanel jPanel_location;

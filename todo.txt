@@ -2,12 +2,15 @@
 Sebastian: Oprette drug-objekt og opretter lande-objekter
 Tobias: GUI-mockup + initialize player, kig på interfacemetoder 
 
+28-11-14
 
 
 
 
 
 
+Tabellen har kun længden af drugs (ingen tomme rækker)
+Implementering af events + liv
 Highscore
 
   

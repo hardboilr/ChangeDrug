@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 public class Engine implements EngineInterface {
 
@@ -21,13 +22,13 @@ public class Engine implements EngineInterface {
     private String activeCountry;
     private int randomUpOrDown;
     private Country tempCountry;
+    Random random;
 
     public Engine() {
-       countries = World.createWorld();
-       // randomUpOrDown = (int) (Math.random() * 1 + 0);
+        countries = World.createWorld();
+        random = new Random();
         activeCountry = "denmark";
-        tempCountry = countries.get("denmark");
-        player = new Player("hardboilr", 100, 5000); //for now we instantiate our player here
+        player = new Player("hardboilr"); //for now we instantiate our player here
     }
 
     @Override
@@ -43,8 +44,9 @@ public class Engine implements EngineInterface {
     public void setActiveCountry(String countryInput) {
         this.activeCountry = countryInput;
     }
+
     @Override
-    public String getActiveCountry(){
+    public String getActiveCountry() {
         return activeCountry;
     }
 
@@ -55,13 +57,13 @@ public class Engine implements EngineInterface {
         countries.remove(activeCountry);
 
         for (Drug drug : tempList) {
-            drug.setBasePrice(calculatePrice(drug.getBasePrice()));
-            drug.setBaseAvail(calculateAvailability(drug.getBaseAvail()));
+            drug.setModifiedPrice(calculatePrice(drug.getBasePrice()));
+            drug.setModifiedAvail(calculateAvailability(drug.getBaseAvail()));
         }
 
         countries.put(tempCountry.getName(), tempCountry);
 
-        return tempCountry.getDrugs();
+        return tempList;
 
     }
 
@@ -70,12 +72,13 @@ public class Engine implements EngineInterface {
         int randomPercent = (int) (Math.random() * 85 + 1);
         double priceModifier;
         double sum;
+        randomUpOrDown = random.nextInt(2);
         priceModifier = (basePrice * randomPercent) / 100;
         if (randomUpOrDown == 1) {
             sum = basePrice + priceModifier;
             System.out.println("adding" + sum);
             return sum;
-            
+
         } else {
             sum = basePrice - priceModifier;
             System.out.println("sub" + sum);
@@ -88,6 +91,7 @@ public class Engine implements EngineInterface {
         int randomPercent = (int) (Math.random() * 55 + 15);
         int availModifier = (int) (baseAvail * randomPercent) / 100;
         int sum;
+        randomUpOrDown = random.nextInt(2);
         if (randomUpOrDown == 1) {
             sum = baseAvail + availModifier;
             System.out.println("adding: " + sum);
@@ -100,7 +104,6 @@ public class Engine implements EngineInterface {
     }
 
     public void createPlayer() {
-
     }
 
 }

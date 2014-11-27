@@ -9,10 +9,9 @@ public class Player {
     private int life;
     private double credits;
     
-    public Player(String input1, int input2, double input3) {
+    public Player(String input1) {
         this.name = input1;
-        this.life = input2;
-        this.credits = input3;
+        this.life = 100;
+        this.credits = 5000;
     }
-    
 }
