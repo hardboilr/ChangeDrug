@@ -147,4 +147,25 @@ public class Engine implements EngineInterface {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    @Override
+    public void calculateCredits(double price) {
+        double credits = player.getCredits() + price;
+        player.setCredits(credits);
+    }
+
+    @Override
+    public double getCredits() {
+        return player.getCredits();
+    }
+
+    @Override
+    public void savePlayers(List<String> playerList, String filename) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public List<String> loadPlayers(String filename) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
 }
