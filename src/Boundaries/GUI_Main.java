@@ -10,10 +10,28 @@ import Interfaces.EngineInterface;
 import java.util.List;
 import java.util.Locale;
 import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
 public class GUI_Main extends javax.swing.JFrame {
+
+    private final ImageIcon selectionArrow_right_pressed_icon;
+    private final ImageIcon selectionArrow_right_icon;
+    private final ImageIcon selectionArrow_left_pressed_icon;
+    private final ImageIcon selectionArrow_left_icon;
+
+    private final ImageIcon clemenza1_icon;
+    private final ImageIcon brasi2_icon;
+    private final ImageIcon deNiro3_icon;
+    private final ImageIcon kay4_icon;
+    private final ImageIcon michael5_icon;
+    private final ImageIcon sollozo6_icon;
+    private final ImageIcon talia7_icon;
+    private final ImageIcon vitelli8_icon;
+    private final ImageIcon vito9_icon;
+
+    private int nextImg;
 
     private EngineInterface engine;
     private DefaultListModel listmodel = new DefaultListModel();
@@ -29,6 +47,34 @@ public class GUI_Main extends javax.swing.JFrame {
         setLocationText();
         jButton_buy.setEnabled(false);
         jButton_sell.setEnabled(false);
+        nextImg = 0;
+
+        //init icons
+        selectionArrow_right_pressed_icon = new ImageIcon("./src/art/gui/selctionArrow_right_pressed.png");
+        selectionArrow_right_icon = new ImageIcon("./src/art/gui/selctionArrow_right.png");
+        selectionArrow_left_pressed_icon = new ImageIcon("./src/art/gui/selctionArrow_left_pressed.png");
+        selectionArrow_left_icon = new ImageIcon("./src/art/gui/selctionArrow_left.png");
+        clemenza1_icon = new ImageIcon("./src/art/characters/1_clemenza.png");
+        brasi2_icon = new ImageIcon("./src/art/characters/2_brasi.png");
+        deNiro3_icon = new ImageIcon("./src/art/characters/3_deNiro.png");
+        kay4_icon = new ImageIcon("./src/art/characters/4_kay.png");
+        michael5_icon = new ImageIcon("./src/art/characters/5_michael.png");
+        sollozo6_icon = new ImageIcon("./src/art/characters/6_sollozo.png");
+        talia7_icon = new ImageIcon("./src/art/characters/7_talia.png");
+        vitelli8_icon = new ImageIcon("./src/art/characters/8_vitelli.png");
+        vito9_icon = new ImageIcon("./src/art/characters/9_vito.png");
+
+        jLabel_characterPic.setVisible(false);
+        jLabel_selectionLeft.setVisible(false);
+        jLabel_selectionRight.setVisible(false);
+        jLabel_name.setVisible(false);
+        jTextField_inputName.setVisible(false);
+        jLabel_life.setVisible(false);
+        jLabel_daysLeft.setVisible(false);
+        jLabel_money.setVisible(false);
+        jButton_confirm.setVisible(false);
+        
+        
     }
 
     private void setLocationText() {
@@ -74,7 +120,7 @@ public class GUI_Main extends javax.swing.JFrame {
         jButton_sell = new javax.swing.JButton();
         jButton_buy = new javax.swing.JButton();
         jButton_highscore = new javax.swing.JButton();
-        jButton_newGame = new javax.swing.JButton();
+        jButton_confirm = new javax.swing.JButton();
         jPanel_player = new javax.swing.JPanel();
         jLabel_characterPic = new javax.swing.JLabel();
         jLabel_TEXT_info = new javax.swing.JLabel();
@@ -88,7 +134,8 @@ public class GUI_Main extends javax.swing.JFrame {
         jLabel_selectionLeft = new javax.swing.JLabel();
         jLabel_TEXT_DaysLeft = new javax.swing.JLabel();
         jLabel_daysLeft = new javax.swing.JLabel();
-        jButton_newGame1 = new javax.swing.JButton();
+        jTextField_inputName = new javax.swing.JTextField();
+        jButton_newGame = new javax.swing.JButton();
         jPanel_market = new javax.swing.JPanel();
         jScrollPane_market = new javax.swing.JScrollPane();
         jTable_market = new javax.swing.JTable();
@@ -133,19 +180,19 @@ public class GUI_Main extends javax.swing.JFrame {
         jButton_highscore.setText("Highscore");
         getContentPane().add(jButton_highscore, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 20, -1, -1));
 
-        jButton_newGame.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jButton_newGame.setText("Confirm");
-        jButton_newGame.addActionListener(new java.awt.event.ActionListener() {
+        jButton_confirm.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jButton_confirm.setText("Confirm");
+        jButton_confirm.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton_newGameActionPerformed(evt);
+                jButton_confirmActionPerformed(evt);
             }
         });
-        getContentPane().add(jButton_newGame, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 20, -1, -1));
+        getContentPane().add(jButton_confirm, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 20, -1, -1));
 
         jPanel_player.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jPanel_player.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jLabel_characterPic.setIcon(new javax.swing.ImageIcon(getClass().getResource("/art/characters/clemenza.png"))); // NOI18N
+        jLabel_characterPic.setIcon(new javax.swing.ImageIcon(getClass().getResource("/art/characters/1_clemenza.png"))); // NOI18N
         jLabel_characterPic.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jLabel_characterPic.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jLabel_characterPic.setMaximumSize(new java.awt.Dimension(800, 600));
@@ -163,7 +210,8 @@ public class GUI_Main extends javax.swing.JFrame {
 
         jLabel_name.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel_name.setText("Hardboilr");
-        jPanel_player.add(jLabel_name, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 50, -1, -1));
+        jLabel_name.setPreferredSize(new java.awt.Dimension(70, 20));
+        jPanel_player.add(jLabel_name, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 50, 130, 30));
 
         jLabel_TEXT_Life.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel_TEXT_Life.setText("Life:");
@@ -185,9 +233,31 @@ public class GUI_Main extends javax.swing.JFrame {
         jPanel_player.add(jLabel_money, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 140, -1, 20));
 
         jLabel_selectionRight.setIcon(new javax.swing.ImageIcon(getClass().getResource("/art/gui/selctionArrow_right.png"))); // NOI18N
+        jLabel_selectionRight.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel_selectionRightMouseClicked(evt);
+            }
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                jLabel_selectionRightMousePressed(evt);
+            }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                jLabel_selectionRightMouseReleased(evt);
+            }
+        });
         jPanel_player.add(jLabel_selectionRight, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 80, -1, -1));
 
         jLabel_selectionLeft.setIcon(new javax.swing.ImageIcon(getClass().getResource("/art/gui/selctionArrow_left.png"))); // NOI18N
+        jLabel_selectionLeft.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel_selectionLeftMouseClicked(evt);
+            }
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                jLabel_selectionLeftMousePressed(evt);
+            }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                jLabel_selectionLeftMouseReleased(evt);
+            }
+        });
         jPanel_player.add(jLabel_selectionLeft, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 80, -1, -1));
 
         jLabel_TEXT_DaysLeft.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
@@ -205,16 +275,20 @@ public class GUI_Main extends javax.swing.JFrame {
         });
         jPanel_player.add(jLabel_daysLeft, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 110, -1, 20));
 
+        jTextField_inputName.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jTextField_inputName.setPreferredSize(new java.awt.Dimension(70, 20));
+        jPanel_player.add(jTextField_inputName, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 50, 130, 30));
+
         getContentPane().add(jPanel_player, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 60, 360, 180));
 
-        jButton_newGame1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jButton_newGame1.setText("New game");
-        jButton_newGame1.addActionListener(new java.awt.event.ActionListener() {
+        jButton_newGame.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jButton_newGame.setText("New game");
+        jButton_newGame.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton_newGame1ActionPerformed(evt);
+                jButton_newGameActionPerformed(evt);
             }
         });
-        getContentPane().add(jButton_newGame1, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 20, -1, -1));
+        getContentPane().add(jButton_newGame, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 20, -1, -1));
 
         jPanel_market.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jPanel_market.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -346,13 +420,33 @@ public class GUI_Main extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton_newGameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_newGameActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton_newGameActionPerformed
+    private void jButton_confirmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_confirmActionPerformed
+        String name = jTextField_inputName.getText();
+        jLabel_name.setText(name);
+        jLabel_name.setVisible(true);
+        jLabel_daysLeft.setVisible(true);
+        jLabel_life.setVisible(true);
+        jLabel_money.setVisible(true);
+        jTextField_inputName.setVisible(false);
+        jLabel_selectionLeft.setVisible(false);
+        jLabel_selectionRight.setVisible(false);
+        jButton_confirm.setVisible(false);
+        
+    }//GEN-LAST:event_jButton_confirmActionPerformed
 
-    private void jButton_newGame1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_newGame1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton_newGame1ActionPerformed
+    private void jButton_newGameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_newGameActionPerformed
+        jTextField_inputName.setText("");
+        jLabel_name.setText("");
+        jTextField_inputName.setVisible(true);
+        jLabel_TEXT_info.setText("Input name:");
+        jLabel_selectionLeft.setVisible(true);
+        jLabel_selectionRight.setVisible(true);
+        jLabel_characterPic.setIcon(clemenza1_icon);
+        jLabel_characterPic.setVisible(true);
+        jButton_confirm.setVisible(true);
+        jLabel_selectionLeft.setVisible(false);
+        nextImg = 1;
+    }//GEN-LAST:event_jButton_newGameActionPerformed
 
     private void jButton_travelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_travelActionPerformed
         int index = jList_countries.getSelectedIndex();
@@ -399,6 +493,38 @@ public class GUI_Main extends javax.swing.JFrame {
             //close frame and open highscore frame
         }
     }//GEN-LAST:event_jLabel_daysLeftPropertyChange
+
+    private void jLabel_selectionRightMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel_selectionRightMousePressed
+        jLabel_selectionRight.setIcon(selectionArrow_right_pressed_icon);
+
+
+    }//GEN-LAST:event_jLabel_selectionRightMousePressed
+
+    private void jLabel_selectionRightMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel_selectionRightMouseReleased
+        jLabel_selectionRight.setIcon(selectionArrow_right_icon);
+    }//GEN-LAST:event_jLabel_selectionRightMouseReleased
+
+    private void jLabel_selectionLeftMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel_selectionLeftMousePressed
+        jLabel_selectionLeft.setIcon(selectionArrow_left_pressed_icon);
+    }//GEN-LAST:event_jLabel_selectionLeftMousePressed
+
+    private void jLabel_selectionLeftMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel_selectionLeftMouseReleased
+        jLabel_selectionLeft.setIcon(selectionArrow_left_icon);
+    }//GEN-LAST:event_jLabel_selectionLeftMouseReleased
+
+    private void jLabel_selectionRightMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel_selectionRightMouseClicked
+        nextImg++;
+        System.out.println(nextImg);
+        changeCharacterIcon();
+        
+
+    }//GEN-LAST:event_jLabel_selectionRightMouseClicked
+
+    private void jLabel_selectionLeftMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel_selectionLeftMouseClicked
+        nextImg--;
+        System.out.println(nextImg);
+        changeCharacterIcon();
+    }//GEN-LAST:event_jLabel_selectionLeftMouseClicked
 
     /**
      * @param args the command line arguments
@@ -469,12 +595,57 @@ public class GUI_Main extends javax.swing.JFrame {
         }
     }
 
+    public void changeCharacterIcon() {
+//        if (nextImg == 10) {
+//            nextImg = 1;
+//        }
+//        
+//        if (nextImg <= 0) {
+//            nextImg = 9;
+//        }
+        
+        switch (nextImg) {
+            case 1:
+                jLabel_characterPic.setIcon(clemenza1_icon);
+                jLabel_selectionLeft.setVisible(false);
+                break;
+            case 2:
+                jLabel_characterPic.setIcon(brasi2_icon);
+                jLabel_selectionLeft.setVisible(true);
+                break;
+            case 3:
+                jLabel_characterPic.setIcon(deNiro3_icon);
+                break;
+            case 4:
+                jLabel_characterPic.setIcon(kay4_icon);
+                break;
+            case 5:
+                jLabel_characterPic.setIcon(michael5_icon);
+                break;
+            case 6:
+                jLabel_characterPic.setIcon(sollozo6_icon);
+                break;
+            case 7:
+                jLabel_characterPic.setIcon(talia7_icon);
+                break;
+            case 8:
+                jLabel_characterPic.setIcon(vitelli8_icon);
+                jLabel_selectionRight.setVisible(true);
+                break;
+            case 9:
+                jLabel_characterPic.setIcon(vito9_icon);
+                jLabel_selectionRight.setVisible(false);
+                break;
+        }
+        
+    }
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton_buy;
+    private javax.swing.JButton jButton_confirm;
     private javax.swing.JButton jButton_highscore;
     private javax.swing.JButton jButton_newGame;
-    private javax.swing.JButton jButton_newGame1;
     private javax.swing.JButton jButton_sell;
     private javax.swing.JButton jButton_travel;
     private javax.swing.JLabel jLabel_TEXT_DaysLeft;
@@ -502,5 +673,6 @@ public class GUI_Main extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane_market;
     private javax.swing.JTable jTable_inventory;
     private javax.swing.JTable jTable_market;
+    private javax.swing.JTextField jTextField_inputName;
     // End of variables declaration//GEN-END:variables
 }
