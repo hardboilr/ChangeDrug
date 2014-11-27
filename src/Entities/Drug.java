@@ -19,6 +19,10 @@ public class Drug {
         this.basePrice = basePriceInput;
         this.baseAvail = baseAvailInput;
     }
+    
+    public String toString(){
+        return "" + name + "," + basePrice + "," + baseAvail;
+    }
 
     public String getName() {
         return name;

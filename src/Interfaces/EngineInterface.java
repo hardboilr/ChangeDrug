@@ -12,6 +12,10 @@ public interface EngineInterface  {
      */
     public void setCountry(String input);
     
-    public void travel(String country);
+    public void travel();
+    
+    public double calculatePrice(double baseprice);
+    
+    public int calculateAvailability(int baseAvail);
     
 }

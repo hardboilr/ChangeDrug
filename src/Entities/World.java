@@ -12,9 +12,17 @@ import java.util.HashMap;
  * @author Tobias
  */
 public class World {
+    
+   
 
     public static HashMap createWorld() {
-        return null;
+        HashMap countries = new HashMap();
+        Country denmark = new Country("denmark");
+        Country columbia = new Country("columbia");
+        countries.put(denmark.getName(), denmark);
+        countries.put(columbia.getName(), columbia);
+        
+        return countries;
     }
 
 }
