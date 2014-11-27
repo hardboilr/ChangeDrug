@@ -1,10 +1,9 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/**
+ * @author Tobias & Sebastian
  */
 package Controllere;
 
+import Entities.Player;
 import Entities.World;
 import Entities.Country;
 import Entities.Drug;
@@ -15,11 +14,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-/**
- *
- * @author Tobias
- */
+
 public class Engine implements EngineInterface {
+    
+    private HashMap countries;
+    private Player player;
     
     private Map countries;
     private String activeCountry;
@@ -33,6 +32,7 @@ public class Engine implements EngineInterface {
         upOrDown.add(1);
         randomUpOrDown = (int) (Math.random() * 1 + 0);
         
+        player = new Player("hardboilr",100,5000); //for now we instantiate our player here
     }
 
     @Override
@@ -83,5 +83,10 @@ public class Engine implements EngineInterface {
     
     
     
+    
+    public void createPlayer()  {
+        
+        
+    }
     
 }

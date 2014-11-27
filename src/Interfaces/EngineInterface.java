@@ -18,4 +18,6 @@ public interface EngineInterface  {
     
     public int calculateAvailability(int baseAvail);
     
+    public void createPlayer();
+    
 }

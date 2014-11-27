@@ -1,21 +1,20 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/**
+ * @author Tobias
  */
 package Boundaries;
 
-/**
- *
- * @author Tobias
- */
+import Controllere.Engine;
+import Entities.Player;
+import Interfaces.EngineInterface;
+
 public class GUI_Main extends javax.swing.JFrame {
 
-    /**
-     * Creates new form GUI_Main
-     */
+    private EngineInterface engine;
+    
     public GUI_Main() {
         initComponents();
+        this.setLocationRelativeTo(null);
+        engine = new Engine();
     }
 
     /**
@@ -27,21 +26,232 @@ public class GUI_Main extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        jButton_sell = new javax.swing.JButton();
+        jButton_buy = new javax.swing.JButton();
+        jButton_highscore = new javax.swing.JButton();
+        jButton_newGame = new javax.swing.JButton();
+        jPanel_player = new javax.swing.JPanel();
+        jLabel_characterPic = new javax.swing.JLabel();
+        jLabel_TEXT_info = new javax.swing.JLabel();
+        jLabel_TEXT_name = new javax.swing.JLabel();
+        jLabel_name = new javax.swing.JLabel();
+        jLabel_TEXT_Life = new javax.swing.JLabel();
+        jLabel_life = new javax.swing.JLabel();
+        jLabel_TEXT_DaysLeft = new javax.swing.JLabel();
+        jLabel_daysLeft = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jButton_newGame1 = new javax.swing.JButton();
+        jPanel_market = new javax.swing.JPanel();
+        jScrollPane_market = new javax.swing.JScrollPane();
+        jTable_market = new javax.swing.JTable();
+        jLabel_TEXT_market1 = new javax.swing.JLabel();
+        jPanel_inventory = new javax.swing.JPanel();
+        jScrollPane_inventory = new javax.swing.JScrollPane();
+        jTable_inventory = new javax.swing.JTable();
+        jLabel_TEXT_market = new javax.swing.JLabel();
+        jPanel_location = new javax.swing.JPanel();
+        jLabel_TEXT_location = new javax.swing.JLabel();
+        jScrollPane_countries = new javax.swing.JScrollPane();
+        jList_countries = new javax.swing.JList();
+        jButton_travel = new javax.swing.JButton();
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
-        );
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Thug Life 0.1");
+        setMaximumSize(new java.awt.Dimension(800, 600));
+        setMinimumSize(new java.awt.Dimension(800, 600));
+        setPreferredSize(new java.awt.Dimension(800, 600));
+        setResizable(false);
+        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jButton_sell.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jButton_sell.setText("<< Sell ");
+        getContentPane().add(jButton_sell, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 300, 80, -1));
+
+        jButton_buy.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jButton_buy.setText("Buy >>");
+        getContentPane().add(jButton_buy, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 260, 80, -1));
+
+        jButton_highscore.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jButton_highscore.setText("Highscore");
+        getContentPane().add(jButton_highscore, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 20, -1, -1));
+
+        jButton_newGame.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jButton_newGame.setText("Confirm");
+        jButton_newGame.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton_newGameActionPerformed(evt);
+            }
+        });
+        getContentPane().add(jButton_newGame, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 20, -1, -1));
+
+        jPanel_player.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        jPanel_player.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jLabel_characterPic.setIcon(new javax.swing.ImageIcon(getClass().getResource("/art/characters/clemenza.png"))); // NOI18N
+        jLabel_characterPic.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jLabel_characterPic.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jLabel_characterPic.setMaximumSize(new java.awt.Dimension(800, 600));
+        jLabel_characterPic.setMinimumSize(new java.awt.Dimension(800, 600));
+        jLabel_characterPic.setPreferredSize(new java.awt.Dimension(800, 600));
+        jPanel_player.add(jLabel_characterPic, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 10, 110, 160));
+
+        jLabel_TEXT_info.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jLabel_TEXT_info.setText("Info");
+        jPanel_player.add(jLabel_TEXT_info, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, -1, -1));
+
+        jLabel_TEXT_name.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabel_TEXT_name.setText("Name: ");
+        jPanel_player.add(jLabel_TEXT_name, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 50, -1, -1));
+
+        jLabel_name.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabel_name.setText("Hardboilr");
+        jPanel_player.add(jLabel_name, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 50, -1, -1));
+
+        jLabel_TEXT_Life.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabel_TEXT_Life.setText("Life:");
+        jLabel_TEXT_Life.setToolTipText("");
+        jPanel_player.add(jLabel_TEXT_Life, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 80, -1, -1));
+
+        jLabel_life.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabel_life.setText("55%");
+        jPanel_player.add(jLabel_life, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 80, -1, -1));
+
+        jLabel_TEXT_DaysLeft.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabel_TEXT_DaysLeft.setText("Days left: ");
+        jLabel_TEXT_DaysLeft.setToolTipText("");
+        jPanel_player.add(jLabel_TEXT_DaysLeft, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 110, -1, 20));
+
+        jLabel_daysLeft.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabel_daysLeft.setText("14");
+        jLabel_daysLeft.setToolTipText("");
+        jPanel_player.add(jLabel_daysLeft, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 110, -1, 20));
+
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/art/gui/selctionArrow_right.png"))); // NOI18N
+        jPanel_player.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 80, -1, -1));
+
+        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/art/gui/selctionArrow_left.png"))); // NOI18N
+        jPanel_player.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 80, -1, -1));
+
+        getContentPane().add(jPanel_player, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 60, 360, 180));
+
+        jButton_newGame1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jButton_newGame1.setText("New game");
+        jButton_newGame1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton_newGame1ActionPerformed(evt);
+            }
+        });
+        getContentPane().add(jButton_newGame1, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 20, -1, -1));
+
+        jPanel_market.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        jPanel_market.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jTable_market.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jTable_market.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {"Cocaine", "30", "1200"},
+                {"Heroin", "15", "1600"},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null}
+            },
+            new String [] {
+                "Name", "Qty", "Price"
+            }
+        ));
+        jTable_market.setGridColor(new java.awt.Color(255, 255, 255));
+        jScrollPane_market.setViewportView(jTable_market);
+
+        jPanel_market.add(jScrollPane_market, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 40, 300, 260));
+
+        jLabel_TEXT_market1.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jLabel_TEXT_market1.setText("Market");
+        jPanel_market.add(jLabel_TEXT_market1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, -1, -1));
+
+        getContentPane().add(jPanel_market, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 260, 320, 310));
+
+        jPanel_inventory.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        jPanel_inventory.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jTable_inventory.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jTable_inventory.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {"Cocaine", "30", "1200"},
+                {"Heroin", "15", "1600"},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null}
+            },
+            new String [] {
+                "Name", "Qty", "Price"
+            }
+        ));
+        jTable_inventory.setGridColor(new java.awt.Color(255, 255, 255));
+        jScrollPane_inventory.setViewportView(jTable_inventory);
+
+        jPanel_inventory.add(jScrollPane_inventory, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 40, 300, 260));
+
+        jLabel_TEXT_market.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jLabel_TEXT_market.setText("Inventory");
+        jPanel_inventory.add(jLabel_TEXT_market, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, -1, -1));
+
+        getContentPane().add(jPanel_inventory, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 260, 330, 310));
+
+        jPanel_location.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        jPanel_location.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jLabel_TEXT_location.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jLabel_TEXT_location.setText("Location");
+        jPanel_location.add(jLabel_TEXT_location, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, -1, -1));
+
+        jList_countries.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jList_countries.setModel(new javax.swing.AbstractListModel() {
+            String[] strings = { "Denmark", "Columbia" };
+            public int getSize() { return strings.length; }
+            public Object getElementAt(int i) { return strings[i]; }
+        });
+        jScrollPane_countries.setViewportView(jList_countries);
+
+        jPanel_location.add(jScrollPane_countries, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 40, 300, 120));
+
+        jButton_travel.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jButton_travel.setText("Go!");
+        jButton_travel.setToolTipText("");
+        jPanel_location.add(jButton_travel, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 180, -1, -1));
+
+        getContentPane().add(jPanel_location, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 20, 330, 220));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButton_newGameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_newGameActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton_newGameActionPerformed
+
+    private void jButton_newGame1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_newGame1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton_newGame1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -79,5 +289,34 @@ public class GUI_Main extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButton_buy;
+    private javax.swing.JButton jButton_highscore;
+    private javax.swing.JButton jButton_newGame;
+    private javax.swing.JButton jButton_newGame1;
+    private javax.swing.JButton jButton_sell;
+    private javax.swing.JButton jButton_travel;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel_TEXT_DaysLeft;
+    private javax.swing.JLabel jLabel_TEXT_Life;
+    private javax.swing.JLabel jLabel_TEXT_info;
+    private javax.swing.JLabel jLabel_TEXT_location;
+    private javax.swing.JLabel jLabel_TEXT_market;
+    private javax.swing.JLabel jLabel_TEXT_market1;
+    private javax.swing.JLabel jLabel_TEXT_name;
+    private javax.swing.JLabel jLabel_characterPic;
+    private javax.swing.JLabel jLabel_daysLeft;
+    private javax.swing.JLabel jLabel_life;
+    private javax.swing.JLabel jLabel_name;
+    private javax.swing.JList jList_countries;
+    private javax.swing.JPanel jPanel_inventory;
+    private javax.swing.JPanel jPanel_location;
+    private javax.swing.JPanel jPanel_market;
+    private javax.swing.JPanel jPanel_player;
+    private javax.swing.JScrollPane jScrollPane_countries;
+    private javax.swing.JScrollPane jScrollPane_inventory;
+    private javax.swing.JScrollPane jScrollPane_market;
+    private javax.swing.JTable jTable_inventory;
+    private javax.swing.JTable jTable_market;
     // End of variables declaration//GEN-END:variables
 }
