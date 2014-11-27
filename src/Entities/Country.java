@@ -20,6 +20,13 @@ public class Country {
     private Drug heroin = new Drug("Heroin", 1600.00, 0.0, 15, 0);
     private Drug cocaine = new Drug("Cocaine", 1200.00, 0.0, 30, 0);
     private Drug amphetamine = new Drug("Amphetamine", 200.00, 0.0, 50, 0); 
+    private Drug acid = new Drug("Acid", 550, 0.0, 33, 0);
+    private Drug angelDust = new Drug("Angel Dust", 400, 0.0, 60, 0);
+    private Drug crystalMeth = new Drug("Crystal Meth", 800, 0.0, 38, 0);
+    private Drug hash = new Drug ("Hash", 180, 0.0, 100, 0);
+    private Drug weed = new Drug ("Weed", 150, 0.0, 115, 0);
+    private Drug mushrooms = new Drug ("Mushrooms", 120, 0.0, 95, 0);
+    
     
     public Country(String nameInput){
         this.name = nameInput;
@@ -27,6 +34,12 @@ public class Country {
         drugs.add(heroin);
         drugs.add(cocaine);
         drugs.add(amphetamine);
+        drugs.add(acid);
+        drugs.add(angelDust);
+        drugs.add(crystalMeth);
+        drugs.add(hash);
+        drugs.add(weed);
+        drugs.add(mushrooms);
            
     }
 
@@ -34,8 +47,6 @@ public class Country {
     public String toString() {
         return  name;
     }
-    
-    
 
     public String getName() {
         return name;

@@ -24,6 +24,14 @@ public interface EngineInterface  {
     
     public void createPlayer();
     
+    public void calculateCredits(double price);
+    
+    public double getCredits();
+    
+    public void savePlayers(List<String> playerList, String filename);
+    
+    public List<String> loadPlayers(String filename);
+    
     
     
 }
