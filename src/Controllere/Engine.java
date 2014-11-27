@@ -22,6 +22,9 @@ public class Engine implements EngineInterface {
     private String activeCountry;
     private int randomUpOrDown;
     private Country tempCountry;
+    private final int DAY_CYCLE = 20;
+    private int day;
+    
     Random random;
 
     public Engine() {
@@ -29,6 +32,7 @@ public class Engine implements EngineInterface {
         random = new Random();
         activeCountry = "denmark";
         player = new Player("hardboilr"); //for now we instantiate our player here
+        day = DAY_CYCLE;
     }
 
     @Override
@@ -65,6 +69,25 @@ public class Engine implements EngineInterface {
 
         return tempList;
 
+    }
+    
+    @Override
+    public void createPlayer() {
+    }
+    
+    @Override
+    public void subtractDay() {
+        day--;
+    }
+    
+    @Override 
+    public void setDay(int input) {
+        day = input;
+    }
+    
+    @Override
+    public int getDay() {
+        return day;
     }
 
     private double calculatePrice(double basePrice) {
@@ -103,7 +126,8 @@ public class Engine implements EngineInterface {
         }
     }
 
-    public void createPlayer() {
-    }
+    
+    
+    
 
 }

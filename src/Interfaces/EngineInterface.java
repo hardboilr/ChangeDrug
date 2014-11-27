@@ -24,6 +24,12 @@ public interface EngineInterface  {
     
     public void createPlayer();
     
+    public void subtractDay();
+    
+    public void setDay(int input);
+    
+    public int getDay();
+    
     
     
 }

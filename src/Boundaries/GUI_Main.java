@@ -7,6 +7,7 @@ import Controllere.Engine;
 import Entities.Drug;
 import Entities.Player;
 import Interfaces.EngineInterface;
+import java.awt.Image;
 import java.util.List;
 import java.util.Locale;
 import javax.swing.DefaultListModel;
@@ -30,6 +31,7 @@ public class GUI_Main extends javax.swing.JFrame {
     private final ImageIcon talia7_icon;
     private final ImageIcon vitelli8_icon;
     private final ImageIcon vito9_icon;
+    
 
     private int nextImg;
 
@@ -73,6 +75,11 @@ public class GUI_Main extends javax.swing.JFrame {
         jLabel_daysLeft.setVisible(false);
         jLabel_money.setVisible(false);
         jButton_confirm.setVisible(false);
+        
+        jButton_buy.setVisible(false);
+        jButton_sell.setVisible(false);
+        jButton_travel.setVisible(false);
+        
         
         
     }
@@ -421,10 +428,17 @@ public class GUI_Main extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton_confirmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_confirmActionPerformed
+        jButton_buy.setVisible(true);
+        jButton_sell.setVisible(true);
+        jButton_travel.setVisible(true);
+        
         String name = jTextField_inputName.getText();
         jLabel_name.setText(name);
         jLabel_name.setVisible(true);
         jLabel_daysLeft.setVisible(true);
+        jLabel_daysLeft.setText(engine.getDay()+"");
+        System.out.println(engine.getDay());
+        //jLabel_life.setText();
         jLabel_life.setVisible(true);
         jLabel_money.setVisible(true);
         jTextField_inputName.setVisible(false);
@@ -435,8 +449,17 @@ public class GUI_Main extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton_confirmActionPerformed
 
     private void jButton_newGameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_newGameActionPerformed
+        jButton_buy.setVisible(false);
+        jButton_sell.setVisible(false);
+        jButton_travel.setVisible(false);
+        
+        engine.setDay(WIDTH);
+        
         jTextField_inputName.setText("");
         jLabel_name.setText("");
+        jLabel_life.setText("");
+        jLabel_money.setText("");
+        jLabel_daysLeft.setText("");
         jTextField_inputName.setVisible(true);
         jLabel_TEXT_info.setText("Input name:");
         jLabel_selectionLeft.setVisible(true);
@@ -455,6 +478,12 @@ public class GUI_Main extends javax.swing.JFrame {
         setLocationText();
         engine.travel();
         fillCountryList();
+        engine.subtractDay();
+        jLabel_daysLeft.setText(engine.getDay()+"");
+        if(engine.getDay() == 0) {
+            System.out.println("No more days left!");
+            //sell everything and show highscore
+        }
 
 
     }//GEN-LAST:event_jButton_travelActionPerformed
@@ -639,6 +668,8 @@ public class GUI_Main extends javax.swing.JFrame {
         }
         
     }
+    
+   
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
