@@ -75,20 +75,20 @@ public class Engine implements EngineInterface {
     public void createPlayer() {
     }
     
-    @Override
-    public void subtractDay() {
-        day--;
-    }
+//    @Override
+//    public void subtractDay() {
+//        day--;
+//    }
     
-    @Override 
-    public void setDay(int input) {
-        day = input;
-    }
+//    @Override 
+//    public void setDay(int input) {
+//        day = input;
+//    }
     
-    @Override
-    public int getDay() {
-        return day;
-    }
+//    @Override
+//    public int getDay() {
+//        return day;
+//    }
 
     private double calculatePrice(double basePrice) {
 
@@ -147,25 +147,10 @@ public class Engine implements EngineInterface {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    @Override
-    public void calculateCredits(double price) {
-        double credits = player.getCredits() + price;
-        player.setCredits(credits);
-    }
+    
+  
 
-    @Override
-    public double getCredits() {
-        return player.getCredits();
-    }
+   
 
-    @Override
-    public void savePlayers(List<String> playerList, String filename) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public List<String> loadPlayers(String filename) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
 
 }

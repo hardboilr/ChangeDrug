@@ -442,8 +442,8 @@ public class GUI_Main extends javax.swing.JFrame {
         jLabel_name.setText(name);
         jLabel_name.setVisible(true);
         jLabel_daysLeft.setVisible(true);
-        jLabel_daysLeft.setText(engine.getDay()+"");
-        System.out.println(engine.getDay());
+//        jLabel_daysLeft.setText(engine.getDay()+"");
+//        System.out.println(engine.getDay());
         //jLabel_life.setText();
         jLabel_life.setVisible(true);
         jLabel_money.setVisible(true);
@@ -459,7 +459,7 @@ public class GUI_Main extends javax.swing.JFrame {
         jButton_sell.setVisible(false);
         jButton_travel.setVisible(false);
         
-        engine.setDay(WIDTH);
+//        engine.setDay(WIDTH);
         
         jTextField_inputName.setText("");
         jLabel_name.setText("");
@@ -484,12 +484,12 @@ public class GUI_Main extends javax.swing.JFrame {
         setLocationText();
         engine.travel();
         fillCountryList();
-        engine.subtractDay();
-        jLabel_daysLeft.setText(engine.getDay()+"");
-        if(engine.getDay() == 0) {
-            System.out.println("No more days left!");
-            //sell everything and show highscore
-        }
+//        engine.subtractDay();
+//        jLabel_daysLeft.setText(engine.getDay()+"");
+//        if(engine.getDay() == 0) {
+//            System.out.println("No more days left!");
+//            //sell everything and show highscore
+//        }
 
 
     }//GEN-LAST:event_jButton_travelActionPerformed
