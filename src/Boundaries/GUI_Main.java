@@ -150,8 +150,8 @@ public class GUI_Main extends javax.swing.JFrame {
         jTable_market.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jTable_market.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {"Cocaine", "30", "1200"},
-                {"Heroin", "15", "1600"},
+                {null, null, null},
+                {null, null, null},
                 {null, null, null},
                 {null, null, null},
                 {null, null, null},
@@ -169,7 +169,15 @@ public class GUI_Main extends javax.swing.JFrame {
             new String [] {
                 "Name", "Qty", "Price"
             }
-        ));
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.Integer.class, java.lang.Double.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+        });
         jTable_market.setGridColor(new java.awt.Color(255, 255, 255));
         jScrollPane_market.setViewportView(jTable_market);
 
@@ -187,8 +195,8 @@ public class GUI_Main extends javax.swing.JFrame {
         jTable_inventory.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jTable_inventory.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {"Cocaine", "30", "1200"},
-                {"Heroin", "15", "1600"},
+                {null, null, null},
+                {null, null, null},
                 {null, null, null},
                 {null, null, null},
                 {null, null, null},
@@ -206,7 +214,15 @@ public class GUI_Main extends javax.swing.JFrame {
             new String [] {
                 "Name", "Qty", "Price"
             }
-        ));
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.Integer.class, java.lang.Double.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+        });
         jTable_inventory.setGridColor(new java.awt.Color(255, 255, 255));
         jScrollPane_inventory.setViewportView(jTable_inventory);
 
