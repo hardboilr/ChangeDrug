@@ -465,7 +465,7 @@ public class GUI_Main extends javax.swing.JFrame {
                     input2.setValueAt(marketName, i, 0);
                     input2.setValueAt(add, i, 1);
                     input2.setValueAt(price, i, 2);
-                    
+
                     break;
                 } else if (inventoryName == marketName) {
                     System.out.println("Eksisterer i forvejen!");
@@ -473,15 +473,16 @@ public class GUI_Main extends javax.swing.JFrame {
                     input2.setValueAt(newQty, i, 1);
                     break;
                 }
-                
+
+            }
+            if (subtract == 0) {
+                System.out.println("Nu fjerner jeg!");
+                ((DefaultTableModel) input1.getModel()).removeRow(row);
+                ((DefaultTableModel) input1.getModel()).addRow(new Object[]{});
             }
             return true;
         }
-        if (subtract == 0) {
-            System.out.println("Nu fjerner jeg!");
-            ((DefaultTableModel) input1.getModel()).removeRow(row);
-            ((DefaultTableModel) input1.getModel()).addRow(new Object[]{});
-        }
+
         return false;
     }
 
