@@ -14,27 +14,43 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-
 public class Engine implements EngineInterface {
-    
-    private Map countries;
+
+    private Map<String, Country> countries;
     private Player player;
     private String activeCountry;
     private int randomUpOrDown;
-        
+    private Country tempCountry;
+
     public Engine() {
-        countries = World.createWorld();
-        randomUpOrDown = (int) (Math.random() * 1 + 0);
-        
-        player = new Player("hardboilr",100,5000); //for now we instantiate our player here
+       countries = World.createWorld();
+       // randomUpOrDown = (int) (Math.random() * 1 + 0);
+        activeCountry = "denmark";
+        tempCountry = countries.get("denmark");
+        player = new Player("hardboilr", 100, 5000); //for now we instantiate our player here
     }
 
-
+    @Override
+    public ArrayList getCountries() {
+        ArrayList<String> countryArrayList = new ArrayList<>();
+        for (String key : countries.keySet()) {
+            countryArrayList.add(key);
+        }
+        return countryArrayList;
+    }
 
     @Override
-    public void travel(String countryInput) {
+    public void setActiveCountry(String countryInput) {
         this.activeCountry = countryInput;
-        Country tempCountry = (Country) countries.get(activeCountry);
+    }
+    @Override
+    public String getActiveCountry(){
+        return activeCountry;
+    }
+
+    @Override
+    public List travel() {
+        tempCountry = (Country) countries.get(activeCountry);
         List<Drug> tempList = tempCountry.getDrugs();
         countries.remove(activeCountry);
 
@@ -45,39 +61,46 @@ public class Engine implements EngineInterface {
 
         countries.put(tempCountry.getName(), tempCountry);
 
+        return tempCountry.getDrugs();
+
     }
 
-    
     private double calculatePrice(double basePrice) {
 
         int randomPercent = (int) (Math.random() * 85 + 1);
         double priceModifier;
+        double sum;
         priceModifier = (basePrice * randomPercent) / 100;
         if (randomUpOrDown == 1) {
-            return basePrice + priceModifier;
+            sum = basePrice + priceModifier;
+            System.out.println("adding" + sum);
+            return sum;
+            
         } else {
-            return basePrice - priceModifier;
+            sum = basePrice - priceModifier;
+            System.out.println("sub" + sum);
+            return sum;
         }
 
     }
 
-  
     private int calculateAvailability(int baseAvail) {
         int randomPercent = (int) (Math.random() * 55 + 15);
         int availModifier = (int) (baseAvail * randomPercent) / 100;
+        int sum;
         if (randomUpOrDown == 1) {
-            return baseAvail + availModifier;
+            sum = baseAvail + availModifier;
+            System.out.println("adding: " + sum);
+            return sum;
         } else {
-            return baseAvail - availModifier;
+            sum = baseAvail - availModifier;
+            System.out.println("sub: " + sum);
+            return sum;
         }
     }
-    
-    
-    
-    
-    public void createPlayer()  {
-        
-        
+
+    public void createPlayer() {
+
     }
-    
+
 }

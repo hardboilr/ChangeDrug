@@ -18,7 +18,7 @@ public class Country {
     private String name;
     private List<Drug> drugs;
     private Drug heroin = new Drug("Heroin", 1600.00, 15);
-    private Drug cocaine = new Drug("Heroin", 1200.00, 30);
+    private Drug cocaine = new Drug("Cocaine", 1200.00, 30);
     
     public Country(String nameInput){
         this.name = nameInput;
@@ -27,6 +27,13 @@ public class Country {
         drugs.add(cocaine);
            
     }
+
+    @Override
+    public String toString() {
+        return  name;
+    }
+    
+    
 
     public String getName() {
         return name;

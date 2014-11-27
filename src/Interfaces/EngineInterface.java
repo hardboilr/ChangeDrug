@@ -3,6 +3,9 @@
  */
 package Interfaces;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 public interface EngineInterface  {
 
@@ -11,9 +14,13 @@ public interface EngineInterface  {
      * Post: set current country
      */
 
+    public void setActiveCountry(String input);
     
-    public void travel(String input);
+    public String getActiveCountry();
     
+    public List travel();
+    
+    public ArrayList getCountries();
     
     public void createPlayer();
     

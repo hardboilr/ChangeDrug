@@ -16,7 +16,7 @@ public class World {
    
 
     public static HashMap createWorld() {
-        HashMap countries = new HashMap();
+        HashMap countries = new HashMap<>();
         Country denmark = new Country("denmark");
         Country columbia = new Country("columbia");
         countries.put(denmark.getName(), denmark);

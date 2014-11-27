@@ -4,17 +4,51 @@
 package Boundaries;
 
 import Controllere.Engine;
+import Entities.Drug;
 import Entities.Player;
 import Interfaces.EngineInterface;
+import java.util.Locale;
+import javax.swing.DefaultListModel;
 
 public class GUI_Main extends javax.swing.JFrame {
 
     private EngineInterface engine;
+    private DefaultListModel listmodel = new DefaultListModel();
     
     public GUI_Main() {
         initComponents();
         this.setLocationRelativeTo(null);
         engine = new Engine();
+        jList_countries.setModel(listmodel);
+        fillCountryList();
+        setLocationText();
+    }
+    
+    private void setLocationText(){
+        //char char1 = engine.getActiveCountry().charAt(0);
+        jLabel_location.setText("Location: " + engine.getActiveCountry().toUpperCase().charAt(0)
+        + engine.getActiveCountry().substring(1));
+    }
+    
+    private void fillCountryList(){
+        listmodel.clear();
+        // fill countrylist
+        for(int i = 0; i < engine.getCountries().size(); i++){
+            listmodel.addElement(engine.getCountries().get(i));
+        }
+        
+        // fill market table
+        for(int i = 0; i < engine.travel().size(); i++){
+            Drug drug = (Drug) engine.travel().get(i);
+            String name = drug.getName();
+            Double price = drug.getBasePrice();
+            int avail = drug.getBaseAvail();
+            
+            jTable_market.setValueAt(name, i, 0);
+            jTable_market.setValueAt(avail,i, 1);
+            jTable_market.setValueAt(price,i, 2);
+        }
+        
     }
 
     /**
@@ -51,7 +85,7 @@ public class GUI_Main extends javax.swing.JFrame {
         jTable_inventory = new javax.swing.JTable();
         jLabel_TEXT_market = new javax.swing.JLabel();
         jPanel_location = new javax.swing.JPanel();
-        jLabel_TEXT_location = new javax.swing.JLabel();
+        jLabel_location = new javax.swing.JLabel();
         jScrollPane_countries = new javax.swing.JScrollPane();
         jList_countries = new javax.swing.JList();
         jButton_travel = new javax.swing.JButton();
@@ -178,7 +212,6 @@ public class GUI_Main extends javax.swing.JFrame {
                 return types [columnIndex];
             }
         });
-        jTable_market.setGridColor(new java.awt.Color(255, 255, 255));
         jScrollPane_market.setViewportView(jTable_market);
 
         jPanel_market.add(jScrollPane_market, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 40, 300, 260));
@@ -223,7 +256,6 @@ public class GUI_Main extends javax.swing.JFrame {
                 return types [columnIndex];
             }
         });
-        jTable_inventory.setGridColor(new java.awt.Color(255, 255, 255));
         jScrollPane_inventory.setViewportView(jTable_inventory);
 
         jPanel_inventory.add(jScrollPane_inventory, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 40, 300, 260));
@@ -237,9 +269,9 @@ public class GUI_Main extends javax.swing.JFrame {
         jPanel_location.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jPanel_location.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jLabel_TEXT_location.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        jLabel_TEXT_location.setText("Location");
-        jPanel_location.add(jLabel_TEXT_location, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, -1, -1));
+        jLabel_location.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jLabel_location.setText("Location");
+        jPanel_location.add(jLabel_location, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, -1, -1));
 
         jList_countries.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jList_countries.setModel(new javax.swing.AbstractListModel() {
@@ -254,6 +286,11 @@ public class GUI_Main extends javax.swing.JFrame {
         jButton_travel.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jButton_travel.setText("Go!");
         jButton_travel.setToolTipText("");
+        jButton_travel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton_travelActionPerformed(evt);
+            }
+        });
         jPanel_location.add(jButton_travel, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 180, -1, -1));
 
         getContentPane().add(jPanel_location, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 20, 330, 220));
@@ -268,6 +305,16 @@ public class GUI_Main extends javax.swing.JFrame {
     private void jButton_newGame1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_newGame1ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton_newGame1ActionPerformed
+
+    private void jButton_travelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_travelActionPerformed
+        //System.out.println(listmodel.get);
+        int index = jList_countries.getSelectedIndex();
+        System.out.println(listmodel.getElementAt(index));
+        engine.setActiveCountry((String)listmodel.getElementAt(index));
+        setLocationText();
+        engine.travel();
+        fillCountryList();
+    }//GEN-LAST:event_jButton_travelActionPerformed
 
     /**
      * @param args the command line arguments
@@ -316,13 +363,13 @@ public class GUI_Main extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel_TEXT_DaysLeft;
     private javax.swing.JLabel jLabel_TEXT_Life;
     private javax.swing.JLabel jLabel_TEXT_info;
-    private javax.swing.JLabel jLabel_TEXT_location;
     private javax.swing.JLabel jLabel_TEXT_market;
     private javax.swing.JLabel jLabel_TEXT_market1;
     private javax.swing.JLabel jLabel_TEXT_name;
     private javax.swing.JLabel jLabel_characterPic;
     private javax.swing.JLabel jLabel_daysLeft;
     private javax.swing.JLabel jLabel_life;
+    private javax.swing.JLabel jLabel_location;
     private javax.swing.JLabel jLabel_name;
     private javax.swing.JList jList_countries;
     private javax.swing.JPanel jPanel_inventory;
