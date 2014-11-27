@@ -17,9 +17,7 @@ import java.util.Map;
 
 public class Engine implements EngineInterface {
     
-    private HashMap countries;
     private Player player;
-    
     private Map countries;
     private String activeCountry;
     private final List<Integer> upOrDown;
