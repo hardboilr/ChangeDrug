@@ -17,10 +17,19 @@ public class World {
 
     public static HashMap createWorld() {
         HashMap countries = new HashMap<>();
-        Country denmark = new Country("denmark");
-        Country columbia = new Country("columbia");
+        Country denmark = new Country("Denmark");
+        Country columbia = new Country("Columbia");
+        Country germany = new Country("Germany");
+        Country usa = new Country("USA");
+        Country france = new Country("France");
+        Country afghanistan = new Country("Afghanistan");
+        
         countries.put(denmark.getName(), denmark);
         countries.put(columbia.getName(), columbia);
+        countries.put(germany.getName(), germany);
+        countries.put(usa.getName(), usa);
+        countries.put(france.getName(), france);
+        countries.put(afghanistan.getName(), afghanistan);
         
         return countries;
     }

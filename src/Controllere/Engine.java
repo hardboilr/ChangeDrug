@@ -10,7 +10,6 @@ import Entities.Drug;
 import Interfaces.EngineInterface;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -30,7 +29,7 @@ public class Engine implements EngineInterface {
     public Engine() {
         countries = World.createWorld();
         random = new Random();
-        activeCountry = "denmark";
+        activeCountry = "Denmark";
         player = new Player("hardboilr"); //for now we instantiate our player here
         day = DAY_CYCLE;
     }
@@ -57,6 +56,7 @@ public class Engine implements EngineInterface {
     @Override
     public List travel() {
         tempCountry = (Country) countries.get(activeCountry);
+        System.out.println(tempCountry);
         List<Drug> tempList = tempCountry.getDrugs();
         countries.remove(activeCountry);
 
@@ -99,12 +99,10 @@ public class Engine implements EngineInterface {
         priceModifier = (basePrice * randomPercent) / 100;
         if (randomUpOrDown == 1) {
             sum = basePrice + priceModifier;
-            System.out.println("adding" + sum);
             return sum;
 
         } else {
             sum = basePrice - priceModifier;
-            System.out.println("sub" + sum);
             return sum;
         }
 
@@ -117,11 +115,9 @@ public class Engine implements EngineInterface {
         randomUpOrDown = random.nextInt(2);
         if (randomUpOrDown == 1) {
             sum = baseAvail + availModifier;
-            System.out.println("adding: " + sum);
             return sum;
         } else {
             sum = baseAvail - availModifier;
-            System.out.println("sub: " + sum);
             return sum;
         }
     }
@@ -129,5 +125,26 @@ public class Engine implements EngineInterface {
     
     
     
+
+    @Override
+    public void calculateCredits(double price) {
+        double credits = player.getCredits() + price;
+        player.setCredits(credits);
+    }
+
+    @Override
+    public double getCredits() {
+        return player.getCredits();
+    }
+
+    @Override
+    public void savePlayers(List<String> playerList, String filename) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public List<String> loadPlayers(String filename) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
 }

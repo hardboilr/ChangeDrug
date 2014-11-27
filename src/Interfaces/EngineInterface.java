@@ -24,11 +24,13 @@ public interface EngineInterface  {
     
     public void createPlayer();
     
-    public void subtractDay();
+    public void calculateCredits(double price);
     
-    public void setDay(int input);
+    public double getCredits();
     
-    public int getDay();
+    public void savePlayers(List<String> playerList, String filename);
+    
+    public List<String> loadPlayers(String filename);
     
     
     

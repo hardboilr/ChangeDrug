@@ -37,9 +37,10 @@ public class GUI_Main extends javax.swing.JFrame {
 
     private EngineInterface engine;
     private DefaultListModel listmodel = new DefaultListModel();
+    
 
     private int avail;
-
+    private double price;
     public GUI_Main() {
         initComponents();
         this.setLocationRelativeTo(null);
@@ -47,6 +48,7 @@ public class GUI_Main extends javax.swing.JFrame {
         jList_countries.setModel(listmodel);
         fillCountryList();
         setLocationText();
+        jLabel_money.setText(Double.toString(engine.getCredits()));
         jButton_buy.setEnabled(false);
         jButton_sell.setEnabled(false);
         nextImg = 0;
@@ -93,14 +95,12 @@ public class GUI_Main extends javax.swing.JFrame {
     private void fillCountryList() {
         listmodel.clear();
         // fill countrylist
-        System.out.println("1.List size is: " + engine.getCountries().size());
         for (int i = 0; i < engine.getCountries().size(); i++) {
-            System.out.println("1.We are at index: " + i);
-            listmodel.addElement(engine.getCountries().get(i));
+            String country = (String) engine.getCountries().get(i);
+            listmodel.addElement(country.toUpperCase().charAt(0) + country.substring(1));
         }
 
         // fill market table
-        System.out.println("2.List size is: " + engine.getCountries().size());
         List<Drug> tempList = engine.travel();
 
         for (int i = 0; i < tempList.size(); i++) {
@@ -337,6 +337,9 @@ public class GUI_Main extends javax.swing.JFrame {
             }
         });
         jScrollPane_market.setViewportView(jTable_market);
+        if (jTable_market.getColumnModel().getColumnCount() > 0) {
+            jTable_market.getColumnModel().getColumn(0).setPreferredWidth(100);
+        }
 
         jPanel_market.add(jScrollPane_market, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 40, 300, 260));
 
@@ -386,6 +389,9 @@ public class GUI_Main extends javax.swing.JFrame {
             }
         });
         jScrollPane_inventory.setViewportView(jTable_inventory);
+        if (jTable_inventory.getColumnModel().getColumnCount() > 0) {
+            jTable_inventory.getColumnModel().getColumn(0).setPreferredWidth(100);
+        }
 
         jPanel_inventory.add(jScrollPane_inventory, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 40, 300, 260));
 
@@ -489,11 +495,17 @@ public class GUI_Main extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton_travelActionPerformed
 
     private void jButton_buyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_buyActionPerformed
-        transaction(jTable_market, jTable_inventory);
+        if(transaction(jTable_market, jTable_inventory) == true){
+        engine.calculateCredits(-price);
+        jLabel_money.setText(Double.toString(engine.getCredits()));
+        }
     }//GEN-LAST:event_jButton_buyActionPerformed
 
     private void jButton_sellActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_sellActionPerformed
-        transaction(jTable_inventory, jTable_market);
+        if(transaction(jTable_inventory, jTable_market) == true){
+        engine.calculateCredits(price);
+        jLabel_money.setText(Double.toString(engine.getCredits()));
+        }
     }//GEN-LAST:event_jButton_sellActionPerformed
 
     private void jTable_marketMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable_marketMouseClicked
@@ -590,14 +602,14 @@ public class GUI_Main extends javax.swing.JFrame {
         });
     }
 
-    public void transaction(javax.swing.JTable input1, javax.swing.JTable input2) {
+    public boolean transaction(javax.swing.JTable input1, javax.swing.JTable input2) {
         int row = input1.getSelectedRow();
         String marketName = (String) input1.getValueAt(row, 0);
         int qty = (int) input1.getValueAt(row, 1);
-        double price = (double) input1.getValueAt(row, 2);
+        price = (double) input1.getValueAt(row, 2);
         int subtract = qty - 1;
 
-        if (subtract >= 0) {
+        if (subtract >= 0 && engine.getCredits() - price >= 0) {
             input1.setValueAt(subtract, row, 1);
             for (int i = 0; i <= input2.getRowCount(); i++) {
                 String temp = (String) input2.getValueAt(i, 0);
@@ -608,6 +620,7 @@ public class GUI_Main extends javax.swing.JFrame {
                     input2.setValueAt(marketName, i, 0);
                     input2.setValueAt(add, i, 1);
                     input2.setValueAt(price, i, 2);
+
                     break;
                 } else if (inventoryName == marketName) {
                     System.out.println("Eksisterer i forvejen!");
@@ -615,13 +628,17 @@ public class GUI_Main extends javax.swing.JFrame {
                     input2.setValueAt(newQty, i, 1);
                     break;
                 }
+
             }
+            if (subtract == 0) {
+                System.out.println("Nu fjerner jeg!");
+                ((DefaultTableModel) input1.getModel()).removeRow(row);
+                ((DefaultTableModel) input1.getModel()).addRow(new Object[]{});
+            }
+            return true;
         }
-        if (subtract == 0) {
-            System.out.println("Nu fjerner jeg!");
-            ((DefaultTableModel) input1.getModel()).removeRow(row);
-            ((DefaultTableModel) input1.getModel()).addRow(new Object[]{});
-        }
+
+        return false;
     }
 
     public void changeCharacterIcon() {
