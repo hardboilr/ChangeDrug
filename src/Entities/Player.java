@@ -3,16 +3,16 @@
  */
 package Entities;
 
-public class Player{
+public class Player implements Comparable {
     
     private String name;
     private int life, days;
     private double credits;
     
-    public Player(String input1) {
+    public Player(String input1, double input2) {
         this.name = input1;
         this.life = 100;
-        this.credits = 5000;
+        this.credits = input2;
         this.days = 20;
     }
 
@@ -39,11 +39,22 @@ public class Player{
     public void setDays(int input) {
         days = days + input;
     }
+
+    public String getName() {
+        return name;
+    }
+    
     
     
     @Override
     public String toString() {
-        return  name + "," + credits;
+        return  "" + name + "," + credits;
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        Player p = (Player) o;
+        return (int)(p.getCredits() - credits);
     }
     
 }

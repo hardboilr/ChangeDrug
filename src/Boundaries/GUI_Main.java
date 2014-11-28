@@ -51,6 +51,9 @@ public class GUI_Main extends javax.swing.JFrame {
         jButton_buy.setEnabled(false);
         jButton_sell.setEnabled(false);
         nextImg = 0;
+        engine.loadPlayers("players.txt");
+        
+        
 
         //init icons
         selectionArrow_right_pressed_icon = new ImageIcon("./src/art/gui/selctionArrow_right_pressed.png");
@@ -99,7 +102,7 @@ public class GUI_Main extends javax.swing.JFrame {
 
         //remove existing table rows
         ((DefaultTableModel) jTable_market.getModel()).setRowCount(0);
-        
+
         // fill market table
         List<Drug> tempList = engine.travel();
 
@@ -158,7 +161,7 @@ public class GUI_Main extends javax.swing.JFrame {
         jList_countries = new javax.swing.JList();
         jButton_travel = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Thug Life 0.1");
         setMaximumSize(new java.awt.Dimension(800, 600));
         setMinimumSize(new java.awt.Dimension(800, 600));
@@ -186,6 +189,11 @@ public class GUI_Main extends javax.swing.JFrame {
 
         jButton_highscore.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jButton_highscore.setText("Highscore");
+        jButton_highscore.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton_highscoreActionPerformed(evt);
+            }
+        });
         getContentPane().add(jButton_highscore, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 20, -1, -1));
 
         jButton_confirm.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
@@ -412,7 +420,7 @@ public class GUI_Main extends javax.swing.JFrame {
 
         if (!name.isEmpty()) {
 
-            engine.createPlayer(name);
+            engine.createPlayer(name, engine.getStartCredits());
             jButton_buy.setVisible(true);
             jButton_sell.setVisible(true);
             jButton_travel.setVisible(true);
@@ -428,6 +436,8 @@ public class GUI_Main extends javax.swing.JFrame {
             jLabel_selectionLeft.setVisible(false);
             jLabel_selectionRight.setVisible(false);
             jButton_confirm.setVisible(false);
+            
+            jButton_newGame.setVisible(false);
         }
     }//GEN-LAST:event_jButton_confirmActionPerformed
 
@@ -456,6 +466,21 @@ public class GUI_Main extends javax.swing.JFrame {
         engine.getPlayer().setDays(-1);
         if (engine.getPlayer().getDays() == 0) {
             System.out.println("Game Over!");
+            autoSell();
+            //gemmer spiller
+            engine.savePlayer("players.txt");
+            GUI_Highscore highscore = new GUI_Highscore((Engine)engine);
+            highscore.setVisible(true);
+            highscore.setLocationRelativeTo(null);
+            this.dispose();
+            
+            
+            
+            //lukker MAIN_GUI
+            //åbner vi highscore_GUI (restart -> start programmet igen
+            
+            
+
         }
         jLabel_daysLeft.setText(engine.getPlayer().getDays() + "");
 
@@ -464,7 +489,7 @@ public class GUI_Main extends javax.swing.JFrame {
         setLocationText();
         engine.travel();
         fillCountryList();
-        
+
     }//GEN-LAST:event_jButton_travelActionPerformed
 
     private void jButton_buyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_buyActionPerformed
@@ -539,6 +564,13 @@ public class GUI_Main extends javax.swing.JFrame {
 
     }//GEN-LAST:event_jLabel_selectionLeftMouseClicked
 
+    private void jButton_highscoreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_highscoreActionPerformed
+        GUI_Highscore highscore = new GUI_Highscore((Engine)engine);
+        
+        highscore.setVisible(true);
+        highscore.setLocationRelativeTo(null);
+    }//GEN-LAST:event_jButton_highscoreActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -609,18 +641,38 @@ public class GUI_Main extends javax.swing.JFrame {
         return false;
     }
 
+    public void autoSell() {
+        for (int i = 0; i < jTable_inventory.getRowCount(); i++) {
+            String inventoryDrug = (String) jTable_inventory.getValueAt(i, 0);
+            int inventoryQty = (int) jTable_inventory.getValueAt(i, 1);
+
+            for (int j = 0; j < jTable_market.getRowCount(); j++) {
+                String marketDrug = (String) jTable_market.getValueAt(j, 0);
+
+                if (inventoryDrug.equals(marketDrug)) {
+
+                    double marketPrice = (double) jTable_market.getValueAt(j, 2);
+                    int newQty = (int) jTable_market.getValueAt(i, 1) + 1;
+                    price = inventoryQty * marketPrice;
+                    engine.calculateCredits(price);
+                    break;
+                }
+            }
+        }
+    }
+
     public boolean buy() {
         int row = jTable_market.getSelectedRow();
         String marketDrug = (String) jTable_market.getValueAt(row, 0);
         System.out.println("marketDrug er: " + marketDrug);
-        
+
         int qty = (int) jTable_market.getValueAt(row, 1);
         price = (double) jTable_market.getValueAt(row, 2);
         int subtract = qty - 1;
         int add = 1;
         if ((engine.getCredits() - price >= 0)) { //sufficiant credits
             jTable_market.setValueAt(subtract, row, 1); //trækker vi 1 fra markedets drug 
-            
+
             if (jTable_inventory.getRowCount() == 0) { //hvis tabel er tom i inv, tilføjes en række.
                 System.out.println("tilføjer første gang: ");
                 ((DefaultTableModel) jTable_inventory.getModel()).addRow(new Object[]{});
@@ -632,7 +684,7 @@ public class GUI_Main extends javax.swing.JFrame {
                 boolean drugExist = false;
                 for (int i = 0; i < jTable_inventory.getRowCount(); i++) {
                     String inventoryDrug = (String) jTable_inventory.getValueAt(i, 0);
-                    System.out.println("Iventorydrug er: " + inventoryDrug);   
+                    System.out.println("Iventorydrug er: " + inventoryDrug);
                     if (marketDrug.equals(inventoryDrug)) { //har vi druggget i forvejen?
                         drugExist = true;
                         int newQty = (int) jTable_inventory.getValueAt(i, 1) + 1;
@@ -645,7 +697,7 @@ public class GUI_Main extends javax.swing.JFrame {
                         jTable_inventory.setValueAt(newAveragePrice, i, 2);
                         break;
                     }
-                    
+
                 }
 
                 if (drugExist == false) { //Vi har IKKE drugget i forvejen");

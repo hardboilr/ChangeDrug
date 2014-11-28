@@ -7,8 +7,10 @@ import Entities.Player;
 import Entities.World;
 import Entities.Country;
 import Entities.Drug;
+import Entities.FileHandler;
 import Interfaces.EngineInterface;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +24,11 @@ public class Engine implements EngineInterface {
     private int randomUpOrDown;
     private Country tempCountry;
     private final int DAY_CYCLE = 20;
+    private final double START_CREDITS = 5000.00;
+    
     private int day;
+    private List<Player> playerList;
+    
     
     Random random;
 
@@ -30,7 +36,8 @@ public class Engine implements EngineInterface {
         countries = World.createWorld();
         random = new Random();
         activeCountry = "Denmark";
-       // player = new Player("hardboilr"); //for now we instantiate our player here
+        playerList = new ArrayList<>();
+       
         day = DAY_CYCLE;
     }
 
@@ -80,8 +87,8 @@ public class Engine implements EngineInterface {
     }
     
     @Override
-    public void createPlayer(String input) {
-        player = new Player(input);
+    public void createPlayer(String input1, double input2) {
+        player = new Player(input1, input2);
     }
 
     private double calculatePrice(double basePrice) {
@@ -127,20 +134,34 @@ public class Engine implements EngineInterface {
         return player.getCredits();
     }
     
+    @Override 
+    public double getStartCredits() {
+        return START_CREDITS;
+    }
+    
     @Override
     public Player getPlayer() {
         return player;
         
     }
+    
+    @Override
+    public void addPlayer() {
+        playerList.add(player);
+        
+    }
 
     @Override
-    public void savePlayers(List<String> playerList, String filename) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void savePlayer(String filename) {
+        playerList.add(player);
+        FileHandler.savePlayer(playerList, filename);
     }
 
     @Override
     public List<Player> loadPlayers(String filename) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        playerList = FileHandler.loadPlayers(filename);
+        Collections.sort(playerList);
+        return playerList;
     }
 
     

@@ -3,19 +3,29 @@
  */
 package Boundaries;
 
+import Controllere.Engine;
 import Entities.FileHandler;
+import Entities.Player;
+import Interfaces.EngineInterface;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
+import javax.swing.table.DefaultTableModel;
 
 public class GUI_Highscore extends javax.swing.JFrame {
     
-    List<String> playerList;
-
-    public GUI_Highscore() {
+    List<Player> playerList;
+    EngineInterface engine;
+    
+    public GUI_Highscore(){
+      initComponents();
+    }
+    
+    public GUI_Highscore(Engine input) {
+        this.engine = input;
+        
         initComponents();
-        playerList = new LinkedList<>();
-        playerList = FileHandler.loadPlayers("players.txt");
+        playerList = engine.loadPlayers("players.txt");
         addData();
     }
 
@@ -31,6 +41,7 @@ public class GUI_Highscore extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
+        jButton_again = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -65,7 +76,7 @@ public class GUI_Highscore extends javax.swing.JFrame {
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class
+                java.lang.String.class, java.lang.Double.class
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -73,6 +84,14 @@ public class GUI_Highscore extends javax.swing.JFrame {
             }
         });
         jScrollPane1.setViewportView(jTable1);
+
+        jButton_again.setFont(new java.awt.Font("Tahoma", 0, 36)); // NOI18N
+        jButton_again.setText("Try again?");
+        jButton_again.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton_againActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -85,7 +104,10 @@ public class GUI_Highscore extends javax.swing.JFrame {
                         .addComponent(jLabel1))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(61, 61, 61)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(95, 95, 95)
+                        .addComponent(jButton_again)))
                 .addContainerGap(64, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -94,12 +116,20 @@ public class GUI_Highscore extends javax.swing.JFrame {
                 .addGap(40, 40, 40)
                 .addComponent(jLabel1)
                 .addGap(29, 29, 29)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 473, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(36, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 349, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(42, 42, 42)
+                .addComponent(jButton_again)
+                .addContainerGap(65, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButton_againActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_againActionPerformed
+        GUI_Main newgame = new GUI_Main();
+        newgame.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_jButton_againActionPerformed
 
     /**
      * @param args the command line arguments
@@ -136,25 +166,22 @@ public class GUI_Highscore extends javax.swing.JFrame {
         });
     }
     
-    public void addData() {
+    private void addData() {
         for (int i = 0; i < playerList.size(); i++) {
-            String line = playerList.get(i);
-            Scanner sc = new Scanner(line).useDelimiter(",");
-            String name = sc.next();
-            String credits = sc.next();
-            System.out.println(name);
-            System.out.println(credits);
-            jTable1.setValueAt(name, i, 0);
-            jTable1.setValueAt(credits, i, 1);
+//            int count = 0;
+            Player player = playerList.get(i);
+            jTable1.setValueAt(player.getName(), i, 0);
+            jTable1.setValueAt(player.getCredits(), i, 1);
+//            System.out.println(player.toString());
+//            count++;
         }
         
     }
     
-    public void sortTable() {
-        //add code!
-    }
+    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButton_again;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
