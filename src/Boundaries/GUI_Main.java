@@ -621,7 +621,7 @@ public class GUI_Main extends javax.swing.JFrame {
                     input2.setValueAt(price, i, 2);
 
                     break;
-                } else if (inventoryName == marketName) {
+                } else if (inventoryName.equals(marketName)) {
                     System.out.println("Eksisterer i forvejen!");
                     int newQty = (int) input2.getValueAt(i, 1) + 1;
                     input2.setValueAt(newQty, i, 1);

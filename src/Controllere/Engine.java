@@ -62,6 +62,15 @@ public class Engine implements EngineInterface {
 
         for (Drug drug : tempList) {
             drug.setModifiedPrice(calculatePrice(drug.getBasePrice()));
+            int goldenNumber = (int) ((Math.random() * 100) + 1);
+            randomUpOrDown = random.nextInt(2);
+            if(goldenNumber >= 1 && goldenNumber <= drug.getGoldenNumber()){
+                if(randomUpOrDown == 1){
+                    drug.setModifiedPrice(drug.getModifiedPrice() * 10);
+                } else {
+                    drug.setModifiedPrice(drug.getModifiedPrice() / 10);
+                }
+            }
             drug.setModifiedAvail(calculateAvailability(drug.getBaseAvail()));
         }
 
@@ -77,7 +86,7 @@ public class Engine implements EngineInterface {
 
     private double calculatePrice(double basePrice) {
 
-        int randomPercent = (int) (Math.random() * 85 + 1);
+        int randomPercent = (int) ((Math.random() * 85) + 1);
         double priceModifier;
         double sum;
         randomUpOrDown = random.nextInt(2);
@@ -94,7 +103,7 @@ public class Engine implements EngineInterface {
     }
 
     private int calculateAvailability(int baseAvail) {
-        int randomPercent = (int) (Math.random() * 55 + 15);
+        int randomPercent = (int) ((Math.random() * 55) + 15);
         int availModifier = (int) (baseAvail * randomPercent) / 100;
         int sum;
         randomUpOrDown = random.nextInt(2);
