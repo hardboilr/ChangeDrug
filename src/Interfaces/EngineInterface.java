@@ -23,11 +23,14 @@ public interface EngineInterface  {
     
     public ArrayList getCountries();
     
-    public void createPlayer();
+    public void createPlayer(String input);
     
     public void calculateCredits(double price);
     
-    public double getCredits();
+    //it might be enough to use getPlayer()!
+    public double getCredits(); 
+    
+    public Player getPlayer();
     
     public void savePlayers(List<String> playerList, String filename);
     

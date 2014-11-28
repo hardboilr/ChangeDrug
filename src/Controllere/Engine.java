@@ -21,13 +21,17 @@ public class Engine implements EngineInterface {
     private String activeCountry;
     private int randomUpOrDown;
     private Country tempCountry;
+    private final int DAY_CYCLE = 20;
+    private int day;
+    
     Random random;
 
     public Engine() {
         countries = World.createWorld();
         random = new Random();
         activeCountry = "Denmark";
-        player = new Player("hardboilr"); //for now we instantiate our player here
+       // player = new Player("hardboilr"); //for now we instantiate our player here
+        day = DAY_CYCLE;
     }
 
     @Override
@@ -62,9 +66,13 @@ public class Engine implements EngineInterface {
         }
 
         countries.put(tempCountry.getName(), tempCountry);
-
         return tempList;
 
+    }
+    
+    @Override
+    public void createPlayer(String input) {
+        player = new Player(input);
     }
 
     private double calculatePrice(double basePrice) {
@@ -99,9 +107,6 @@ public class Engine implements EngineInterface {
         }
     }
 
-    public void createPlayer() {
-    }
-
     @Override
     public void calculateCredits(double price) {
         double credits = player.getCredits() + price;
@@ -111,6 +116,12 @@ public class Engine implements EngineInterface {
     @Override
     public double getCredits() {
         return player.getCredits();
+    }
+    
+    @Override
+    public Player getPlayer() {
+        return player;
+        
     }
 
     @Override
@@ -122,5 +133,11 @@ public class Engine implements EngineInterface {
     public List<Player> loadPlayers(String filename) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+    
+  
+
+   
+
 
 }
