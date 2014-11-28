@@ -3,6 +3,7 @@
  */
 package Interfaces;
 
+import Entities.Player;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,7 +31,7 @@ public interface EngineInterface  {
     
     public void savePlayers(List<String> playerList, String filename);
     
-    public List<String> loadPlayers(String filename);
+    public List<Player> loadPlayers(String filename);
     
     
     

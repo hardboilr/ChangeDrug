@@ -12,10 +12,10 @@ import java.util.Scanner;
 public class FileHandler
 {
     
-    public static List<String> loadPlayers(String filename)
+    public static List<Player> loadHighScore(String filename)
     {
         Scanner file_scanner = null;
-        List<String> playerList = new LinkedList<>();
+        List<Player> playerList = new LinkedList<>();
 
         try {
             file_scanner = new Scanner(new File(filename));  //Connection to the file using the Scanner object
@@ -29,8 +29,8 @@ public class FileHandler
             String linje = file_scanner.nextLine();
             Scanner sc = new Scanner(linje).useDelimiter(",");
             String name = sc.next();
-            String credits  = sc.next();
-            String player = new String(name + " " + credits);
+            double credits  = sc.nextDouble();
+            Player player = new Player(name + "," + credits);
             playerList.add(player);  //Reading in a single line and saving in the ArrayList
         }
 
@@ -39,7 +39,7 @@ public class FileHandler
     }
 
        
-    public static boolean savePlayers(List<String> playerList, String filename)
+    public static boolean saveHighScore(List<Player> playerList, String filename)
     {
         if( playerList == null ) { 
             return false;
@@ -48,7 +48,7 @@ public class FileHandler
         
         try {
                 output = new FileWriter(new File(filename));  //Opening connection to file.
-                for (String playerLine : playerList) {   //running through the ArrayList.                    
+                for (Player playerLine : playerList) {   //running through the ArrayList.                    
                     output.write(playerLine.toString() + "\n");  //Each String object is written as a line in file.
             }
 

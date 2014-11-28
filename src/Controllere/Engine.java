@@ -119,7 +119,7 @@ public class Engine implements EngineInterface {
     }
 
     @Override
-    public List<String> loadPlayers(String filename) {
+    public List<Player> loadPlayers(String filename) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
