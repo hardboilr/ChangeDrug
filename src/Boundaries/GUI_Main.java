@@ -97,6 +97,9 @@ public class GUI_Main extends javax.swing.JFrame {
             listmodel.addElement(country.toUpperCase().charAt(0) + country.substring(1));
         }
 
+        //remove existing table rows
+        ((DefaultTableModel) jTable_market.getModel()).setRowCount(0);
+        
         // fill market table
         List<Drug> tempList = engine.travel();
 
@@ -105,6 +108,7 @@ public class GUI_Main extends javax.swing.JFrame {
             String name = drug.getName();
             Double price = drug.getModifiedPrice();
             avail = drug.getModifiedAvail();
+            ((DefaultTableModel) jTable_market.getModel()).addRow(new Object[]{});
             jTable_market.setValueAt(name, i, 0);
             jTable_market.setValueAt(avail, i, 1);
             jTable_market.setValueAt(price, i, 2);
@@ -300,21 +304,7 @@ public class GUI_Main extends javax.swing.JFrame {
         jTable_market.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jTable_market.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null}
+
             },
             new String [] {
                 "Name", "Qty", "Price"
@@ -352,24 +342,10 @@ public class GUI_Main extends javax.swing.JFrame {
         jTable_inventory.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jTable_inventory.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null}
+
             },
             new String [] {
-                "Name", "Qty", "Price"
+                "Name", "Qty", "Avg. price"
             }
         ) {
             Class[] types = new Class [] {
@@ -435,6 +411,7 @@ public class GUI_Main extends javax.swing.JFrame {
         name = name.replaceAll(" ", "").toLowerCase();
 
         if (!name.isEmpty()) {
+
             engine.createPlayer(name);
             jButton_buy.setVisible(true);
             jButton_sell.setVisible(true);
@@ -479,10 +456,6 @@ public class GUI_Main extends javax.swing.JFrame {
         engine.getPlayer().setDays(-1);
         if (engine.getPlayer().getDays() == 0) {
             System.out.println("Game Over!");
-            //sell everything!
-            //save player to file
-            //close window and open highscore
-            //
         }
         jLabel_daysLeft.setText(engine.getPlayer().getDays() + "");
 
@@ -491,6 +464,7 @@ public class GUI_Main extends javax.swing.JFrame {
         setLocationText();
         engine.travel();
         fillCountryList();
+        
     }//GEN-LAST:event_jButton_travelActionPerformed
 
     private void jButton_buyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_buyActionPerformed
@@ -607,7 +581,7 @@ public class GUI_Main extends javax.swing.JFrame {
         price = (double) jTable_inventory.getValueAt(row, 2);
         int subtract = qty - 1;
 
-        if ((subtract >= 0) && (engine.getCredits() - price >= 0)) {
+        if (subtract >= 0) {
             jTable_inventory.setValueAt(subtract, row, 1);
             for (int i = 0; i <= jTable_market.getRowCount(); i++) {
                 String marketDrug = (String) jTable_market.getValueAt(i, 0);
@@ -628,7 +602,7 @@ public class GUI_Main extends javax.swing.JFrame {
             }
             if (subtract == 0) {
                 ((DefaultTableModel) jTable_inventory.getModel()).removeRow(row);
-                ((DefaultTableModel) jTable_inventory.getModel()).addRow(new Object[]{});
+                //((DefaultTableModel) jTable_inventory.getModel()).addRow(new Object[]{});
             }
             return true;
         }
@@ -638,31 +612,57 @@ public class GUI_Main extends javax.swing.JFrame {
     public boolean buy() {
         int row = jTable_market.getSelectedRow();
         String marketDrug = (String) jTable_market.getValueAt(row, 0);
+        System.out.println("marketDrug er: " + marketDrug);
+        
         int qty = (int) jTable_market.getValueAt(row, 1);
         price = (double) jTable_market.getValueAt(row, 2);
         int subtract = qty - 1;
+        int add = 1;
+        if ((engine.getCredits() - price >= 0)) { //sufficiant credits
+            jTable_market.setValueAt(subtract, row, 1); //trækker vi 1 fra markedets drug 
+            
+            if (jTable_inventory.getRowCount() == 0) { //hvis tabel er tom i inv, tilføjes en række.
+                System.out.println("tilføjer første gang: ");
+                ((DefaultTableModel) jTable_inventory.getModel()).addRow(new Object[]{});
+                jTable_inventory.setValueAt(marketDrug, 0, 0);
+                jTable_inventory.setValueAt(add, 0, 1);
+                jTable_inventory.setValueAt(price, 0, 2);
 
-        if ((subtract >= 0) && (engine.getCredits() - price >= 0)) {
-            jTable_market.setValueAt(subtract, row, 1);
-            for (int i = 0; i <= jTable_inventory.getRowCount(); i++) {
-                String inventoryDrug = (String) jTable_inventory.getValueAt(i, 0);
-                if (inventoryDrug == null) {
-                    int add = 1;
-                    jTable_inventory.setValueAt(marketDrug, i, 0);
-                    jTable_inventory.setValueAt(add, i, 1);
-                    jTable_inventory.setValueAt(price, i, 2);
-                    break;
-                } else {
-                    if (marketDrug.equals(inventoryDrug)) {
+            } else {
+                boolean drugExist = false;
+                for (int i = 0; i < jTable_inventory.getRowCount(); i++) {
+                    String inventoryDrug = (String) jTable_inventory.getValueAt(i, 0);
+                    System.out.println("Iventorydrug er: " + inventoryDrug);   
+                    if (marketDrug.equals(inventoryDrug)) { //har vi druggget i forvejen?
+                        drugExist = true;
                         int newQty = (int) jTable_inventory.getValueAt(i, 1) + 1;
                         jTable_inventory.setValueAt(newQty, i, 1);
+                        //set ny gennemsnitspris
+                        double currentInventoryPrice = (double) jTable_inventory.getValueAt(i, 2);
+                        int currentQuantity = (int) jTable_inventory.getValueAt(i, 1);
+                        double newAveragePrice = ((currentInventoryPrice * currentQuantity)
+                                + (price * 1)) / (currentQuantity + 1);
+                        jTable_inventory.setValueAt(newAveragePrice, i, 2);
                         break;
                     }
+                    
                 }
+
+                if (drugExist == false) { //Vi har IKKE drugget i forvejen");
+
+                    int rowPosition = jTable_inventory.getRowCount();
+                    ((DefaultTableModel) jTable_inventory.getModel()).addRow(new Object[]{});
+                    jTable_inventory.setValueAt(marketDrug, rowPosition, 0);
+                    jTable_inventory.setValueAt(add, rowPosition, 1);
+                    jTable_inventory.setValueAt(price, rowPosition, 2);
+
+                }
+
             }
             if (subtract == 0) {
+                System.out.println("Slettes den tomme række");
                 ((DefaultTableModel) jTable_market.getModel()).removeRow(row);
-                ((DefaultTableModel) jTable_market.getModel()).addRow(new Object[]{});
+//                ((DefaultTableModel) jTable_market.getModel()).addRow(new Object[]{});
             }
             return true;
         }
