@@ -26,6 +26,7 @@ public class Country {
     private Drug hash = new Drug ("Hash", 180, 0.0, 100, 0);
     private Drug weed = new Drug ("Weed", 150, 0.0, 115, 0);
     private Drug mushrooms = new Drug ("Mushrooms", 120, 0.0, 95, 0);
+    private Drug valium = new Drug("Valium", 290, 0.0, 80, 0);
     
     
     public Country(String nameInput){
@@ -40,6 +41,7 @@ public class Country {
         drugs.add(hash);
         drugs.add(weed);
         drugs.add(mushrooms);
+        drugs.add(valium);
            
     }
 

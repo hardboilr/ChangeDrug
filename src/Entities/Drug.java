@@ -12,14 +12,15 @@ package Entities;
 public class Drug {
     private String name;
     private double basePrice, modifiedPrice;
-    private int baseAvail, modifiedAvail;
+    private int baseAvail, modifiedAvail, goldenNumber;
 
-    public Drug(String nameInput, double basePriceInput, double modifiedPriceInput, int baseAvailInput, int modifiedAvailInput) {
+    public Drug(String nameInput, double basePriceInput, double modifiedPriceInput, int baseAvailInput, int modifiedAvailInput, int goldenNumber) {
         this.name = nameInput;
         this.basePrice = basePriceInput;
         this.modifiedPrice = modifiedPriceInput;
         this.baseAvail = baseAvailInput;
         this.modifiedAvail = modifiedAvailInput;
+        this.goldenNumber = goldenNumber;
     }
     
     public String toString(){
@@ -65,6 +66,16 @@ public class Drug {
     public void setBaseAvail(int baseAvail) {
         this.baseAvail = baseAvail;
     }
+
+    public int getGoldenNumber() {
+        return goldenNumber;
+    }
+
+    public void setGoldenNumber(int goldenNumber) {
+        this.goldenNumber = goldenNumber;
+    }
+    
+    
 
 
 }
