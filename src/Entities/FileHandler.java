@@ -7,13 +7,12 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+public class FileHandler {
 
-public class FileHandler
-{
-    
-    public static List<String> loadPlayers(String filename)
-    {
+    public static List<String> loadPlayers(String filename) {
         Scanner file_scanner = null;
         List<String> playerList = new LinkedList<>();
 
@@ -24,13 +23,13 @@ public class FileHandler
             ex.printStackTrace();
             return null;  //If something goes wrong the method returns null
         }
-        
+
         while (file_scanner.hasNext()) {  //File found. Reading one line. 
             String linje = file_scanner.nextLine();
             Scanner sc = new Scanner(linje).useDelimiter(",");
             String name = sc.next();
-            String credits  = sc.next();
-            String player = new String(name + " " + credits);
+            String credits = sc.next();
+            String player = new String(name + "," + credits);
             playerList.add(player);  //Reading in a single line and saving in the ArrayList
         }
 
@@ -38,29 +37,37 @@ public class FileHandler
         return playerList;    //returning the arraylist
     }
 
-       
-    public static boolean savePlayers(List<String> playerList, String filename)
-    {
-        if( playerList == null ) { 
-            return false;
-        }  //Checking parameter for null.
-        FileWriter output;  //Creating reference for filewriter.
-        
-        try {
-                output = new FileWriter(new File(filename));  //Opening connection to file.
-                for (String playerLine : playerList) {   //running through the ArrayList.                    
-                    output.write(playerLine.toString() + "\n");  //Each String object is written as a line in file.
-            }
-
-            output.close();  //Closing the file
-        } catch (IOException ex) {  //If something goes wrong everything is send to system out.
-            System.out.println("Could not save to file!");
-            System.out.println(ex.toString());
-            ex.printStackTrace();
-            return false;  //If something goes wrong false is returned!
-        }
-
-        return true;
+//    public static boolean savePlayers(List<String> playerList, String filename)
+//    {
+//        if( playerList == null ) { 
+//            return false;
+//        }  //Checking parameter for null.
+//        FileWriter output;  //Creating reference for filewriter.
+//        
+//        try {
+//                 //Opening connection to file.
+//                for (String playerLine : playerList) {   //running through the ArrayList.                    
+//                    output.write(playerLine.toString() + "\n");  //Each String object is written as a line in file.
+//            }
+//
+//            output.close();  //Closing the file
+//        } catch (IOException ex) {  //If something goes wrong everything is send to system out.
+//            System.out.println("Could not save to file!");
+//            System.out.println(ex.toString());
+//            ex.printStackTrace();
+//            return false;  //If something goes wrong false is returned!
+//        }
+//
+//        return true;
+//    }
+    public static void savePlayer(String playerName, int credits, String filename) {
+        try (FileWriter output = new FileWriter(new File(filename))) {
+//            output.write(playerName + "," + credits);  //Each String object is written as a line in file.
+            output.write("Tis");
+            output.close(); //Closing the file
+        } catch (IOException ex) {
+            System.out.println("Doesnt work!");
+        } //Each String object is written as a line in file.
     }
 
 }//END CLASS

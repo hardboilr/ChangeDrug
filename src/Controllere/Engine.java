@@ -30,7 +30,7 @@ public class Engine implements EngineInterface {
         countries = World.createWorld();
         random = new Random();
         activeCountry = "Denmark";
-        player = new Player("hardboilr"); //for now we instantiate our player here
+       // player = new Player("hardboilr"); //for now we instantiate our player here
         day = DAY_CYCLE;
     }
 
@@ -66,29 +66,14 @@ public class Engine implements EngineInterface {
         }
 
         countries.put(tempCountry.getName(), tempCountry);
-
         return tempList;
 
     }
     
     @Override
-    public void createPlayer() {
+    public void createPlayer(String input) {
+        player = new Player(input);
     }
-    
-//    @Override
-//    public void subtractDay() {
-//        day--;
-//    }
-    
-//    @Override 
-//    public void setDay(int input) {
-//        day = input;
-//    }
-    
-//    @Override
-//    public int getDay() {
-//        return day;
-//    }
 
     private double calculatePrice(double basePrice) {
 
@@ -122,10 +107,6 @@ public class Engine implements EngineInterface {
         }
     }
 
-    
-    
-    
-
     @Override
     public void calculateCredits(double price) {
         double credits = player.getCredits() + price;
@@ -135,6 +116,12 @@ public class Engine implements EngineInterface {
     @Override
     public double getCredits() {
         return player.getCredits();
+    }
+    
+    @Override
+    public Player getPlayer() {
+        return player;
+        
     }
 
     @Override

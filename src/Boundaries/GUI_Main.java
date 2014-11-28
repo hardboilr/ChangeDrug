@@ -31,16 +31,15 @@ public class GUI_Main extends javax.swing.JFrame {
     private final ImageIcon talia7_icon;
     private final ImageIcon vitelli8_icon;
     private final ImageIcon vito9_icon;
-    
 
     private int nextImg;
 
     private EngineInterface engine;
     private DefaultListModel listmodel = new DefaultListModel();
-    
 
     private int avail;
     private double price;
+
     public GUI_Main() {
         initComponents();
         this.setLocationRelativeTo(null);
@@ -48,7 +47,7 @@ public class GUI_Main extends javax.swing.JFrame {
         jList_countries.setModel(listmodel);
         fillCountryList();
         setLocationText();
-        jLabel_money.setText(Double.toString(engine.getCredits()));
+//        jLabel_money.setText(Double.toString(engine.getCredits()));
         jButton_buy.setEnabled(false);
         jButton_sell.setEnabled(false);
         nextImg = 0;
@@ -77,13 +76,11 @@ public class GUI_Main extends javax.swing.JFrame {
         jLabel_daysLeft.setVisible(false);
         jLabel_money.setVisible(false);
         jButton_confirm.setVisible(false);
-        
+
         jButton_buy.setVisible(false);
         jButton_sell.setVisible(false);
         jButton_travel.setVisible(false);
-        
-        
-        
+
     }
 
     private void setLocationText() {
@@ -434,33 +431,34 @@ public class GUI_Main extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton_confirmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_confirmActionPerformed
-        jButton_buy.setVisible(true);
-        jButton_sell.setVisible(true);
-        jButton_travel.setVisible(true);
-        
         String name = jTextField_inputName.getText();
-        jLabel_name.setText(name);
-        jLabel_name.setVisible(true);
-        jLabel_daysLeft.setVisible(true);
-//        jLabel_daysLeft.setText(engine.getDay()+"");
-//        System.out.println(engine.getDay());
-        //jLabel_life.setText();
-        jLabel_life.setVisible(true);
-        jLabel_money.setVisible(true);
-        jTextField_inputName.setVisible(false);
-        jLabel_selectionLeft.setVisible(false);
-        jLabel_selectionRight.setVisible(false);
-        jButton_confirm.setVisible(false);
-        
+        name = name.replaceAll(" ", "").toLowerCase();
+
+        if (!name.isEmpty()) {
+            engine.createPlayer(name);
+            jButton_buy.setVisible(true);
+            jButton_sell.setVisible(true);
+            jButton_travel.setVisible(true);
+            jLabel_name.setText(name);
+            jLabel_name.setVisible(true);
+            jLabel_daysLeft.setText(engine.getPlayer().getDays() + "");
+            jLabel_daysLeft.setVisible(true);
+            jLabel_life.setText(engine.getPlayer().getLife() + "");
+            jLabel_life.setVisible(true);
+            jLabel_money.setText(engine.getPlayer().getCredits() + "");
+            jLabel_money.setVisible(true);
+            jTextField_inputName.setVisible(false);
+            jLabel_selectionLeft.setVisible(false);
+            jLabel_selectionRight.setVisible(false);
+            jButton_confirm.setVisible(false);
+        }
     }//GEN-LAST:event_jButton_confirmActionPerformed
 
     private void jButton_newGameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_newGameActionPerformed
         jButton_buy.setVisible(false);
         jButton_sell.setVisible(false);
         jButton_travel.setVisible(false);
-        
-//        engine.setDay(WIDTH);
-        
+
         jTextField_inputName.setText("");
         jLabel_name.setText("");
         jLabel_life.setText("");
@@ -478,33 +476,34 @@ public class GUI_Main extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton_newGameActionPerformed
 
     private void jButton_travelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_travelActionPerformed
+        engine.getPlayer().setDays(-1);
+        if (engine.getPlayer().getDays() == 0) {
+            System.out.println("Game Over!");
+            //sell everything!
+            //save player to file
+            //close window and open highscore
+            //
+        }
+        jLabel_daysLeft.setText(engine.getPlayer().getDays()+ "");
+        
         int index = jList_countries.getSelectedIndex();
-        //System.out.println(listmodel.getElementAt(index));
         engine.setActiveCountry((String) listmodel.getElementAt(index));
         setLocationText();
         engine.travel();
         fillCountryList();
-//        engine.subtractDay();
-//        jLabel_daysLeft.setText(engine.getDay()+"");
-//        if(engine.getDay() == 0) {
-//            System.out.println("No more days left!");
-//            //sell everything and show highscore
-//        }
-
-
     }//GEN-LAST:event_jButton_travelActionPerformed
 
     private void jButton_buyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_buyActionPerformed
-        if(transaction(jTable_market, jTable_inventory) == true){
-        engine.calculateCredits(-price);
-        jLabel_money.setText(Double.toString(engine.getCredits()));
+        if (transaction(jTable_market, jTable_inventory) == true) {
+            engine.calculateCredits(-price);
+            jLabel_money.setText(Double.toString(engine.getCredits()));
         }
     }//GEN-LAST:event_jButton_buyActionPerformed
 
     private void jButton_sellActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_sellActionPerformed
-        if(transaction(jTable_inventory, jTable_market) == true){
-        engine.calculateCredits(price);
-        jLabel_money.setText(Double.toString(engine.getCredits()));
+        if (transaction(jTable_inventory, jTable_market) == true) {
+            engine.calculateCredits(price);
+            jLabel_money.setText(Double.toString(engine.getCredits()));
         }
     }//GEN-LAST:event_jButton_sellActionPerformed
 
@@ -557,7 +556,7 @@ public class GUI_Main extends javax.swing.JFrame {
         nextImg++;
         System.out.println(nextImg);
         changeCharacterIcon();
-        
+
 
     }//GEN-LAST:event_jLabel_selectionRightMouseClicked
 
@@ -649,7 +648,7 @@ public class GUI_Main extends javax.swing.JFrame {
 //        if (nextImg <= 0) {
 //            nextImg = 9;
 //        }
-        
+
         switch (nextImg) {
             case 1:
                 jLabel_characterPic.setIcon(clemenza1_icon);
@@ -683,10 +682,8 @@ public class GUI_Main extends javax.swing.JFrame {
                 jLabel_selectionRight.setVisible(false);
                 break;
         }
-        
+
     }
-    
-   
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
