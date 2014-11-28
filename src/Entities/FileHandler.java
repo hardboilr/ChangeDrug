@@ -14,7 +14,7 @@ public class FileHandler {
 
     public static List<String> loadPlayers(String filename) {
         Scanner file_scanner = null;
-        List<Player> playerList = new LinkedList<>();
+        List<String> playerList = new LinkedList<>();
 
         try {
             file_scanner = new Scanner(new File(filename));  //Connection to the file using the Scanner object
