@@ -484,8 +484,8 @@ public class GUI_Main extends javax.swing.JFrame {
             //close window and open highscore
             //
         }
-        jLabel_daysLeft.setText(engine.getPlayer().getDays()+ "");
-        
+        jLabel_daysLeft.setText(engine.getPlayer().getDays() + "");
+
         int index = jList_countries.getSelectedIndex();
         engine.setActiveCountry((String) listmodel.getElementAt(index));
         setLocationText();
@@ -494,14 +494,14 @@ public class GUI_Main extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton_travelActionPerformed
 
     private void jButton_buyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_buyActionPerformed
-        if (transaction(jTable_market, jTable_inventory) == true) {
+        if (buy() == true) {
             engine.calculateCredits(-price);
             jLabel_money.setText(Double.toString(engine.getCredits()));
         }
     }//GEN-LAST:event_jButton_buyActionPerformed
 
     private void jButton_sellActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_sellActionPerformed
-        if (transaction(jTable_inventory, jTable_market) == true) {
+        if (sell() == true) {
             engine.calculateCredits(price);
             jLabel_money.setText(Double.toString(engine.getCredits()));
         }
@@ -535,35 +535,34 @@ public class GUI_Main extends javax.swing.JFrame {
     }//GEN-LAST:event_jLabel_daysLeftPropertyChange
 
     private void jLabel_selectionRightMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel_selectionRightMousePressed
+        ++nextImg;
         jLabel_selectionRight.setIcon(selectionArrow_right_pressed_icon);
 
 
     }//GEN-LAST:event_jLabel_selectionRightMousePressed
 
     private void jLabel_selectionRightMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel_selectionRightMouseReleased
+        changeCharacterIcon();
         jLabel_selectionRight.setIcon(selectionArrow_right_icon);
     }//GEN-LAST:event_jLabel_selectionRightMouseReleased
 
     private void jLabel_selectionLeftMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel_selectionLeftMousePressed
+        --nextImg;
         jLabel_selectionLeft.setIcon(selectionArrow_left_pressed_icon);
     }//GEN-LAST:event_jLabel_selectionLeftMousePressed
 
     private void jLabel_selectionLeftMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel_selectionLeftMouseReleased
+        changeCharacterIcon();
         jLabel_selectionLeft.setIcon(selectionArrow_left_icon);
     }//GEN-LAST:event_jLabel_selectionLeftMouseReleased
 
     private void jLabel_selectionRightMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel_selectionRightMouseClicked
-        nextImg++;
-        System.out.println(nextImg);
-        changeCharacterIcon();
 
 
     }//GEN-LAST:event_jLabel_selectionRightMouseClicked
 
     private void jLabel_selectionLeftMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel_selectionLeftMouseClicked
-        nextImg--;
-        System.out.println(nextImg);
-        changeCharacterIcon();
+
     }//GEN-LAST:event_jLabel_selectionLeftMouseClicked
 
     /**
@@ -601,54 +600,76 @@ public class GUI_Main extends javax.swing.JFrame {
         });
     }
 
-    public boolean transaction(javax.swing.JTable input1, javax.swing.JTable input2) {
-        int row = input1.getSelectedRow();
-        String marketName = (String) input1.getValueAt(row, 0);
-        int qty = (int) input1.getValueAt(row, 1);
-        price = (double) input1.getValueAt(row, 2);
+    public boolean sell() {
+        int row = jTable_inventory.getSelectedRow();
+        String inventoryDrug = (String) jTable_inventory.getValueAt(row, 0);
+        int qty = (int) jTable_inventory.getValueAt(row, 1);
+        price = (double) jTable_inventory.getValueAt(row, 2);
         int subtract = qty - 1;
 
-        if (subtract >= 0 && engine.getCredits() - price >= 0) {
-            input1.setValueAt(subtract, row, 1);
-            for (int i = 0; i <= input2.getRowCount(); i++) {
-                String temp = (String) input2.getValueAt(i, 0);
-                String inventoryName = (String) input2.getValueAt(i, 0);
-                if (temp == null) {
+        if ((subtract >= 0) && (engine.getCredits() - price >= 0)) {
+            jTable_inventory.setValueAt(subtract, row, 1);
+            for (int i = 0; i <= jTable_market.getRowCount(); i++) {
+                String marketDrug = (String) jTable_market.getValueAt(i, 0);
+                if (marketDrug == null) {
                     int add = 1;
-                    System.out.println("temp is null");
-                    input2.setValueAt(marketName, i, 0);
-                    input2.setValueAt(add, i, 1);
-                    input2.setValueAt(price, i, 2);
-
+                    jTable_market.setValueAt(inventoryDrug, i, 0);
+                    jTable_market.setValueAt(add, i, 1);
+                    jTable_market.setValueAt(price, i, 2);
                     break;
-                } else if (inventoryName.equals(marketName)) {
-                    System.out.println("Eksisterer i forvejen!");
-                    int newQty = (int) input2.getValueAt(i, 1) + 1;
-                    input2.setValueAt(newQty, i, 1);
-                    break;
+                } else {
+                    if (inventoryDrug.equals(marketDrug)) {
+                        int newQty = (int) jTable_market.getValueAt(i, 1) + 1;
+                        price = (double) jTable_market.getValueAt(i, 2);
+                        jTable_market.setValueAt(newQty, i, 1);
+                        break;
+                    }
                 }
-
             }
             if (subtract == 0) {
-                System.out.println("Nu fjerner jeg!");
-                ((DefaultTableModel) input1.getModel()).removeRow(row);
-                ((DefaultTableModel) input1.getModel()).addRow(new Object[]{});
+                ((DefaultTableModel) jTable_inventory.getModel()).removeRow(row);
+                ((DefaultTableModel) jTable_inventory.getModel()).addRow(new Object[]{});
             }
             return true;
         }
+        return false;
+    }
 
+    public boolean buy() {
+        int row = jTable_market.getSelectedRow();
+        String marketDrug = (String) jTable_market.getValueAt(row, 0);
+        int qty = (int) jTable_market.getValueAt(row, 1);
+        price = (double) jTable_market.getValueAt(row, 2);
+        int subtract = qty - 1;
+
+        if ((subtract >= 0) && (engine.getCredits() - price >= 0)) {
+            jTable_market.setValueAt(subtract, row, 1);
+            for (int i = 0; i <= jTable_inventory.getRowCount(); i++) {
+                String inventoryDrug = (String) jTable_inventory.getValueAt(i, 0);
+                if (inventoryDrug == null) {
+                    int add = 1;
+                    jTable_inventory.setValueAt(marketDrug, i, 0);
+                    jTable_inventory.setValueAt(add, i, 1);
+                    jTable_inventory.setValueAt(price, i, 2);
+                    break;
+                } else {
+                    if (marketDrug.equals(inventoryDrug)) {
+                        int newQty = (int) jTable_inventory.getValueAt(i, 1) + 1;
+                        jTable_inventory.setValueAt(newQty, i, 1);
+                        break;
+                    }
+                }
+            }
+            if (subtract == 0) {
+                ((DefaultTableModel) jTable_market.getModel()).removeRow(row);
+                ((DefaultTableModel) jTable_market.getModel()).addRow(new Object[]{});
+            }
+            return true;
+        }
         return false;
     }
 
     public void changeCharacterIcon() {
-//        if (nextImg == 10) {
-//            nextImg = 1;
-//        }
-//        
-//        if (nextImg <= 0) {
-//            nextImg = 9;
-//        }
-
         switch (nextImg) {
             case 1:
                 jLabel_characterPic.setIcon(clemenza1_icon);
