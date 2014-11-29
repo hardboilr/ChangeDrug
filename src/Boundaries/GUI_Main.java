@@ -94,7 +94,6 @@ public class GUI_Main extends javax.swing.JFrame {
     }
 
     private void prepareGame() {
-    private void initData() {
     //---------------------------------------------
     //Fill [jList_countries]-list with countries 
     //fill [jTable_market]-table with drugs
