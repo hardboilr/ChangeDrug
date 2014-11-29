@@ -5,6 +5,8 @@ package Boundaries;
 import Controllere.Engine;
 import Entities.Drug;
 import Interfaces.EngineInterface;
+import java.awt.Image;
+import java.text.DecimalFormat;
 import java.util.List;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
@@ -34,15 +36,19 @@ public class GUI_Main extends javax.swing.JFrame {
 
     private EngineInterface engine;
     private DefaultListModel listmodel = new DefaultListModel();
+    private DecimalFormat doubleCreditFormat; 
 
     public GUI_Main() {
         initComponents();
         this.setLocationRelativeTo(null); //place window in center of screen
         engine = new Engine();
         jList_countries.setModel(listmodel);
-        initData();
+        prepareGame();
         setLocationText();
         engine.loadPlayers("players.txt");
+        doubleCreditFormat = new DecimalFormat("0.00"); 
+        
+        
 
         nextImg = 0;
         //init icons
@@ -87,6 +93,7 @@ public class GUI_Main extends javax.swing.JFrame {
                 + engine.getActiveCountry().substring(1));
     }
 
+    private void prepareGame() {
     private void initData() {
     //---------------------------------------------
     //Fill [jList_countries]-list with countries 
@@ -576,7 +583,7 @@ public class GUI_Main extends javax.swing.JFrame {
             jLabel_daysLeft.setVisible(true);
             jLabel_life.setText(engine.getPlayer().getLife() + "");
             jLabel_life.setVisible(true);
-            jLabel_money.setText(engine.getPlayer().getCredits() + "");
+            jLabel_money.setText(doubleCreditFormat.format(engine.getCredits())+" $");
             jLabel_money.setVisible(true);
             jTextField_inputName.setVisible(false);
             jLabel_selectionLeft.setVisible(false);
@@ -629,21 +636,21 @@ public class GUI_Main extends javax.swing.JFrame {
         engine.setActiveCountry((String) listmodel.getElementAt(index));
         setLocationText();
         engine.travel();
-        initData();
+        prepareGame();
 
     }//GEN-LAST:event_jButton_travelActionPerformed
 
     private void jButton_buyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_buyActionPerformed
         if (buy() == true) {
             engine.calculateCredits(-price);
-            jLabel_money.setText(Double.toString(engine.getCredits()));
+            jLabel_money.setText(doubleCreditFormat.format(engine.getCredits())+" $");
         }
     }//GEN-LAST:event_jButton_buyActionPerformed
 
     private void jButton_sellActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_sellActionPerformed
         if (sell() == true) {
             engine.calculateCredits(price);
-            jLabel_money.setText(Double.toString(engine.getCredits()));
+            jLabel_money.setText(doubleCreditFormat.format(engine.getCredits())+" $");
         }
     }//GEN-LAST:event_jButton_sellActionPerformed
 
