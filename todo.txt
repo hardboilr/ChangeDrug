@@ -1,36 +1,13 @@
-27-11-14
-Sebastian: Oprette drug-objekt og opretter lande-objekter
-Tobias: GUI-mockup + initialize player, kig på interfacemetoder 
+Når days == -1 (ikke 0!) skal spillet slutte
 
-28-11-14
+Afrund doubles
 
-1. Tobias
+design class diagram
 
-2. Tobias
-Når days == 0, skal spillet slutte og man går videre til highscore.
-Husk at sælg alle stoffer inventory først!
-
-3. Sebastian
-fix sælg
-
-
-
+Nice to have:
 (4. Hvis inventory er tomt og han ikke har råd til at købe varer på markedet, så slutter spillet og man går videre til highscore)
 
-Sebastian
-5. Spillernavn + highscore skal gemmes ud til fil
+Implementering af events + liv 
 
-
-6. B: Sebastian
-Add countries
-Add drugs
-
-7. New game hvor man oprettet spiller
-
-
-
-Tabellen har kun længden af drugs (ingen tomme rækker)
-Implementering af events + liv
-Highscore
-
-  
+Noter:
+vi kan lave en "jLabel_daysLeftPropertyChange", så vi kan lytte på hvad en label skriver og køre noget kode based on that. Nice nok

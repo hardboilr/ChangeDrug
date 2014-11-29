@@ -1,27 +1,22 @@
 /**
- * @author Tobias
+ * @author Tobias & Sebastian
  */
 package Boundaries;
-
 import Controllere.Engine;
 import Entities.Drug;
-import Entities.Player;
 import Interfaces.EngineInterface;
-import java.awt.Image;
 import java.util.List;
-import java.util.Locale;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
 public class GUI_Main extends javax.swing.JFrame {
 
+    //Images
     private final ImageIcon selectionArrow_right_pressed_icon;
     private final ImageIcon selectionArrow_right_icon;
     private final ImageIcon selectionArrow_left_pressed_icon;
     private final ImageIcon selectionArrow_left_icon;
-
     private final ImageIcon clemenza1_icon;
     private final ImageIcon brasi2_icon;
     private final ImageIcon deNiro3_icon;
@@ -32,29 +27,24 @@ public class GUI_Main extends javax.swing.JFrame {
     private final ImageIcon vitelli8_icon;
     private final ImageIcon vito9_icon;
 
+    //variables
     private int nextImg;
+    private int avail;
+    private double price;
 
     private EngineInterface engine;
     private DefaultListModel listmodel = new DefaultListModel();
 
-    private int avail;
-    private double price;
-
     public GUI_Main() {
         initComponents();
-        this.setLocationRelativeTo(null);
+        this.setLocationRelativeTo(null); //place window in center of screen
         engine = new Engine();
         jList_countries.setModel(listmodel);
-        fillCountryList();
+        initData();
         setLocationText();
-//        jLabel_money.setText(Double.toString(engine.getCredits()));
-        jButton_buy.setEnabled(false);
-        jButton_sell.setEnabled(false);
-        nextImg = 0;
         engine.loadPlayers("players.txt");
-        
-        
 
+        nextImg = 0;
         //init icons
         selectionArrow_right_pressed_icon = new ImageIcon("./src/art/gui/selctionArrow_right_pressed.png");
         selectionArrow_right_icon = new ImageIcon("./src/art/gui/selctionArrow_right.png");
@@ -70,6 +60,7 @@ public class GUI_Main extends javax.swing.JFrame {
         vitelli8_icon = new ImageIcon("./src/art/characters/8_vitelli.png");
         vito9_icon = new ImageIcon("./src/art/characters/9_vito.png");
 
+        //hide images related to [create player]
         jLabel_characterPic.setVisible(false);
         jLabel_selectionLeft.setVisible(false);
         jLabel_selectionRight.setVisible(false);
@@ -79,33 +70,37 @@ public class GUI_Main extends javax.swing.JFrame {
         jLabel_daysLeft.setVisible(false);
         jLabel_money.setVisible(false);
         jButton_confirm.setVisible(false);
-
         jButton_buy.setVisible(false);
         jButton_sell.setVisible(false);
         jButton_travel.setVisible(false);
 
+        //hide buttons related to [buy/sell]
+        jButton_buy.setEnabled(false);
+        jButton_sell.setEnabled(false);
     }
 
     private void setLocationText() {
-        //char char1 = engine.getActiveCountry().charAt(0);
+    //---------------------------------------------------------
+    //Updates the [jLabel_location]-label with current country
+    //---------------------------------------------------------
         jLabel_location.setText("Location: " + engine.getActiveCountry().toUpperCase().charAt(0)
                 + engine.getActiveCountry().substring(1));
     }
 
-    private void fillCountryList() {
+    private void initData() {
+    //---------------------------------------------
+    //Fill [jList_countries]-list with countries 
+    //fill [jTable_market]-table with drugs
+    //---------------------------------------------
         listmodel.clear();
-        // fill countrylist
         for (int i = 0; i < engine.getCountries().size(); i++) {
             String country = (String) engine.getCountries().get(i);
             listmodel.addElement(country.toUpperCase().charAt(0) + country.substring(1));
         }
 
-        //remove existing table rows
-        ((DefaultTableModel) jTable_market.getModel()).setRowCount(0);
-
         // fill market table
+        ((DefaultTableModel) jTable_market.getModel()).setRowCount(0);
         List<Drug> tempList = engine.travel();
-
         for (int i = 0; i < tempList.size(); i++) {
             Drug drug = tempList.get(i);
             String name = drug.getName();
@@ -116,7 +111,163 @@ public class GUI_Main extends javax.swing.JFrame {
             jTable_market.setValueAt(avail, i, 1);
             jTable_market.setValueAt(price, i, 2);
         }
+    }
 
+    public void changeCharacterIcon() {
+    //------------------------------------------------------------------------------------
+    //Looks at value of [nextImg]-int and changes [jLabel_characterPic]-label accordingly
+    //------------------------------------------------------------------------------------
+        switch (nextImg) {
+            case 1:
+                jLabel_characterPic.setIcon(clemenza1_icon);
+                jLabel_selectionLeft.setVisible(false);
+                break;
+            case 2:
+                jLabel_characterPic.setIcon(brasi2_icon);
+                jLabel_selectionLeft.setVisible(true);
+                break;
+            case 3:
+                jLabel_characterPic.setIcon(deNiro3_icon);
+                break;
+            case 4:
+                jLabel_characterPic.setIcon(kay4_icon);
+                break;
+            case 5:
+                jLabel_characterPic.setIcon(michael5_icon);
+                break;
+            case 6:
+                jLabel_characterPic.setIcon(sollozo6_icon);
+                break;
+            case 7:
+                jLabel_characterPic.setIcon(talia7_icon);
+                break;
+            case 8:
+                jLabel_characterPic.setIcon(vitelli8_icon);
+                jLabel_selectionRight.setVisible(true);
+                break;
+            case 9:
+                jLabel_characterPic.setIcon(vito9_icon);
+                jLabel_selectionRight.setVisible(false);
+                break;
+        }
+    }
+
+    public boolean buy() {
+    //------------------------------------------------------------------------------------
+    //Looks at data in selected row in [jTable_market]-table
+    //If player has enough credits, then transfer 1 quantity of market drug to inventory
+    //Calculates new avg. price of particular drug in inventory
+    //Creates a new row in inventory if player does not own particular drug already
+    //Deletes drug from market if qty of particular drug reaches 0
+    //------------------------------------------------------------------------------------
+        int row = jTable_market.getSelectedRow();
+        String marketDrug = (String) jTable_market.getValueAt(row, 0);
+        int qty = (int) jTable_market.getValueAt(row, 1);
+        price = (double) jTable_market.getValueAt(row, 2);
+        int subtract = qty - 1;
+        int add = 1;
+        if ((engine.getCredits() - price >= 0)) { //sufficiant credits
+            jTable_market.setValueAt(subtract, row, 1); //withdraw 1 from markedet qty 
+            if (jTable_inventory.getRowCount() == 0) { //hvis tabel er tom i inv, tilføjes en række.
+                ((DefaultTableModel) jTable_inventory.getModel()).addRow(new Object[]{});
+                jTable_inventory.setValueAt(marketDrug, 0, 0);
+                jTable_inventory.setValueAt(add, 0, 1);
+                jTable_inventory.setValueAt(price, 0, 2);
+            } else {
+                boolean drugExist = false;
+                for (int i = 0; i < jTable_inventory.getRowCount(); i++) {
+                    String inventoryDrug = (String) jTable_inventory.getValueAt(i, 0);
+                    if (marketDrug.equals(inventoryDrug)) { //do we already have the drug?
+                        drugExist = true;
+                        int newQty = (int) jTable_inventory.getValueAt(i, 1) + 1;
+                        jTable_inventory.setValueAt(newQty, i, 1);
+                        //set new average price
+                        double currentInventoryPrice = (double) jTable_inventory.getValueAt(i, 2);
+                        int currentQuantity = (int) jTable_inventory.getValueAt(i, 1);
+                        double newAveragePrice = ((currentInventoryPrice * currentQuantity)
+                                + (price * 1)) / (currentQuantity + 1);
+                        jTable_inventory.setValueAt(newAveragePrice, i, 2);
+                        break;
+                    }
+                }
+                if (drugExist == false) { //Vi har IKKE drugget i forvejen");
+
+                    int rowPosition = jTable_inventory.getRowCount();
+                    ((DefaultTableModel) jTable_inventory.getModel()).addRow(new Object[]{});
+                    jTable_inventory.setValueAt(marketDrug, rowPosition, 0);
+                    jTable_inventory.setValueAt(add, rowPosition, 1);
+                    jTable_inventory.setValueAt(price, rowPosition, 2);
+                }
+            }
+            if (subtract == 0) {
+                System.out.println("Slettes den tomme række");
+                ((DefaultTableModel) jTable_market.getModel()).removeRow(row);
+            }
+            return true;
+        }
+        return false;
+    }
+
+    public boolean sell() {
+    //----------------------------------------------------------------
+    //Looks at data in selected row in [jTable_inventory]-table
+    //Transfer 1 quantity of inventory drug to market
+    //Creates a new row in market if particular drug does not exist
+    //Deletes drug from inventory if qty of particular drug reaches 0
+    //----------------------------------------------------------------
+        int row = jTable_inventory.getSelectedRow();
+        String inventoryDrug = (String) jTable_inventory.getValueAt(row, 0);
+        int qty = (int) jTable_inventory.getValueAt(row, 1);
+        price = (double) jTable_inventory.getValueAt(row, 2);
+        int subtract = qty - 1;
+
+        if (subtract >= 0) {
+            jTable_inventory.setValueAt(subtract, row, 1);
+            for (int i = 0; i <= jTable_market.getRowCount(); i++) {
+                String marketDrug = (String) jTable_market.getValueAt(i, 0);
+                if (marketDrug == null) {
+                    int add = 1;
+                    jTable_market.setValueAt(inventoryDrug, i, 0);
+                    jTable_market.setValueAt(add, i, 1);
+                    jTable_market.setValueAt(price, i, 2);
+                    break;
+                } else {
+                    if (inventoryDrug.equals(marketDrug)) {
+                        int newQty = (int) jTable_market.getValueAt(i, 1) + 1;
+                        price = (double) jTable_market.getValueAt(i, 2);
+                        jTable_market.setValueAt(newQty, i, 1);
+                        break;
+                    }
+                }
+            }
+            if (subtract == 0) {
+                ((DefaultTableModel) jTable_inventory.getModel()).removeRow(row);
+            }
+            return true;
+        }
+        return false;
+    }
+
+    public void autoSell() {
+    //---------------------------------------------------
+    //Runs through all rows in [jTable_inventory]-table
+    //Sell every drug in each row to market
+    //Add profit to credits
+    //---------------------------------------------------
+        for (int i = 0; i < jTable_inventory.getRowCount(); i++) {
+            String inventoryDrug = (String) jTable_inventory.getValueAt(i, 0);
+            int inventoryQty = (int) jTable_inventory.getValueAt(i, 1);
+            for (int j = 0; j < jTable_market.getRowCount(); j++) {
+                String marketDrug = (String) jTable_market.getValueAt(j, 0);
+                if (inventoryDrug.equals(marketDrug)) {
+                    double marketPrice = (double) jTable_market.getValueAt(j, 2);
+                    int newQty = (int) jTable_market.getValueAt(i, 1) + 1;
+                    price = inventoryQty * marketPrice;
+                    engine.calculateCredits(price);
+                    break;
+                }
+            }
+        }
     }
 
     /**
@@ -284,11 +435,6 @@ public class GUI_Main extends javax.swing.JFrame {
         jLabel_daysLeft.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel_daysLeft.setText("14");
         jLabel_daysLeft.setToolTipText("");
-        jLabel_daysLeft.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
-            public void propertyChange(java.beans.PropertyChangeEvent evt) {
-                jLabel_daysLeftPropertyChange(evt);
-            }
-        });
         jPanel_player.add(jLabel_daysLeft, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 110, -1, 20));
 
         jTextField_inputName.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
@@ -436,7 +582,7 @@ public class GUI_Main extends javax.swing.JFrame {
             jLabel_selectionLeft.setVisible(false);
             jLabel_selectionRight.setVisible(false);
             jButton_confirm.setVisible(false);
-            
+
             jButton_newGame.setVisible(false);
         }
     }//GEN-LAST:event_jButton_confirmActionPerformed
@@ -469,18 +615,13 @@ public class GUI_Main extends javax.swing.JFrame {
             autoSell();
             //gemmer spiller
             engine.savePlayer("players.txt");
-            GUI_Highscore highscore = new GUI_Highscore((Engine)engine);
+            GUI_Highscore highscore = new GUI_Highscore((Engine) engine);
             highscore.setVisible(true);
             highscore.setLocationRelativeTo(null);
             this.dispose();
-            
-            
-            
+
             //lukker MAIN_GUI
             //åbner vi highscore_GUI (restart -> start programmet igen
-            
-            
-
         }
         jLabel_daysLeft.setText(engine.getPlayer().getDays() + "");
 
@@ -488,7 +629,7 @@ public class GUI_Main extends javax.swing.JFrame {
         engine.setActiveCountry((String) listmodel.getElementAt(index));
         setLocationText();
         engine.travel();
-        fillCountryList();
+        initData();
 
     }//GEN-LAST:event_jButton_travelActionPerformed
 
@@ -526,13 +667,6 @@ public class GUI_Main extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jTable_inventoryMouseClicked
 
-    private void jLabel_daysLeftPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jLabel_daysLeftPropertyChange
-        if (jLabel_daysLeft.getText().equals("0")) {
-            //game is over
-            //close frame and open highscore frame
-        }
-    }//GEN-LAST:event_jLabel_daysLeftPropertyChange
-
     private void jLabel_selectionRightMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel_selectionRightMousePressed
         ++nextImg;
         jLabel_selectionRight.setIcon(selectionArrow_right_pressed_icon);
@@ -565,8 +699,8 @@ public class GUI_Main extends javax.swing.JFrame {
     }//GEN-LAST:event_jLabel_selectionLeftMouseClicked
 
     private void jButton_highscoreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_highscoreActionPerformed
-        GUI_Highscore highscore = new GUI_Highscore((Engine)engine);
-        
+        GUI_Highscore highscore = new GUI_Highscore((Engine) engine);
+
         highscore.setVisible(true);
         highscore.setLocationRelativeTo(null);
     }//GEN-LAST:event_jButton_highscoreActionPerformed
@@ -605,159 +739,6 @@ public class GUI_Main extends javax.swing.JFrame {
             }
         });
     }
-
-    public boolean sell() {
-        int row = jTable_inventory.getSelectedRow();
-        String inventoryDrug = (String) jTable_inventory.getValueAt(row, 0);
-        int qty = (int) jTable_inventory.getValueAt(row, 1);
-        price = (double) jTable_inventory.getValueAt(row, 2);
-        int subtract = qty - 1;
-
-        if (subtract >= 0) {
-            jTable_inventory.setValueAt(subtract, row, 1);
-            for (int i = 0; i <= jTable_market.getRowCount(); i++) {
-                String marketDrug = (String) jTable_market.getValueAt(i, 0);
-                if (marketDrug == null) {
-                    int add = 1;
-                    jTable_market.setValueAt(inventoryDrug, i, 0);
-                    jTable_market.setValueAt(add, i, 1);
-                    jTable_market.setValueAt(price, i, 2);
-                    break;
-                } else {
-                    if (inventoryDrug.equals(marketDrug)) {
-                        int newQty = (int) jTable_market.getValueAt(i, 1) + 1;
-                        price = (double) jTable_market.getValueAt(i, 2);
-                        jTable_market.setValueAt(newQty, i, 1);
-                        break;
-                    }
-                }
-            }
-            if (subtract == 0) {
-                ((DefaultTableModel) jTable_inventory.getModel()).removeRow(row);
-                //((DefaultTableModel) jTable_inventory.getModel()).addRow(new Object[]{});
-            }
-            return true;
-        }
-        return false;
-    }
-
-    public void autoSell() {
-        for (int i = 0; i < jTable_inventory.getRowCount(); i++) {
-            String inventoryDrug = (String) jTable_inventory.getValueAt(i, 0);
-            int inventoryQty = (int) jTable_inventory.getValueAt(i, 1);
-
-            for (int j = 0; j < jTable_market.getRowCount(); j++) {
-                String marketDrug = (String) jTable_market.getValueAt(j, 0);
-
-                if (inventoryDrug.equals(marketDrug)) {
-
-                    double marketPrice = (double) jTable_market.getValueAt(j, 2);
-                    int newQty = (int) jTable_market.getValueAt(i, 1) + 1;
-                    price = inventoryQty * marketPrice;
-                    engine.calculateCredits(price);
-                    break;
-                }
-            }
-        }
-    }
-
-    public boolean buy() {
-        int row = jTable_market.getSelectedRow();
-        String marketDrug = (String) jTable_market.getValueAt(row, 0);
-        System.out.println("marketDrug er: " + marketDrug);
-
-        int qty = (int) jTable_market.getValueAt(row, 1);
-        price = (double) jTable_market.getValueAt(row, 2);
-        int subtract = qty - 1;
-        int add = 1;
-        if ((engine.getCredits() - price >= 0)) { //sufficiant credits
-            jTable_market.setValueAt(subtract, row, 1); //trækker vi 1 fra markedets drug 
-
-            if (jTable_inventory.getRowCount() == 0) { //hvis tabel er tom i inv, tilføjes en række.
-                System.out.println("tilføjer første gang: ");
-                ((DefaultTableModel) jTable_inventory.getModel()).addRow(new Object[]{});
-                jTable_inventory.setValueAt(marketDrug, 0, 0);
-                jTable_inventory.setValueAt(add, 0, 1);
-                jTable_inventory.setValueAt(price, 0, 2);
-
-            } else {
-                boolean drugExist = false;
-                for (int i = 0; i < jTable_inventory.getRowCount(); i++) {
-                    String inventoryDrug = (String) jTable_inventory.getValueAt(i, 0);
-                    System.out.println("Iventorydrug er: " + inventoryDrug);
-                    if (marketDrug.equals(inventoryDrug)) { //har vi druggget i forvejen?
-                        drugExist = true;
-                        int newQty = (int) jTable_inventory.getValueAt(i, 1) + 1;
-                        jTable_inventory.setValueAt(newQty, i, 1);
-                        //set ny gennemsnitspris
-                        double currentInventoryPrice = (double) jTable_inventory.getValueAt(i, 2);
-                        int currentQuantity = (int) jTable_inventory.getValueAt(i, 1);
-                        double newAveragePrice = ((currentInventoryPrice * currentQuantity)
-                                + (price * 1)) / (currentQuantity + 1);
-                        jTable_inventory.setValueAt(newAveragePrice, i, 2);
-                        break;
-                    }
-
-                }
-
-                if (drugExist == false) { //Vi har IKKE drugget i forvejen");
-
-                    int rowPosition = jTable_inventory.getRowCount();
-                    ((DefaultTableModel) jTable_inventory.getModel()).addRow(new Object[]{});
-                    jTable_inventory.setValueAt(marketDrug, rowPosition, 0);
-                    jTable_inventory.setValueAt(add, rowPosition, 1);
-                    jTable_inventory.setValueAt(price, rowPosition, 2);
-
-                }
-
-            }
-            if (subtract == 0) {
-                System.out.println("Slettes den tomme række");
-                ((DefaultTableModel) jTable_market.getModel()).removeRow(row);
-//                ((DefaultTableModel) jTable_market.getModel()).addRow(new Object[]{});
-            }
-            return true;
-        }
-        return false;
-    }
-
-    public void changeCharacterIcon() {
-        switch (nextImg) {
-            case 1:
-                jLabel_characterPic.setIcon(clemenza1_icon);
-                jLabel_selectionLeft.setVisible(false);
-                break;
-            case 2:
-                jLabel_characterPic.setIcon(brasi2_icon);
-                jLabel_selectionLeft.setVisible(true);
-                break;
-            case 3:
-                jLabel_characterPic.setIcon(deNiro3_icon);
-                break;
-            case 4:
-                jLabel_characterPic.setIcon(kay4_icon);
-                break;
-            case 5:
-                jLabel_characterPic.setIcon(michael5_icon);
-                break;
-            case 6:
-                jLabel_characterPic.setIcon(sollozo6_icon);
-                break;
-            case 7:
-                jLabel_characterPic.setIcon(talia7_icon);
-                break;
-            case 8:
-                jLabel_characterPic.setIcon(vitelli8_icon);
-                jLabel_selectionRight.setVisible(true);
-                break;
-            case 9:
-                jLabel_characterPic.setIcon(vito9_icon);
-                jLabel_selectionRight.setVisible(false);
-                break;
-        }
-
-    }
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton_buy;
