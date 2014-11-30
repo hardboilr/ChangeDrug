@@ -2,6 +2,7 @@
  * @author Tobias & Sebastian
  */
 package Boundaries;
+
 import Controllere.Engine;
 import Entities.Drug;
 import Interfaces.EngineInterface;
@@ -33,11 +34,11 @@ public class GUI_Main extends javax.swing.JFrame {
     private int nextImg;
     private int avail;
     private double price;
-
+    
     private EngineInterface engine;
     private DefaultListModel listmodel = new DefaultListModel();
-    private DecimalFormat doubleCreditFormat; 
-
+    private DecimalFormat doubleCreditFormat;    
+    
     public GUI_Main() {
         initComponents();
         this.setLocationRelativeTo(null); //place window in center of screen
@@ -45,11 +46,10 @@ public class GUI_Main extends javax.swing.JFrame {
         jList_countries.setModel(listmodel);
         prepareGame();
         setLocationText();
+        formatTables();
         engine.loadPlayers("players.txt");
-        doubleCreditFormat = new DecimalFormat("0.00"); 
+        doubleCreditFormat = new DecimalFormat("0.00");        
         
-        
-
         nextImg = 0;
         //init icons
         selectionArrow_right_pressed_icon = new ImageIcon("./src/art/gui/selctionArrow_right_pressed.png");
@@ -76,28 +76,29 @@ public class GUI_Main extends javax.swing.JFrame {
         jLabel_daysLeft.setVisible(false);
         jLabel_money.setVisible(false);
         jButton_confirm.setVisible(false);
-        jButton_buy.setVisible(false);
-        jButton_sell.setVisible(false);
-        jButton_travel.setVisible(false);
+        
 
-        //hide buttons related to [buy/sell]
+        //deactivate buttons
+        jButton_travel.setEnabled(false);
         jButton_buy.setEnabled(false);
         jButton_sell.setEnabled(false);
+        jButton_bulkBuy.setEnabled(false);
+        jButton_bulkSell.setEnabled(false);
     }
-
+    
     private void setLocationText() {
     //---------------------------------------------------------
-    //Updates the [jLabel_location]-label with current country
-    //---------------------------------------------------------
+        //Updates the [jLabel_location]-label with current country
+        //---------------------------------------------------------
         jLabel_location.setText("Location: " + engine.getActiveCountry().toUpperCase().charAt(0)
                 + engine.getActiveCountry().substring(1));
     }
-
+    
     private void prepareGame() {
     //---------------------------------------------
-    //Fill [jList_countries]-list with countries 
-    //fill [jTable_market]-table with drugs
-    //---------------------------------------------
+        //Fill [jList_countries]-list with countries 
+        //fill [jTable_market]-table with drugs
+        //---------------------------------------------
         listmodel.clear();
         for (int i = 0; i < engine.getCountries().size(); i++) {
             String country = (String) engine.getCountries().get(i);
@@ -118,11 +119,11 @@ public class GUI_Main extends javax.swing.JFrame {
             jTable_market.setValueAt(price, i, 2);
         }
     }
-
-    public void changeCharacterIcon() {
+    
+    private void changeCharacterIcon() {
     //------------------------------------------------------------------------------------
-    //Looks at value of [nextImg]-int and changes [jLabel_characterPic]-label accordingly
-    //------------------------------------------------------------------------------------
+        //Looks at value of [nextImg]-int and changes [jLabel_characterPic]-label accordingly
+        //------------------------------------------------------------------------------------
         switch (nextImg) {
             case 1:
                 jLabel_characterPic.setIcon(clemenza1_icon);
@@ -157,21 +158,32 @@ public class GUI_Main extends javax.swing.JFrame {
                 break;
         }
     }
-
-    public boolean buy() {
+    
+    private boolean buy() {
     //------------------------------------------------------------------------------------
-    //Looks at data in selected row in [jTable_market]-table
-    //If player has enough credits, then transfer 1 quantity of market drug to inventory
-    //Calculates new avg. price of particular drug in inventory
-    //Creates a new row in inventory if player does not own particular drug already
-    //Deletes drug from market if qty of particular drug reaches 0
-    //------------------------------------------------------------------------------------
+        //Looks at data in selected row in [jTable_market]-table
+        //If player has enough credits, then transfer 1 quantity of market drug to inventory
+        //Calculates new avg. price of particular drug in inventory
+        //Creates a new row in inventory if player does not own particular drug already
+        //Deletes drug from market if qty of particular drug reaches 0
+        //------------------------------------------------------------------------------------
         int row = jTable_market.getSelectedRow();
-        String marketDrug = (String) jTable_market.getValueAt(row, 0);
+        String marketDrug = "";
+        int subtract = 0;
+        double sufficiantCredits;
+        price = 0;
+        int add = 1;
+        try {
+        marketDrug = (String) jTable_market.getValueAt(row, 0);
         int qty = (int) jTable_market.getValueAt(row, 1);
         price = (double) jTable_market.getValueAt(row, 2);
-        int subtract = qty - 1;
-        int add = 1;
+        subtract = qty - 1;
+        }
+        catch (ArrayIndexOutOfBoundsException ex) {
+            sufficiantCredits = -1.00;
+        }
+        
+        sufficiantCredits = engine.getCredits() - price;
         if ((engine.getCredits() - price >= 0)) { //sufficiant credits
             jTable_market.setValueAt(subtract, row, 1); //withdraw 1 from markedet qty 
             if (jTable_inventory.getRowCount() == 0) { //hvis tabel er tom i inv, tilføjes en række.
@@ -213,20 +225,27 @@ public class GUI_Main extends javax.swing.JFrame {
         }
         return false;
     }
-
-    public boolean sell() {
+    
+    private boolean sell() {
     //----------------------------------------------------------------
-    //Looks at data in selected row in [jTable_inventory]-table
-    //Transfer 1 quantity of inventory drug to market
-    //Creates a new row in market if particular drug does not exist
-    //Deletes drug from inventory if qty of particular drug reaches 0
-    //----------------------------------------------------------------
+        //Looks at data in selected row in [jTable_inventory]-table
+        //Transfer 1 quantity of inventory drug to market
+        //Creates a new row in market if particular drug does not exist
+        //Deletes drug from inventory if qty of particular drug reaches 0
+        //----------------------------------------------------------------
         int row = jTable_inventory.getSelectedRow();
-        String inventoryDrug = (String) jTable_inventory.getValueAt(row, 0);
+        String inventoryDrug = "";
+        int subtract;
+        try {
+        inventoryDrug = (String) jTable_inventory.getValueAt(row, 0);
         int qty = (int) jTable_inventory.getValueAt(row, 1);
         price = (double) jTable_inventory.getValueAt(row, 2);
-        int subtract = qty - 1;
-
+        subtract = qty - 1;
+        }
+        catch (ArrayIndexOutOfBoundsException ex) {
+        subtract = -1;    
+        }
+        
         if (subtract >= 0) {
             jTable_inventory.setValueAt(subtract, row, 1);
             for (int i = 0; i <= jTable_market.getRowCount(); i++) {
@@ -253,13 +272,13 @@ public class GUI_Main extends javax.swing.JFrame {
         }
         return false;
     }
-
-    public void autoSell() {
+    
+    private void autoSell() {
     //---------------------------------------------------
-    //Runs through all rows in [jTable_inventory]-table
-    //Sell every drug in each row to market
-    //Add profit to credits
-    //---------------------------------------------------
+        //Runs through all rows in [jTable_inventory]-table
+        //Sell every drug in each row to market
+        //Add profit to credits
+        //---------------------------------------------------
         for (int i = 0; i < jTable_inventory.getRowCount(); i++) {
             String inventoryDrug = (String) jTable_inventory.getValueAt(i, 0);
             int inventoryQty = (int) jTable_inventory.getValueAt(i, 1);
@@ -275,6 +294,27 @@ public class GUI_Main extends javax.swing.JFrame {
             }
         }
     }
+    
+    private void formatTables() {
+        jTable_market.setSelectionMode(0);
+        jTable_inventory.setSelectionMode(0);
+    }
+    
+    private void performBuy() {
+        jTable_inventory.clearSelection();
+        if (buy() == true) {
+            engine.calculateCredits(-price);
+            jLabel_money.setText(doubleCreditFormat.format(engine.getCredits()) + " $");
+        }
+    }
+    
+    private void performSell() {
+        jTable_market.clearSelection();
+        if (sell() == true) {
+            engine.calculateCredits(price);
+            jLabel_money.setText(doubleCreditFormat.format(engine.getCredits()) + " $");
+        }
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -285,8 +325,6 @@ public class GUI_Main extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jButton_sell = new javax.swing.JButton();
-        jButton_buy = new javax.swing.JButton();
         jButton_highscore = new javax.swing.JButton();
         jButton_confirm = new javax.swing.JButton();
         jPanel_player = new javax.swing.JPanel();
@@ -317,6 +355,12 @@ public class GUI_Main extends javax.swing.JFrame {
         jScrollPane_countries = new javax.swing.JScrollPane();
         jList_countries = new javax.swing.JList();
         jButton_travel = new javax.swing.JButton();
+        jPanel1 = new javax.swing.JPanel();
+        jButton_buy = new javax.swing.JButton();
+        jButton_sell = new javax.swing.JButton();
+        jPanel2 = new javax.swing.JPanel();
+        jButton_bulkSell = new javax.swing.JButton();
+        jButton_bulkBuy = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Thug Life 0.1");
@@ -325,24 +369,6 @@ public class GUI_Main extends javax.swing.JFrame {
         setPreferredSize(new java.awt.Dimension(800, 600));
         setResizable(false);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        jButton_sell.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jButton_sell.setText("<< Sell ");
-        jButton_sell.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton_sellActionPerformed(evt);
-            }
-        });
-        getContentPane().add(jButton_sell, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 300, 80, -1));
-
-        jButton_buy.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jButton_buy.setText("Buy >>");
-        jButton_buy.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton_buyActionPerformed(evt);
-            }
-        });
-        getContentPane().add(jButton_buy, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 260, 80, -1));
 
         jButton_highscore.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jButton_highscore.setText("Highscore");
@@ -371,7 +397,7 @@ public class GUI_Main extends javax.swing.JFrame {
         jLabel_characterPic.setMaximumSize(new java.awt.Dimension(800, 600));
         jLabel_characterPic.setMinimumSize(new java.awt.Dimension(800, 600));
         jLabel_characterPic.setPreferredSize(new java.awt.Dimension(800, 600));
-        jPanel_player.add(jLabel_characterPic, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 10, 110, 160));
+        jPanel_player.add(jLabel_characterPic, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 10, 110, 160));
 
         jLabel_TEXT_info.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         jLabel_TEXT_info.setText("Info");
@@ -417,7 +443,7 @@ public class GUI_Main extends javax.swing.JFrame {
                 jLabel_selectionRightMouseReleased(evt);
             }
         });
-        jPanel_player.add(jLabel_selectionRight, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 80, -1, -1));
+        jPanel_player.add(jLabel_selectionRight, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 80, -1, -1));
 
         jLabel_selectionLeft.setIcon(new javax.swing.ImageIcon(getClass().getResource("/art/gui/selctionArrow_left.png"))); // NOI18N
         jLabel_selectionLeft.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -431,7 +457,7 @@ public class GUI_Main extends javax.swing.JFrame {
                 jLabel_selectionLeftMouseReleased(evt);
             }
         });
-        jPanel_player.add(jLabel_selectionLeft, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 80, -1, -1));
+        jPanel_player.add(jLabel_selectionLeft, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 80, -1, -1));
 
         jLabel_TEXT_DaysLeft.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel_TEXT_DaysLeft.setText("Days left: ");
@@ -447,7 +473,7 @@ public class GUI_Main extends javax.swing.JFrame {
         jTextField_inputName.setPreferredSize(new java.awt.Dimension(70, 20));
         jPanel_player.add(jTextField_inputName, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 50, 130, 30));
 
-        getContentPane().add(jPanel_player, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 60, 360, 180));
+        getContentPane().add(jPanel_player, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 60, 420, 180));
 
         jButton_newGame.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jButton_newGame.setText("New game");
@@ -478,6 +504,7 @@ public class GUI_Main extends javax.swing.JFrame {
                 return types [columnIndex];
             }
         });
+        jTable_market.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jTable_market.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jTable_marketMouseClicked(evt);
@@ -488,13 +515,13 @@ public class GUI_Main extends javax.swing.JFrame {
             jTable_market.getColumnModel().getColumn(0).setPreferredWidth(100);
         }
 
-        jPanel_market.add(jScrollPane_market, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 40, 300, 260));
+        jPanel_market.add(jScrollPane_market, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 40, 280, 260));
 
         jLabel_TEXT_market1.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         jLabel_TEXT_market1.setText("Market");
         jPanel_market.add(jLabel_TEXT_market1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, -1, -1));
 
-        getContentPane().add(jPanel_market, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 260, 320, 310));
+        getContentPane().add(jPanel_market, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 260, 310, 310));
 
         jPanel_inventory.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jPanel_inventory.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -532,7 +559,7 @@ public class GUI_Main extends javax.swing.JFrame {
         jLabel_TEXT_market.setText("Inventory");
         jPanel_inventory.add(jLabel_TEXT_market, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, -1, -1));
 
-        getContentPane().add(jPanel_inventory, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 260, 330, 310));
+        getContentPane().add(jPanel_inventory, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 260, 310, 310));
 
         jPanel_location.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jPanel_location.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -561,7 +588,55 @@ public class GUI_Main extends javax.swing.JFrame {
         });
         jPanel_location.add(jButton_travel, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 180, -1, -1));
 
-        getContentPane().add(jPanel_location, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 20, 330, 220));
+        getContentPane().add(jPanel_location, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 20, 310, 220));
+
+        jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jButton_buy.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jButton_buy.setText("Buy >>");
+        jButton_buy.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton_buyActionPerformed(evt);
+            }
+        });
+        jPanel1.add(jButton_buy, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, -1, 40));
+
+        jButton_sell.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jButton_sell.setText("<< Sell ");
+        jButton_sell.setMaximumSize(new java.awt.Dimension(79, 30));
+        jButton_sell.setMinimumSize(new java.awt.Dimension(79, 30));
+        jButton_sell.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton_sellActionPerformed(evt);
+            }
+        });
+        jPanel1.add(jButton_sell, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 60, -1, 40));
+
+        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 270, 100, 110));
+
+        jPanel2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jButton_bulkSell.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jButton_bulkSell.setText("<< x10");
+        jButton_bulkSell.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton_bulkSellActionPerformed(evt);
+            }
+        });
+        jPanel2.add(jButton_bulkSell, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, -1, 40));
+
+        jButton_bulkBuy.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jButton_bulkBuy.setText("x10 >>");
+        jButton_bulkBuy.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton_bulkBuyActionPerformed(evt);
+            }
+        });
+        jPanel2.add(jButton_bulkBuy, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 60, -1, 40));
+
+        getContentPane().add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 400, 100, 110));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -569,35 +644,32 @@ public class GUI_Main extends javax.swing.JFrame {
     private void jButton_confirmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_confirmActionPerformed
         String name = jTextField_inputName.getText();
         name = name.replaceAll(" ", "").toLowerCase();
-
+        
         if (!name.isEmpty()) {
-
+            
             engine.createPlayer(name, engine.getStartCredits());
-            jButton_buy.setVisible(true);
-            jButton_sell.setVisible(true);
-            jButton_travel.setVisible(true);
+            jButton_buy.setEnabled(true);
+            jButton_sell.setEnabled(true);
+            jButton_bulkBuy.setEnabled(true);
+            jButton_bulkSell.setEnabled(true);
+            jButton_travel.setEnabled(true);
             jLabel_name.setText(name);
             jLabel_name.setVisible(true);
             jLabel_daysLeft.setText(engine.getPlayer().getDays() + "");
             jLabel_daysLeft.setVisible(true);
             jLabel_life.setText(engine.getPlayer().getLife() + "");
             jLabel_life.setVisible(true);
-            jLabel_money.setText(doubleCreditFormat.format(engine.getCredits())+" $");
+            jLabel_money.setText(doubleCreditFormat.format(engine.getCredits()) + " $");
             jLabel_money.setVisible(true);
             jTextField_inputName.setVisible(false);
             jLabel_selectionLeft.setVisible(false);
             jLabel_selectionRight.setVisible(false);
             jButton_confirm.setVisible(false);
-
             jButton_newGame.setVisible(false);
         }
     }//GEN-LAST:event_jButton_confirmActionPerformed
 
     private void jButton_newGameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_newGameActionPerformed
-        jButton_buy.setVisible(false);
-        jButton_sell.setVisible(false);
-        jButton_travel.setVisible(false);
-
         jTextField_inputName.setText("");
         jLabel_name.setText("");
         jLabel_life.setText("");
@@ -616,41 +688,35 @@ public class GUI_Main extends javax.swing.JFrame {
 
     private void jButton_travelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_travelActionPerformed
         engine.getPlayer().setDays(-1);
-        if (engine.getPlayer().getDays() == 0) {
-            System.out.println("Game Over!");
-            autoSell();
-            //gemmer spiller
-            engine.savePlayer("players.txt");
+        int currentDay = engine.getPlayer().getDays();
+        if (currentDay >= 0) {
+            jLabel_daysLeft.setText(engine.getPlayer().getDays() + "");
+            int index = jList_countries.getSelectedIndex();
+            engine.setActiveCountry((String) listmodel.getElementAt(index));
+            setLocationText();
+            engine.travel();
+            prepareGame();
+        }
+        if (currentDay == 0) {
+            jButton_travel.setText("Cash in!");
+        }
+        if (currentDay == -1) {
+            autoSell(); //sell everything in inventory
+            engine.savePlayer("players.txt"); //save player
             GUI_Highscore highscore = new GUI_Highscore((Engine) engine);
             highscore.setVisible(true);
+            highscore.setAgainVisibility(true);
             highscore.setLocationRelativeTo(null);
             this.dispose();
-
-            //lukker MAIN_GUI
-            //åbner vi highscore_GUI (restart -> start programmet igen
         }
-        jLabel_daysLeft.setText(engine.getPlayer().getDays() + "");
-
-        int index = jList_countries.getSelectedIndex();
-        engine.setActiveCountry((String) listmodel.getElementAt(index));
-        setLocationText();
-        engine.travel();
-        prepareGame();
-
     }//GEN-LAST:event_jButton_travelActionPerformed
 
     private void jButton_buyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_buyActionPerformed
-        if (buy() == true) {
-            engine.calculateCredits(-price);
-            jLabel_money.setText(doubleCreditFormat.format(engine.getCredits())+" $");
-        }
+        performBuy();
     }//GEN-LAST:event_jButton_buyActionPerformed
 
     private void jButton_sellActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_sellActionPerformed
-        if (sell() == true) {
-            engine.calculateCredits(price);
-            jLabel_money.setText(doubleCreditFormat.format(engine.getCredits())+" $");
-        }
+        performSell();
     }//GEN-LAST:event_jButton_sellActionPerformed
 
     private void jTable_marketMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable_marketMouseClicked
@@ -676,7 +742,7 @@ public class GUI_Main extends javax.swing.JFrame {
     private void jLabel_selectionRightMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel_selectionRightMousePressed
         ++nextImg;
         jLabel_selectionRight.setIcon(selectionArrow_right_pressed_icon);
-
+        
 
     }//GEN-LAST:event_jLabel_selectionRightMousePressed
 
@@ -696,7 +762,7 @@ public class GUI_Main extends javax.swing.JFrame {
     }//GEN-LAST:event_jLabel_selectionLeftMouseReleased
 
     private void jLabel_selectionRightMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel_selectionRightMouseClicked
-
+        
 
     }//GEN-LAST:event_jLabel_selectionRightMouseClicked
 
@@ -706,10 +772,23 @@ public class GUI_Main extends javax.swing.JFrame {
 
     private void jButton_highscoreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_highscoreActionPerformed
         GUI_Highscore highscore = new GUI_Highscore((Engine) engine);
-
         highscore.setVisible(true);
         highscore.setLocationRelativeTo(null);
     }//GEN-LAST:event_jButton_highscoreActionPerformed
+
+    private void jButton_bulkSellActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_bulkSellActionPerformed
+        for (int i = 0; i < 10; i++) {
+            System.out.println("Selling in bulk");
+            performSell();
+    }
+    }//GEN-LAST:event_jButton_bulkSellActionPerformed
+
+    private void jButton_bulkBuyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_bulkBuyActionPerformed
+        for (int i = 0; i < 10; i++) {
+            System.out.println("Selling in bulk");
+            performBuy();
+    }
+    }//GEN-LAST:event_jButton_bulkBuyActionPerformed
 
     /**
      * @param args the command line arguments
@@ -747,6 +826,8 @@ public class GUI_Main extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButton_bulkBuy;
+    private javax.swing.JButton jButton_bulkSell;
     private javax.swing.JButton jButton_buy;
     private javax.swing.JButton jButton_confirm;
     private javax.swing.JButton jButton_highscore;
@@ -769,6 +850,8 @@ public class GUI_Main extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel_selectionLeft;
     private javax.swing.JLabel jLabel_selectionRight;
     private javax.swing.JList jList_countries;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel_inventory;
     private javax.swing.JPanel jPanel_location;
     private javax.swing.JPanel jPanel_market;

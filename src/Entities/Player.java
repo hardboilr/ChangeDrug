@@ -13,7 +13,7 @@ public class Player implements Comparable {
         this.name = input1;
         this.life = 100;
         this.credits = input2;
-        this.days = 20;
+        this.days = 2;
     }
 
     public int getLife() {

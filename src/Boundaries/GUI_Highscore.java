@@ -7,6 +7,9 @@ import Controllere.Engine;
 import Entities.FileHandler;
 import Entities.Player;
 import Interfaces.EngineInterface;
+import java.awt.Frame;
+import java.awt.Window;
+import java.lang.reflect.Array;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
@@ -19,12 +22,13 @@ public class GUI_Highscore extends javax.swing.JFrame {
     
     public GUI_Highscore(){
       initComponents();
+      
     }
     
     public GUI_Highscore(Engine input) {
         this.engine = input;
-        
         initComponents();
+        jButton_again.setVisible(false);
         playerList = engine.loadPlayers("players.txt");
         addData();
     }
@@ -38,17 +42,17 @@ public class GUI_Highscore extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
+        jLabel_TEXT_highscore = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        jTable_highscore = new javax.swing.JTable();
         jButton_again = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
-        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        jLabel1.setText("Highscore");
+        jLabel_TEXT_highscore.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabel_TEXT_highscore.setText("Highscore");
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        jTable_highscore.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null},
                 {null, null},
@@ -83,7 +87,7 @@ public class GUI_Highscore extends javax.swing.JFrame {
                 return types [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(jTable_highscore);
 
         jButton_again.setFont(new java.awt.Font("Tahoma", 0, 36)); // NOI18N
         jButton_again.setText("Try again?");
@@ -101,7 +105,7 @@ public class GUI_Highscore extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(155, 155, 155)
-                        .addComponent(jLabel1))
+                        .addComponent(jLabel_TEXT_highscore))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(61, 61, 61)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -114,7 +118,7 @@ public class GUI_Highscore extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(40, 40, 40)
-                .addComponent(jLabel1)
+                .addComponent(jLabel_TEXT_highscore)
                 .addGap(29, 29, 29)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 349, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(42, 42, 42)
@@ -170,20 +174,24 @@ public class GUI_Highscore extends javax.swing.JFrame {
         for (int i = 0; i < playerList.size(); i++) {
 //            int count = 0;
             Player player = playerList.get(i);
-            jTable1.setValueAt(player.getName(), i, 0);
-            jTable1.setValueAt(player.getCredits(), i, 1);
+            jTable_highscore.setValueAt(player.getName(), i, 0);
+            jTable_highscore.setValueAt(player.getCredits(), i, 1);
 //            System.out.println(player.toString());
 //            count++;
         }
         
     }
     
+    public void setAgainVisibility(Boolean input) {
+        jButton_again.setVisible(input);
+    }
+    
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton_again;
-    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel_TEXT_highscore;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
+    private javax.swing.JTable jTable_highscore;
     // End of variables declaration//GEN-END:variables
 }

@@ -1,8 +1,4 @@
-Når days == -1 (ikke 0!) skal spillet slutte
 
-Afrund doubles
-
-design class diagram
 
 Nice to have:
 (4. Hvis inventory er tomt og han ikke har råd til at købe varer på markedet, så slutter spillet og man går videre til highscore)
