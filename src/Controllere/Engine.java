@@ -28,11 +28,9 @@ public class Engine implements EngineInterface {
     private Country tempCountry;
     private final int DAY_CYCLE = 20;
     private final double START_CREDITS = 5000.00;
-    
     private int day;
     private List<Player> playerList;
-    
-    
+
     Random random;
 
     public Engine() {
@@ -42,7 +40,6 @@ public class Engine implements EngineInterface {
         playerList = new ArrayList<>();
         events = new ArrayList<>();
         inv = new HashMap();
-       
         day = DAY_CYCLE;
     }
 
@@ -64,24 +61,37 @@ public class Engine implements EngineInterface {
     public String getActiveCountry() {
         return activeCountry;
     }
-    
+
     @Override
-    public void addToInventory(Drug drugInput){
+    public void addToInventory(Drug drugInput) {
         Drug drug = drugInput;
         String key = drug.getName();
-        if(inv.containsKey(key)){
+        if (inv.containsKey(key)) {
             Drug temp = inv.get(key);
             inv.remove(key);
-            temp.setModifiedAvail(temp.getModifiedAvail()+1);
-            inv.put(temp.getName(),temp);
+            temp.setModifiedAvail(temp.getModifiedAvail() + 1);
+            inv.put(temp.getName(), temp);
         } else {
             inv.put(key, drug);
         }
-        
-        
     }
+
     @Override
-    public Drug getInventoryDrug(String key){
+    public void removeFromInventory(String input) {
+        String key = input;
+        if (inv.containsKey(key)) {
+            Drug temp = inv.get(key);
+            inv.remove(key);
+            temp.setModifiedAvail(temp.getModifiedAvail() - 1);
+            inv.put(key, temp);
+            if (temp.getModifiedAvail() == 0) {
+                inv.remove(key);
+            }
+        }
+    }
+
+    @Override
+    public Drug getInventoryDrug(String key) {
         Drug inventoryDrug = inv.get(key);
         return inventoryDrug;
     }
@@ -96,47 +106,43 @@ public class Engine implements EngineInterface {
             drug.setModifiedPrice(calculatePrice(drug.getBasePrice()));
             int goldenNumber = (int) ((Math.random() * 100) + 1);
             randomUpOrDown = random.nextInt(2);
-            if(goldenNumber >= 1 && goldenNumber <= drug.getGoldenNumber()){
-                if(randomUpOrDown == 1){
+            if (goldenNumber >= 1 && goldenNumber <= drug.getGoldenNumber()) {
+                if (randomUpOrDown == 1) {
                     drug.setModifiedPrice(drug.getModifiedPrice() * 10);
                 } else {
                     drug.setModifiedPrice(drug.getModifiedPrice() / 10);
                 }
             }
             drug.setModifiedAvail(calculateAvailability(drug.getBaseAvail()));
-            
+
         }
         countries.put(tempCountry.getName(), tempCountry);
 
         return tempMap;
 
     }
-    
+
     private List createEvents() {
         Event event1 = new Event("customAuthority", "You are captured by the Custom Authority", 5, 0.10, 0.00, 0.50);
         events.add(event1);
-        
-        
-        
-        
+
         return events;
     }
-    
+
     @Override
     public List getEvents() {
         List<String> tempArray = new ArrayList();
         for (Event event : events) {
             Random random = new Random();
-            int prob = random.nextInt(100)+1;
+            int prob = random.nextInt(100) + 1;
             if (prob <= event.getProbability()) {
                 tempArray.add(event.getDescription());
-                
-                
+
             }
         }
         return tempArray;
     }
-    
+
     @Override
     public void createPlayer(String input1, double input2) {
         player = new Player(input1, input2);
@@ -184,22 +190,22 @@ public class Engine implements EngineInterface {
     public double getCredits() {
         return player.getCredits();
     }
-    
-    @Override 
+
+    @Override
     public double getStartCredits() {
         return START_CREDITS;
     }
-    
+
     @Override
     public Player getPlayer() {
         return player;
-        
+
     }
-    
+
     @Override
     public void addPlayer() {
         playerList.add(player);
-        
+
     }
 
     @Override
@@ -214,11 +220,5 @@ public class Engine implements EngineInterface {
         Collections.sort(playerList);
         return playerList;
     }
-
-    
-  
-
-   
-
 
 }
