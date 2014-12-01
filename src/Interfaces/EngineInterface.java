@@ -3,9 +3,11 @@
  */
 package Interfaces;
 
+import Entities.Drug;
 import Entities.Player;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 
 public interface EngineInterface  {
@@ -19,11 +21,15 @@ public interface EngineInterface  {
     
     public String getActiveCountry();
     
-    public List travel();
+    public Map travel();
     
     public List getEvents();
     
     public ArrayList getCountries();
+    
+    public void addToInventory(Drug drugInput);
+    
+    public Drug getInventoryDrug(String key);
     
     public void createPlayer(String input1, double input2);
     

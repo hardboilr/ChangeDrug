@@ -12,6 +12,7 @@ import Entities.FileHandler;
 import Interfaces.EngineInterface;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -19,6 +20,7 @@ import java.util.Random;
 public class Engine implements EngineInterface {
 
     private Map<String, Country> countries;
+    private Map<String, Drug> inv;
     private List<Event> events;
     private Player player;
     private String activeCountry;
@@ -39,6 +41,7 @@ public class Engine implements EngineInterface {
         activeCountry = "Denmark";
         playerList = new ArrayList<>();
         events = new ArrayList<>();
+        inv = new HashMap();
        
         day = DAY_CYCLE;
     }
@@ -61,15 +64,35 @@ public class Engine implements EngineInterface {
     public String getActiveCountry() {
         return activeCountry;
     }
+    
+    @Override
+    public void addToInventory(Drug drugInput){
+        Drug drug = drugInput;
+        String key = drug.getName();
+        if(inv.containsKey(key)){
+            Drug temp = inv.get(key);
+            inv.remove(key);
+            temp.setModifiedAvail(temp.getModifiedAvail()+1);
+            inv.put(temp.getName(),temp);
+        } else {
+            inv.put(key, drug);
+        }
+        
+        
+    }
+    @Override
+    public Drug getInventoryDrug(String key){
+        Drug inventoryDrug = inv.get(key);
+        return inventoryDrug;
+    }
 
     @Override
-    public List travel() {
+    public Map travel() {
         tempCountry = (Country) countries.get(activeCountry);
-        System.out.println(tempCountry);
-        List<Drug> tempList = tempCountry.getDrugs();
+        Map<String, Drug> tempMap = tempCountry.getDrugs();
         countries.remove(activeCountry);
 
-        for (Drug drug : tempList) {
+        for (Drug drug : tempMap.values()) {
             drug.setModifiedPrice(calculatePrice(drug.getBasePrice()));
             int goldenNumber = (int) ((Math.random() * 100) + 1);
             randomUpOrDown = random.nextInt(2);
@@ -81,10 +104,11 @@ public class Engine implements EngineInterface {
                 }
             }
             drug.setModifiedAvail(calculateAvailability(drug.getBaseAvail()));
+            
         }
-
         countries.put(tempCountry.getName(), tempCountry);
-        return tempList;
+
+        return tempMap;
 
     }
     

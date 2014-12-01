@@ -11,12 +11,14 @@ import java.awt.Color;
 import java.awt.Image;
 import java.text.DecimalFormat;
 import java.util.List;
+import java.util.Map;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.UIDefaults;
 import javax.swing.table.DefaultTableModel;
 
 public class GUI_Main extends javax.swing.JFrame {
+    private Map<String, Drug> marketMap;
 
     //Images
     private final ImageIcon selectionArrow_right_pressed_icon;
@@ -46,6 +48,7 @@ public class GUI_Main extends javax.swing.JFrame {
         initComponents();
         this.setLocationRelativeTo(null); //place window in center of screen
         engine = new Engine();
+        marketMap = engine.travel();
         jList_countries.setModel(listmodel);
         prepareRound();
         setLocationText();
@@ -101,22 +104,19 @@ public class GUI_Main extends javax.swing.JFrame {
 
     private void prepareRound() {
     //---------------------------------------------
-    //Fill [jList_countries]-list with countries 
-    //fill [jTable_market]-table with drugs
-    //---------------------------------------------
+        //Fill [jList_countries]-list with countries 
+        //fill [jTable_market]-table with drugs
+        //---------------------------------------------
 
-        
         List<Event> eventList = engine.getEvents();
         if (eventList.size() > 0) {
-        for (Event event : eventList) {
-            jTextArea_event.setText(event.getDescription());
-                        
+            for (Event event : eventList) {
+                jTextArea_event.setText(event.getDescription());
+
+            }
+
         }
-        
-            
-        }
-        
-        
+
         //fill country list
         listmodel.clear();
         for (int i = 0; i < engine.getCountries().size(); i++) {
@@ -126,16 +126,18 @@ public class GUI_Main extends javax.swing.JFrame {
 
         // fill market table
         ((DefaultTableModel) jTable_market.getModel()).setRowCount(0);
-        List<Drug> tempList = engine.travel();
-        for (int i = 0; i < tempList.size(); i++) {
-            Drug drug = tempList.get(i);
+        
+        int count = 0;
+        for (Drug drug : marketMap.values()) {
             String name = drug.getName();
             Double price = drug.getModifiedPrice();
             avail = drug.getModifiedAvail();
+
             ((DefaultTableModel) jTable_market.getModel()).addRow(new Object[]{});
-            jTable_market.setValueAt(name, i, 0);
-            jTable_market.setValueAt(avail, i, 1);
-            jTable_market.setValueAt(price, i, 2);
+            jTable_market.setValueAt(name, count, 0);
+            jTable_market.setValueAt(avail, count, 1);
+            jTable_market.setValueAt(price, count, 2);
+            count++;
         }
     }
 
@@ -192,36 +194,48 @@ public class GUI_Main extends javax.swing.JFrame {
         double sufficiantCredits;
         price = 0;
         int add = 1;
+        Drug selectedDrug;
         try {
             marketDrug = (String) jTable_market.getValueAt(row, 0);
-            int qty = (int) jTable_market.getValueAt(row, 1);
-            price = (double) jTable_market.getValueAt(row, 2);
-            subtract = qty - 1;
+            selectedDrug = marketMap.get(marketDrug);
+            int qty = selectedDrug.getModifiedAvail();
+            price = selectedDrug.getModifiedPrice();
+            subtract = selectedDrug.getModifiedAvail() - 1;
         } catch (ArrayIndexOutOfBoundsException ex) {
             sufficiantCredits = -1.00;
         }
 
         sufficiantCredits = engine.getCredits() - price;
+        
         if ((sufficiantCredits >= 0)) { //sufficiant credits
+            marketMap.get(marketDrug).setModifiedAvail(subtract);
             jTable_market.setValueAt(subtract, row, 1); //withdraw 1 from markedet qty 
+            Drug drug = new Drug(marketDrug,0,price,0,add,0);
+            engine.addToInventory(drug);
+            Drug addedDrug = engine.getInventoryDrug(marketDrug);
+            String invName = addedDrug.getName();
+            int invQty = addedDrug.getModifiedAvail();
+            double invPrice = addedDrug.getModifiedPrice();
+            
             if (jTable_inventory.getRowCount() == 0) { //hvis tabel er tom i inv, tilføjes en række.
                 ((DefaultTableModel) jTable_inventory.getModel()).addRow(new Object[]{});
-                jTable_inventory.setValueAt(marketDrug, 0, 0);
-                jTable_inventory.setValueAt(add, 0, 1);
-                jTable_inventory.setValueAt(price, 0, 2);
+                jTable_inventory.setValueAt(invName, 0, 0);
+                jTable_inventory.setValueAt(invQty, 0, 1);
+                jTable_inventory.setValueAt(invPrice, 0, 2);
+                
             } else {
                 boolean drugExist = false;
                 for (int i = 0; i < jTable_inventory.getRowCount(); i++) {
                     String inventoryDrug = (String) jTable_inventory.getValueAt(i, 0);
-                    if (marketDrug.equals(inventoryDrug)) { //do we already have the drug?
+                    if (invName.equals(inventoryDrug)) { //do we already have the drug?
                         drugExist = true;
-                        int newQty = (int) jTable_inventory.getValueAt(i, 1) + 1;
-                        jTable_inventory.setValueAt(newQty, i, 1);
+                        
+                        jTable_inventory.setValueAt(invQty, i, 1);
                         //set new average price
                         double currentInventoryPrice = (double) jTable_inventory.getValueAt(i, 2);
                         int currentQuantity = (int) jTable_inventory.getValueAt(i, 1);
                         double newAveragePrice = ((currentInventoryPrice * currentQuantity)
-                                + (price * 1)) / (currentQuantity + 1);
+                                + (invPrice * 1)) / (currentQuantity + 1);
                         jTable_inventory.setValueAt(newAveragePrice, i, 2);
                         break;
                     }
@@ -230,9 +244,9 @@ public class GUI_Main extends javax.swing.JFrame {
 
                     int rowPosition = jTable_inventory.getRowCount();
                     ((DefaultTableModel) jTable_inventory.getModel()).addRow(new Object[]{});
-                    jTable_inventory.setValueAt(marketDrug, rowPosition, 0);
-                    jTable_inventory.setValueAt(add, rowPosition, 1);
-                    jTable_inventory.setValueAt(price, rowPosition, 2);
+                    jTable_inventory.setValueAt(invName, rowPosition, 0);
+                    jTable_inventory.setValueAt(invQty, rowPosition, 1);
+                    jTable_inventory.setValueAt(invPrice, rowPosition, 2);
                 }
             }
             if (subtract == 0) {
