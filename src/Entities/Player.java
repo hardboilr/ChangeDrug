@@ -37,7 +37,7 @@ public class Player implements Comparable {
     }
     
     public void setDays(int input) {
-        days = days + input;
+        days = days - input;
     }
 
     public String getName() {

@@ -5,12 +5,15 @@ package Boundaries;
 
 import Controllere.Engine;
 import Entities.Drug;
+import Entities.Event;
 import Interfaces.EngineInterface;
+import java.awt.Color;
 import java.awt.Image;
 import java.text.DecimalFormat;
 import java.util.List;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
+import javax.swing.UIDefaults;
 import javax.swing.table.DefaultTableModel;
 
 public class GUI_Main extends javax.swing.JFrame {
@@ -34,22 +37,22 @@ public class GUI_Main extends javax.swing.JFrame {
     private int nextImg;
     private int avail;
     private double price;
-    
+
     private EngineInterface engine;
     private DefaultListModel listmodel = new DefaultListModel();
-    private DecimalFormat doubleCreditFormat;    
-    
+    private DecimalFormat doubleCreditFormat;
+
     public GUI_Main() {
         initComponents();
         this.setLocationRelativeTo(null); //place window in center of screen
         engine = new Engine();
         jList_countries.setModel(listmodel);
-        prepareGame();
+        prepareRound();
         setLocationText();
         formatTables();
         engine.loadPlayers("players.txt");
-        doubleCreditFormat = new DecimalFormat("0.00");        
-        
+        doubleCreditFormat = new DecimalFormat("0.00");
+
         nextImg = 0;
         //init icons
         selectionArrow_right_pressed_icon = new ImageIcon("./src/art/gui/selctionArrow_right_pressed.png");
@@ -72,11 +75,8 @@ public class GUI_Main extends javax.swing.JFrame {
         jLabel_selectionRight.setVisible(false);
         jLabel_name.setVisible(false);
         jTextField_inputName.setVisible(false);
-        jLabel_life.setVisible(false);
-        jLabel_daysLeft.setVisible(false);
         jLabel_money.setVisible(false);
         jButton_confirm.setVisible(false);
-        
 
         //deactivate buttons
         jButton_travel.setEnabled(false);
@@ -84,21 +84,40 @@ public class GUI_Main extends javax.swing.JFrame {
         jButton_sell.setEnabled(false);
         jButton_bulkBuy.setEnabled(false);
         jButton_bulkSell.setEnabled(false);
+
+        //setup progressBars
+        jProgressBar_days.setVisible(false);
+        jProgressBar_life.setVisible(false);
+
     }
-    
+
     private void setLocationText() {
-    //---------------------------------------------------------
+        //---------------------------------------------------------
         //Updates the [jLabel_location]-label with current country
         //---------------------------------------------------------
         jLabel_location.setText("Location: " + engine.getActiveCountry().toUpperCase().charAt(0)
                 + engine.getActiveCountry().substring(1));
     }
-    
-    private void prepareGame() {
+
+    private void prepareRound() {
     //---------------------------------------------
-        //Fill [jList_countries]-list with countries 
-        //fill [jTable_market]-table with drugs
-        //---------------------------------------------
+    //Fill [jList_countries]-list with countries 
+    //fill [jTable_market]-table with drugs
+    //---------------------------------------------
+
+        
+        List<Event> eventList = engine.getEvents();
+        if (eventList.size() > 0) {
+        for (Event event : eventList) {
+            jTextArea_event.setText(event.getDescription());
+                        
+        }
+        
+            
+        }
+        
+        
+        //fill country list
         listmodel.clear();
         for (int i = 0; i < engine.getCountries().size(); i++) {
             String country = (String) engine.getCountries().get(i);
@@ -119,9 +138,9 @@ public class GUI_Main extends javax.swing.JFrame {
             jTable_market.setValueAt(price, i, 2);
         }
     }
-    
+
     private void changeCharacterIcon() {
-    //------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------
         //Looks at value of [nextImg]-int and changes [jLabel_characterPic]-label accordingly
         //------------------------------------------------------------------------------------
         switch (nextImg) {
@@ -158,9 +177,9 @@ public class GUI_Main extends javax.swing.JFrame {
                 break;
         }
     }
-    
+
     private boolean buy() {
-    //------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------
         //Looks at data in selected row in [jTable_market]-table
         //If player has enough credits, then transfer 1 quantity of market drug to inventory
         //Calculates new avg. price of particular drug in inventory
@@ -174,17 +193,16 @@ public class GUI_Main extends javax.swing.JFrame {
         price = 0;
         int add = 1;
         try {
-        marketDrug = (String) jTable_market.getValueAt(row, 0);
-        int qty = (int) jTable_market.getValueAt(row, 1);
-        price = (double) jTable_market.getValueAt(row, 2);
-        subtract = qty - 1;
-        }
-        catch (ArrayIndexOutOfBoundsException ex) {
+            marketDrug = (String) jTable_market.getValueAt(row, 0);
+            int qty = (int) jTable_market.getValueAt(row, 1);
+            price = (double) jTable_market.getValueAt(row, 2);
+            subtract = qty - 1;
+        } catch (ArrayIndexOutOfBoundsException ex) {
             sufficiantCredits = -1.00;
         }
-        
+
         sufficiantCredits = engine.getCredits() - price;
-        if ((engine.getCredits() - price >= 0)) { //sufficiant credits
+        if ((sufficiantCredits >= 0)) { //sufficiant credits
             jTable_market.setValueAt(subtract, row, 1); //withdraw 1 from markedet qty 
             if (jTable_inventory.getRowCount() == 0) { //hvis tabel er tom i inv, tilføjes en række.
                 ((DefaultTableModel) jTable_inventory.getModel()).addRow(new Object[]{});
@@ -225,9 +243,9 @@ public class GUI_Main extends javax.swing.JFrame {
         }
         return false;
     }
-    
+
     private boolean sell() {
-    //----------------------------------------------------------------
+        //----------------------------------------------------------------
         //Looks at data in selected row in [jTable_inventory]-table
         //Transfer 1 quantity of inventory drug to market
         //Creates a new row in market if particular drug does not exist
@@ -237,15 +255,14 @@ public class GUI_Main extends javax.swing.JFrame {
         String inventoryDrug = "";
         int subtract;
         try {
-        inventoryDrug = (String) jTable_inventory.getValueAt(row, 0);
-        int qty = (int) jTable_inventory.getValueAt(row, 1);
-        price = (double) jTable_inventory.getValueAt(row, 2);
-        subtract = qty - 1;
+            inventoryDrug = (String) jTable_inventory.getValueAt(row, 0);
+            int qty = (int) jTable_inventory.getValueAt(row, 1);
+            price = (double) jTable_inventory.getValueAt(row, 2);
+            subtract = qty - 1;
+        } catch (ArrayIndexOutOfBoundsException ex) {
+            subtract = -1;
         }
-        catch (ArrayIndexOutOfBoundsException ex) {
-        subtract = -1;    
-        }
-        
+
         if (subtract >= 0) {
             jTable_inventory.setValueAt(subtract, row, 1);
             for (int i = 0; i <= jTable_market.getRowCount(); i++) {
@@ -272,9 +289,9 @@ public class GUI_Main extends javax.swing.JFrame {
         }
         return false;
     }
-    
+
     private void autoSell() {
-    //---------------------------------------------------
+        //---------------------------------------------------
         //Runs through all rows in [jTable_inventory]-table
         //Sell every drug in each row to market
         //Add profit to credits
@@ -294,12 +311,12 @@ public class GUI_Main extends javax.swing.JFrame {
             }
         }
     }
-    
+
     private void formatTables() {
         jTable_market.setSelectionMode(0);
         jTable_inventory.setSelectionMode(0);
     }
-    
+
     private void performBuy() {
         jTable_inventory.clearSelection();
         if (buy() == true) {
@@ -307,13 +324,29 @@ public class GUI_Main extends javax.swing.JFrame {
             jLabel_money.setText(doubleCreditFormat.format(engine.getCredits()) + " $");
         }
     }
-    
+
     private void performSell() {
         jTable_market.clearSelection();
         if (sell() == true) {
             engine.calculateCredits(price);
             jLabel_money.setText(doubleCreditFormat.format(engine.getCredits()) + " $");
         }
+    }
+
+    private void setLife(int input) {
+        int life = engine.getPlayer().getLife();
+        int damage = input;
+        engine.getPlayer().setLife(life - damage);
+        int newLife = engine.getPlayer().getLife();
+        jProgressBar_life.setValue(newLife);
+        jProgressBar_life.setString(newLife + "% health");
+    }
+
+    private void setDays(int input) {
+        engine.getPlayer().setDays(input);
+        int newDay = engine.getPlayer().getDays();
+        jProgressBar_days.setValue(newDay);
+        jProgressBar_days.setString(newDay + " days left");
     }
 
     /**
@@ -332,15 +365,15 @@ public class GUI_Main extends javax.swing.JFrame {
         jLabel_TEXT_info = new javax.swing.JLabel();
         jLabel_TEXT_name = new javax.swing.JLabel();
         jLabel_name = new javax.swing.JLabel();
-        jLabel_TEXT_Life = new javax.swing.JLabel();
-        jLabel_life = new javax.swing.JLabel();
         jLabel_TEXT_money = new javax.swing.JLabel();
         jLabel_money = new javax.swing.JLabel();
         jLabel_selectionRight = new javax.swing.JLabel();
         jLabel_selectionLeft = new javax.swing.JLabel();
-        jLabel_TEXT_DaysLeft = new javax.swing.JLabel();
-        jLabel_daysLeft = new javax.swing.JLabel();
         jTextField_inputName = new javax.swing.JTextField();
+        jProgressBar_life = new javax.swing.JProgressBar();
+        jLabel_TEXT_location = new javax.swing.JLabel();
+        jLabel_location = new javax.swing.JLabel();
+        jProgressBar_days = new javax.swing.JProgressBar();
         jButton_newGame = new javax.swing.JButton();
         jPanel_market = new javax.swing.JPanel();
         jScrollPane_market = new javax.swing.JScrollPane();
@@ -351,16 +384,20 @@ public class GUI_Main extends javax.swing.JFrame {
         jTable_inventory = new javax.swing.JTable();
         jLabel_TEXT_market = new javax.swing.JLabel();
         jPanel_location = new javax.swing.JPanel();
-        jLabel_location = new javax.swing.JLabel();
+        jButton_travel = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTable1 = new javax.swing.JTable();
+        jLabel1 = new javax.swing.JLabel();
         jScrollPane_countries = new javax.swing.JScrollPane();
         jList_countries = new javax.swing.JList();
-        jButton_travel = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         jButton_buy = new javax.swing.JButton();
         jButton_sell = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jButton_bulkSell = new javax.swing.JButton();
         jButton_bulkBuy = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jTextArea_event = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Thug Life 0.1");
@@ -377,7 +414,7 @@ public class GUI_Main extends javax.swing.JFrame {
                 jButton_highscoreActionPerformed(evt);
             }
         });
-        getContentPane().add(jButton_highscore, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 20, -1, -1));
+        getContentPane().add(jButton_highscore, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 10, -1, -1));
 
         jButton_confirm.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jButton_confirm.setText("Confirm");
@@ -386,7 +423,7 @@ public class GUI_Main extends javax.swing.JFrame {
                 jButton_confirmActionPerformed(evt);
             }
         });
-        getContentPane().add(jButton_confirm, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 20, -1, -1));
+        getContentPane().add(jButton_confirm, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 10, -1, -1));
 
         jPanel_player.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jPanel_player.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -397,39 +434,30 @@ public class GUI_Main extends javax.swing.JFrame {
         jLabel_characterPic.setMaximumSize(new java.awt.Dimension(800, 600));
         jLabel_characterPic.setMinimumSize(new java.awt.Dimension(800, 600));
         jLabel_characterPic.setPreferredSize(new java.awt.Dimension(800, 600));
-        jPanel_player.add(jLabel_characterPic, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 10, 110, 160));
+        jPanel_player.add(jLabel_characterPic, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 10, 110, 160));
 
-        jLabel_TEXT_info.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jLabel_TEXT_info.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel_TEXT_info.setText("Info");
         jPanel_player.add(jLabel_TEXT_info, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, -1, -1));
 
-        jLabel_TEXT_name.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabel_TEXT_name.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel_TEXT_name.setText("Name: ");
-        jPanel_player.add(jLabel_TEXT_name, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 50, -1, -1));
+        jPanel_player.add(jLabel_TEXT_name, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 30, -1, -1));
 
-        jLabel_name.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabel_name.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel_name.setText("Hardboilr");
         jLabel_name.setPreferredSize(new java.awt.Dimension(70, 20));
-        jPanel_player.add(jLabel_name, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 50, 130, 30));
+        jPanel_player.add(jLabel_name, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 20, 130, 30));
 
-        jLabel_TEXT_Life.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        jLabel_TEXT_Life.setText("Life:");
-        jLabel_TEXT_Life.setToolTipText("");
-        jPanel_player.add(jLabel_TEXT_Life, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 80, -1, -1));
-
-        jLabel_life.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        jLabel_life.setText("55%");
-        jPanel_player.add(jLabel_life, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 80, -1, -1));
-
-        jLabel_TEXT_money.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabel_TEXT_money.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel_TEXT_money.setText("Money:");
         jLabel_TEXT_money.setToolTipText("");
-        jPanel_player.add(jLabel_TEXT_money, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 140, -1, 20));
+        jPanel_player.add(jLabel_TEXT_money, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 120, -1, 20));
 
-        jLabel_money.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabel_money.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel_money.setText("5000");
         jLabel_money.setToolTipText("");
-        jPanel_player.add(jLabel_money, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 140, -1, 20));
+        jPanel_player.add(jLabel_money, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 120, -1, 20));
 
         jLabel_selectionRight.setIcon(new javax.swing.ImageIcon(getClass().getResource("/art/gui/selctionArrow_right.png"))); // NOI18N
         jLabel_selectionRight.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -443,7 +471,7 @@ public class GUI_Main extends javax.swing.JFrame {
                 jLabel_selectionRightMouseReleased(evt);
             }
         });
-        jPanel_player.add(jLabel_selectionRight, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 80, -1, -1));
+        jPanel_player.add(jLabel_selectionRight, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 70, -1, -1));
 
         jLabel_selectionLeft.setIcon(new javax.swing.ImageIcon(getClass().getResource("/art/gui/selctionArrow_left.png"))); // NOI18N
         jLabel_selectionLeft.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -457,23 +485,29 @@ public class GUI_Main extends javax.swing.JFrame {
                 jLabel_selectionLeftMouseReleased(evt);
             }
         });
-        jPanel_player.add(jLabel_selectionLeft, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 80, -1, -1));
+        jPanel_player.add(jLabel_selectionLeft, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 70, -1, -1));
 
-        jLabel_TEXT_DaysLeft.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        jLabel_TEXT_DaysLeft.setText("Days left: ");
-        jLabel_TEXT_DaysLeft.setToolTipText("");
-        jPanel_player.add(jLabel_TEXT_DaysLeft, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 110, -1, 20));
-
-        jLabel_daysLeft.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        jLabel_daysLeft.setText("14");
-        jLabel_daysLeft.setToolTipText("");
-        jPanel_player.add(jLabel_daysLeft, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 110, -1, 20));
-
-        jTextField_inputName.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jTextField_inputName.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jTextField_inputName.setPreferredSize(new java.awt.Dimension(70, 20));
-        jPanel_player.add(jTextField_inputName, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 50, 130, 30));
+        jPanel_player.add(jTextField_inputName, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 20, 130, 30));
 
-        getContentPane().add(jPanel_player, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 60, 420, 180));
+        jProgressBar_life.setBackground(new java.awt.Color(204, 0, 0));
+        jProgressBar_life.setName(""); // NOI18N
+        jProgressBar_life.setStringPainted(true);
+        jPanel_player.add(jProgressBar_life, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 60, -1, 20));
+
+        jLabel_TEXT_location.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel_TEXT_location.setText("Location:");
+        jPanel_player.add(jLabel_TEXT_location, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 150, -1, -1));
+
+        jLabel_location.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel_location.setText("current location");
+        jPanel_player.add(jLabel_location, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 150, -1, -1));
+
+        jProgressBar_days.setStringPainted(true);
+        jPanel_player.add(jProgressBar_days, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 90, -1, 20));
+
+        getContentPane().add(jPanel_player, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 40, 420, 180));
 
         jButton_newGame.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jButton_newGame.setText("New game");
@@ -482,7 +516,7 @@ public class GUI_Main extends javax.swing.JFrame {
                 jButton_newGameActionPerformed(evt);
             }
         });
-        getContentPane().add(jButton_newGame, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 20, -1, -1));
+        getContentPane().add(jButton_newGame, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 10, -1, -1));
 
         jPanel_market.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jPanel_market.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -499,9 +533,16 @@ public class GUI_Main extends javax.swing.JFrame {
             Class[] types = new Class [] {
                 java.lang.String.class, java.lang.Integer.class, java.lang.Double.class
             };
+            boolean[] canEdit = new boolean [] {
+                false, false, false
+            };
 
             public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
             }
         });
         jTable_market.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -515,13 +556,13 @@ public class GUI_Main extends javax.swing.JFrame {
             jTable_market.getColumnModel().getColumn(0).setPreferredWidth(100);
         }
 
-        jPanel_market.add(jScrollPane_market, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 40, 280, 260));
+        jPanel_market.add(jScrollPane_market, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 40, 280, 220));
 
         jLabel_TEXT_market1.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         jLabel_TEXT_market1.setText("Market");
         jPanel_market.add(jLabel_TEXT_market1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, -1, -1));
 
-        getContentPane().add(jPanel_market, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 260, 310, 310));
+        getContentPane().add(jPanel_market, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 300, 310, 270));
 
         jPanel_inventory.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jPanel_inventory.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -538,9 +579,16 @@ public class GUI_Main extends javax.swing.JFrame {
             Class[] types = new Class [] {
                 java.lang.String.class, java.lang.Integer.class, java.lang.Double.class
             };
+            boolean[] canEdit = new boolean [] {
+                false, false, false
+            };
 
             public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
             }
         });
         jTable_inventory.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -553,30 +601,16 @@ public class GUI_Main extends javax.swing.JFrame {
             jTable_inventory.getColumnModel().getColumn(0).setPreferredWidth(100);
         }
 
-        jPanel_inventory.add(jScrollPane_inventory, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 40, 300, 260));
+        jPanel_inventory.add(jScrollPane_inventory, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 40, 300, 220));
 
         jLabel_TEXT_market.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         jLabel_TEXT_market.setText("Inventory");
         jPanel_inventory.add(jLabel_TEXT_market, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, -1, -1));
 
-        getContentPane().add(jPanel_inventory, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 260, 310, 310));
+        getContentPane().add(jPanel_inventory, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 300, 310, 270));
 
         jPanel_location.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jPanel_location.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        jLabel_location.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        jLabel_location.setText("Location");
-        jPanel_location.add(jLabel_location, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, -1, -1));
-
-        jList_countries.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jList_countries.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "Denmark", "Columbia" };
-            public int getSize() { return strings.length; }
-            public Object getElementAt(int i) { return strings[i]; }
-        });
-        jScrollPane_countries.setViewportView(jList_countries);
-
-        jPanel_location.add(jScrollPane_countries, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 40, 300, 120));
 
         jButton_travel.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jButton_travel.setText("Go!");
@@ -588,7 +622,48 @@ public class GUI_Main extends javax.swing.JFrame {
         });
         jPanel_location.add(jButton_travel, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 180, -1, -1));
 
-        getContentPane().add(jPanel_location, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 20, 310, 220));
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Country", "Ticketprice"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.Integer.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane1.setViewportView(jTable1);
+
+        jPanel_location.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 30, 200, 120));
+
+        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabel1.setText("Airport");
+        jPanel_location.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, -1, -1));
+
+        jList_countries.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jList_countries.setModel(new javax.swing.AbstractListModel() {
+            String[] strings = { "Denmark", "Columbia" };
+            public int getSize() { return strings.length; }
+            public Object getElementAt(int i) { return strings[i]; }
+        });
+        jScrollPane_countries.setViewportView(jList_countries);
+
+        jPanel_location.add(jScrollPane_countries, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 160, 160, 50));
+
+        getContentPane().add(jPanel_location, new org.netbeans.lib.awtextra.AbsoluteConstraints(520, 20, 260, 220));
 
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -613,7 +688,7 @@ public class GUI_Main extends javax.swing.JFrame {
         });
         jPanel1.add(jButton_sell, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 60, -1, 40));
 
-        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 270, 100, 110));
+        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 320, 100, 110));
 
         jPanel2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -636,7 +711,13 @@ public class GUI_Main extends javax.swing.JFrame {
         });
         jPanel2.add(jButton_bulkBuy, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 60, -1, 40));
 
-        getContentPane().add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 400, 100, 110));
+        getContentPane().add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 450, 100, 110));
+
+        jTextArea_event.setColumns(20);
+        jTextArea_event.setRows(5);
+        jScrollPane2.setViewportView(jTextArea_event);
+
+        getContentPane().add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 230, 420, 60));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -644,9 +725,9 @@ public class GUI_Main extends javax.swing.JFrame {
     private void jButton_confirmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_confirmActionPerformed
         String name = jTextField_inputName.getText();
         name = name.replaceAll(" ", "").toLowerCase();
-        
+
         if (!name.isEmpty()) {
-            
+
             engine.createPlayer(name, engine.getStartCredits());
             jButton_buy.setEnabled(true);
             jButton_sell.setEnabled(true);
@@ -655,10 +736,6 @@ public class GUI_Main extends javax.swing.JFrame {
             jButton_travel.setEnabled(true);
             jLabel_name.setText(name);
             jLabel_name.setVisible(true);
-            jLabel_daysLeft.setText(engine.getPlayer().getDays() + "");
-            jLabel_daysLeft.setVisible(true);
-            jLabel_life.setText(engine.getPlayer().getLife() + "");
-            jLabel_life.setVisible(true);
             jLabel_money.setText(doubleCreditFormat.format(engine.getCredits()) + " $");
             jLabel_money.setVisible(true);
             jTextField_inputName.setVisible(false);
@@ -666,15 +743,19 @@ public class GUI_Main extends javax.swing.JFrame {
             jLabel_selectionRight.setVisible(false);
             jButton_confirm.setVisible(false);
             jButton_newGame.setVisible(false);
+            jProgressBar_days.setMinimum(0);
+            jProgressBar_days.setMaximum(engine.getPlayer().getDays());
+            setLife(0);
+            setDays(0);
+            jProgressBar_days.setVisible(true);
+            jProgressBar_life.setVisible(true);
         }
     }//GEN-LAST:event_jButton_confirmActionPerformed
 
     private void jButton_newGameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_newGameActionPerformed
         jTextField_inputName.setText("");
         jLabel_name.setText("");
-        jLabel_life.setText("");
         jLabel_money.setText("");
-        jLabel_daysLeft.setText("");
         jTextField_inputName.setVisible(true);
         jLabel_TEXT_info.setText("Input name:");
         jLabel_selectionLeft.setVisible(true);
@@ -687,15 +768,14 @@ public class GUI_Main extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton_newGameActionPerformed
 
     private void jButton_travelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_travelActionPerformed
-        engine.getPlayer().setDays(-1);
+        setDays(1);
         int currentDay = engine.getPlayer().getDays();
         if (currentDay >= 0) {
-            jLabel_daysLeft.setText(engine.getPlayer().getDays() + "");
             int index = jList_countries.getSelectedIndex();
             engine.setActiveCountry((String) listmodel.getElementAt(index));
             setLocationText();
             engine.travel();
-            prepareGame();
+            prepareRound();
         }
         if (currentDay == 0) {
             jButton_travel.setText("Cash in!");
@@ -742,7 +822,7 @@ public class GUI_Main extends javax.swing.JFrame {
     private void jLabel_selectionRightMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel_selectionRightMousePressed
         ++nextImg;
         jLabel_selectionRight.setIcon(selectionArrow_right_pressed_icon);
-        
+
 
     }//GEN-LAST:event_jLabel_selectionRightMousePressed
 
@@ -762,7 +842,7 @@ public class GUI_Main extends javax.swing.JFrame {
     }//GEN-LAST:event_jLabel_selectionLeftMouseReleased
 
     private void jLabel_selectionRightMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel_selectionRightMouseClicked
-        
+
 
     }//GEN-LAST:event_jLabel_selectionRightMouseClicked
 
@@ -778,16 +858,14 @@ public class GUI_Main extends javax.swing.JFrame {
 
     private void jButton_bulkSellActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_bulkSellActionPerformed
         for (int i = 0; i < 10; i++) {
-            System.out.println("Selling in bulk");
             performSell();
-    }
+        }
     }//GEN-LAST:event_jButton_bulkSellActionPerformed
 
     private void jButton_bulkBuyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_bulkBuyActionPerformed
         for (int i = 0; i < 10; i++) {
-            System.out.println("Selling in bulk");
             performBuy();
-    }
+        }
     }//GEN-LAST:event_jButton_bulkBuyActionPerformed
 
     /**
@@ -834,16 +912,14 @@ public class GUI_Main extends javax.swing.JFrame {
     private javax.swing.JButton jButton_newGame;
     private javax.swing.JButton jButton_sell;
     private javax.swing.JButton jButton_travel;
-    private javax.swing.JLabel jLabel_TEXT_DaysLeft;
-    private javax.swing.JLabel jLabel_TEXT_Life;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel_TEXT_info;
+    private javax.swing.JLabel jLabel_TEXT_location;
     private javax.swing.JLabel jLabel_TEXT_market;
     private javax.swing.JLabel jLabel_TEXT_market1;
     private javax.swing.JLabel jLabel_TEXT_money;
     private javax.swing.JLabel jLabel_TEXT_name;
     private javax.swing.JLabel jLabel_characterPic;
-    private javax.swing.JLabel jLabel_daysLeft;
-    private javax.swing.JLabel jLabel_life;
     private javax.swing.JLabel jLabel_location;
     private javax.swing.JLabel jLabel_money;
     private javax.swing.JLabel jLabel_name;
@@ -856,11 +932,17 @@ public class GUI_Main extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel_location;
     private javax.swing.JPanel jPanel_market;
     private javax.swing.JPanel jPanel_player;
+    private javax.swing.JProgressBar jProgressBar_days;
+    private javax.swing.JProgressBar jProgressBar_life;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane_countries;
     private javax.swing.JScrollPane jScrollPane_inventory;
     private javax.swing.JScrollPane jScrollPane_market;
+    private javax.swing.JTable jTable1;
     private javax.swing.JTable jTable_inventory;
     private javax.swing.JTable jTable_market;
+    private javax.swing.JTextArea jTextArea_event;
     private javax.swing.JTextField jTextField_inputName;
     // End of variables declaration//GEN-END:variables
 }

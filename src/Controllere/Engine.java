@@ -7,6 +7,7 @@ import Entities.Player;
 import Entities.World;
 import Entities.Country;
 import Entities.Drug;
+import Entities.Event;
 import Entities.FileHandler;
 import Interfaces.EngineInterface;
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ import java.util.Random;
 public class Engine implements EngineInterface {
 
     private Map<String, Country> countries;
+    private List<Event> events;
     private Player player;
     private String activeCountry;
     private int randomUpOrDown;
@@ -36,6 +38,7 @@ public class Engine implements EngineInterface {
         random = new Random();
         activeCountry = "Denmark";
         playerList = new ArrayList<>();
+        events = new ArrayList<>();
        
         day = DAY_CYCLE;
     }
@@ -83,6 +86,31 @@ public class Engine implements EngineInterface {
         countries.put(tempCountry.getName(), tempCountry);
         return tempList;
 
+    }
+    
+    private List createEvents() {
+        Event event1 = new Event("customAuthority", "You are captured by the Custom Authority", 5, 0.10, 0.00, 0.50);
+        events.add(event1);
+        
+        
+        
+        
+        return events;
+    }
+    
+    @Override
+    public List getEvents() {
+        List<String> tempArray = new ArrayList();
+        for (Event event : events) {
+            Random random = new Random();
+            int prob = random.nextInt(100)+1;
+            if (prob <= event.getProbability()) {
+                tempArray.add(event.getDescription());
+                
+                
+            }
+        }
+        return tempArray;
     }
     
     @Override

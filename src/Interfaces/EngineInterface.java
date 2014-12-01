@@ -21,6 +21,8 @@ public interface EngineInterface  {
     
     public List travel();
     
+    public List getEvents();
+    
     public ArrayList getCountries();
     
     public void createPlayer(String input1, double input2);
