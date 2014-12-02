@@ -8,16 +8,21 @@ public class Player implements Comparable {
     private String name;
     private int life, days;
     private double credits;
+    private final int DAY_CYCLE = 20;
     
     public Player(String input1, double input2) {
         this.name = input1;
         this.life = 100;
         this.credits = input2;
-        this.days = 2;
+        this.days = DAY_CYCLE;
     }
 
     public int getLife() {
         return life;
+    }
+    
+    public void setName(String input) {
+        name = input;
     }
 
     public void setLife(int life) {
@@ -36,8 +41,12 @@ public class Player implements Comparable {
         return days;
     }
     
+    public int getDayCycle() {
+        return DAY_CYCLE;
+    }
+    
     public void setDays(int input) {
-        days = days - input;
+        days = days + input;
     }
 
     public String getName() {

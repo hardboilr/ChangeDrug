@@ -3,7 +3,7 @@
  */
 package Interfaces;
 
-import Entities.Drug;
+import Entities.Product;
 import Entities.Player;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,11 +27,11 @@ public interface EngineInterface  {
     
     public ArrayList getCountries();
     
-    public void addToInventory(Drug drugInput);
+    public void addToInventory(Product drugInput);
     public void subtractFromInventory(String input);
     
     
-    public Drug getInventoryDrug(String key);
+    public Product getInventoryDrug(String key);
     
     public void createPlayer(String input1, double input2);
     
@@ -40,13 +40,13 @@ public interface EngineInterface  {
     //it might be enough to use getPlayer()!
     public double getCredits(); 
     
-    public double getStartCredits();
+//    public double getStartCredits();
     
     public Player getPlayer();
     
     public void addPlayer();
     
-    public void savePlayer(String filename);
+    public void savePlayerToHighscore(String filename);
     
     public List<Player> loadPlayers(String filename);
     

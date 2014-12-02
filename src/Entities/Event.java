@@ -5,7 +5,7 @@ package Entities;
 
 public class Event {
     private final String name, description;
-    private final int probability;
+    private int probability;
     private final double lifeModifier, creditsModifier, drugModifier;
 
     public Event(String nameInput, String descrpInput, int probInput, double lifeModInput, double credModInput, double drugModInput) {
@@ -28,6 +28,11 @@ public class Event {
     public int getProbability() {
         return probability;
     }
+    
+    public void setProbability(int input) {
+        probability = probability + input;
+    }
+    
 
     public double getLifeModifier() {
         return lifeModifier;

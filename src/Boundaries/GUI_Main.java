@@ -4,22 +4,27 @@
 package Boundaries;
 
 import Controllere.Engine;
-import Entities.Drug;
+import Entities.Country;
+import Entities.Product;
 import Entities.Event;
 import Interfaces.EngineInterface;
 import java.awt.Color;
-import java.awt.Image;
 import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Map;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
-import javax.swing.UIDefaults;
+import javax.swing.JScrollBar;
 import javax.swing.table.DefaultTableModel;
 
 public class GUI_Main extends javax.swing.JFrame {
 
-    private Map<String, Drug> marketMap;
+    private Map<String, Product> marketMap;
+
+    private final int typeColumn = 0;
+    private final int nameColumn = 1;
+    private final int qtyColumn = 2;
+    private final int priceColumn = 3;
 
     //Images
     private final ImageIcon selectionArrow_right_pressed_icon;
@@ -49,9 +54,9 @@ public class GUI_Main extends javax.swing.JFrame {
         initComponents();
         this.setLocationRelativeTo(null); //place window in center of screen
         engine = new Engine();
+        engine.createPlayer("", 0.00);
         marketMap = engine.travel();
-        jList_countries.setModel(listmodel);
-        prepareRound();
+        //prepareRound();
         setLocationText();
         formatTables();
         engine.loadPlayers("players.txt");
@@ -108,35 +113,43 @@ public class GUI_Main extends javax.swing.JFrame {
         //Fill [jList_countries]-list with countries 
         //fill [jTable_market]-table with drugs
         //---------------------------------------------
+        marketMap = engine.travel();
+        List<String> eventList = engine.getEvents();
 
-        List<Event> eventList = engine.getEvents();
         if (eventList.size() > 0) {
-            for (Event event : eventList) {
-                jTextArea_event.setText(event.getDescription());
-
+            for (String eventDescrip : eventList) {
+                String descrip = eventDescrip;
+                listmodel.addElement(descrip);
+                jTextArea_eventMessage.append("\n" + descrip);
+                jTextArea_eventMessage.setCaretPosition(jTextArea_eventMessage.getDocument().getLength());
+                updateLife();
             }
-
         }
 
-        //fill country list
-        listmodel.clear();
+        //fill country table
+        ((DefaultTableModel) jTable_airport.getModel()).setRowCount(0);
         for (int i = 0; i < engine.getCountries().size(); i++) {
-            String country = (String) engine.getCountries().get(i);
-            listmodel.addElement(country.toUpperCase().charAt(0) + country.substring(1));
+            Country country = (Country) engine.getCountries().get(i);
+            String countryName = country.getName().toUpperCase().charAt(0) + country.getName().substring(1);
+            double ticketPrice = country.getTicketPrice();
+            ((DefaultTableModel) jTable_airport.getModel()).addRow(new Object[]{});
+            jTable_airport.setValueAt(countryName, i, 0);
+            jTable_airport.setValueAt(ticketPrice, i, 1);
         }
 
         // fill market table
         ((DefaultTableModel) jTable_market.getModel()).setRowCount(0);
         int count = 0;
-        for (Drug drug : marketMap.values()) {
-            String name = drug.getName();
-            Double price = drug.getModifiedPrice();
-            avail = drug.getModifiedAvail();
-
+        for (Product product : marketMap.values()) {
+            String productType = product.getType();
+            String name = product.getName();
+            Double price = product.getModifiedPrice();
+            avail = product.getModifiedAvail();
             ((DefaultTableModel) jTable_market.getModel()).addRow(new Object[]{});
-            jTable_market.setValueAt(name, count, 0);
-            jTable_market.setValueAt(avail, count, 1);
-            jTable_market.setValueAt(price, count, 2);
+            jTable_market.setValueAt(productType, count, typeColumn);
+            jTable_market.setValueAt(name, count, nameColumn);
+            jTable_market.setValueAt(avail, count, qtyColumn);
+            jTable_market.setValueAt(price, count, priceColumn);
             count++;
         }
     }
@@ -189,59 +202,64 @@ public class GUI_Main extends javax.swing.JFrame {
         //Deletes drug from market if qty of particular drug reaches 0
         //------------------------------------------------------------------------------------
         int selectedRow = jTable_market.getSelectedRow();
+        String productType = "";
         String selectedDrugName = "";
         int newMarketQty = 0;
-        double sufficiantCredits;
+        double sufficiantCredits = engine.getCredits() - MarketPrice;;
         MarketPrice = 0;
         int add = 1;
-        Drug marketDrug;
+        Product marketDrug;
         try {
             //-------------------------------------------------------------------
             //get drug name + price from market table + calculate new qty
-            selectedDrugName = (String) jTable_market.getValueAt(selectedRow, 0);
-            newMarketQty = (int) jTable_market.getValueAt(selectedRow, 1) - 1;
-            MarketPrice = (double) jTable_market.getValueAt(selectedRow, 2);
+            productType = (String) jTable_market.getValueAt(selectedRow, typeColumn);
+            selectedDrugName = (String) jTable_market.getValueAt(selectedRow, nameColumn);
+            newMarketQty = (int) jTable_market.getValueAt(selectedRow, qtyColumn) - 1;
+            MarketPrice = (double) jTable_market.getValueAt(selectedRow, priceColumn);
+
             //-------------------------------------------------------------------
         } catch (ArrayIndexOutOfBoundsException ex) {
             sufficiantCredits = -1.00;
         }
-        sufficiantCredits = engine.getCredits() - MarketPrice;
+
         if ((sufficiantCredits >= 0)) { //if we have sufficiant credits
             //-----------------------------------------------------------
             //update market table + create drug + add to player inv
-            jTable_market.setValueAt(newMarketQty, selectedRow, 1);
-            Drug drug = new Drug(selectedDrugName, 0, MarketPrice, 0, add, 0);
+            jTable_market.setValueAt(newMarketQty, selectedRow, qtyColumn);
+            Product drug = new Product(productType, selectedDrugName, 0, MarketPrice, 0, add, 0);
             engine.addToInventory(drug);
             int newInvQty = engine.getInventoryDrug(selectedDrugName).getModifiedAvail();
             //-----------------------------------------------------------
             if (jTable_inventory.getRowCount() == 0) { //is table is empty?
                 ((DefaultTableModel) jTable_inventory.getModel()).addRow(new Object[]{});
-                jTable_inventory.setValueAt(selectedDrugName, 0, 0);
-                jTable_inventory.setValueAt(newInvQty, 0, 1);
-                jTable_inventory.setValueAt(MarketPrice, 0, 2);
+                jTable_inventory.setValueAt(productType, 0, typeColumn);
+                jTable_inventory.setValueAt(selectedDrugName, 0, nameColumn);
+                jTable_inventory.setValueAt(newInvQty, 0, qtyColumn);
+                jTable_inventory.setValueAt(MarketPrice, 0, priceColumn);
 
             } else {
                 boolean drugExist = false; //we have drug 
                 for (int i = 0; i < jTable_inventory.getRowCount(); i++) {
-                    String inventoryDrug = (String) jTable_inventory.getValueAt(i, 0);
+                    String inventoryDrug = (String) jTable_inventory.getValueAt(i, nameColumn);
                     if (selectedDrugName.equals(inventoryDrug)) { //do we already have the drug in the table?
                         drugExist = true;
-                        jTable_inventory.setValueAt(newInvQty, i, 1);
+                        jTable_inventory.setValueAt(newInvQty, i, qtyColumn);
                         //set new average price
-                        double currentInventoryPrice = (double) jTable_inventory.getValueAt(i, 2);
-                        int currentQuantity = (int) jTable_inventory.getValueAt(i, 1);
+                        double currentInventoryPrice = (double) jTable_inventory.getValueAt(i, priceColumn);
+                        int currentQuantity = (int) jTable_inventory.getValueAt(i, qtyColumn);
                         double newAveragePrice = ((currentInventoryPrice * currentQuantity)
                                 + (MarketPrice)) / (currentQuantity + add);
-                        jTable_inventory.setValueAt(newAveragePrice, i, 2);
+                        jTable_inventory.setValueAt(newAveragePrice, i, priceColumn);
                         break;
                     }
                 }
                 if (drugExist == false) { //we do not have the drug in the table);
                     int rowPosition = jTable_inventory.getRowCount();
                     ((DefaultTableModel) jTable_inventory.getModel()).addRow(new Object[]{});
-                    jTable_inventory.setValueAt(selectedDrugName, rowPosition, 0);
-                    jTable_inventory.setValueAt(newInvQty, rowPosition, 1);
-                    jTable_inventory.setValueAt(MarketPrice, rowPosition, 2);
+                    jTable_inventory.setValueAt(productType, rowPosition, typeColumn);
+                    jTable_inventory.setValueAt(selectedDrugName, rowPosition, nameColumn);
+                    jTable_inventory.setValueAt(newInvQty, rowPosition, qtyColumn);
+                    jTable_inventory.setValueAt(MarketPrice, rowPosition, priceColumn);
                 }
             }
             if (newMarketQty == 0) {
@@ -260,41 +278,45 @@ public class GUI_Main extends javax.swing.JFrame {
         //Deletes drug from inventory if qty of particular drug reaches 0
         //----------------------------------------------------------------
         int row = jTable_inventory.getSelectedRow();
+        String productType = "";
         String inventoryDrug = "";
         int newInventoryQty;
         try {
-            inventoryDrug = (String) jTable_inventory.getValueAt(row, 0);
-            newInventoryQty = (int) jTable_inventory.getValueAt(row, 1) - 1;
+            productType = (String) jTable_inventory.getValueAt(row, typeColumn);
+            inventoryDrug = (String) jTable_inventory.getValueAt(row, nameColumn);
+            newInventoryQty = (int) jTable_inventory.getValueAt(row, qtyColumn) - 1;
         } catch (ArrayIndexOutOfBoundsException ex) {
             newInventoryQty = -1;
+            return false;
         }
-
-        if (newInventoryQty >= 0) {
+        Boolean productExists = false;
+        if (newInventoryQty >= 0 && jTable_market.getRowCount() > 0) {
             engine.subtractFromInventory(inventoryDrug);
-            jTable_inventory.setValueAt(newInventoryQty, row, 1);
-            for (int i = 0; i <= jTable_market.getRowCount(); i++) {
-                String marketDrug = (String) jTable_market.getValueAt(i, 0);
-                if (marketDrug == null) {
-                    int add = 1;
-                    jTable_market.setValueAt(inventoryDrug, i, 0);
-                    jTable_market.setValueAt(add, i, 1);
-                    jTable_market.setValueAt(MarketPrice, i, 2);
+            jTable_inventory.setValueAt(newInventoryQty, row, qtyColumn);
+            for (int i = 0; i < jTable_market.getRowCount(); i++) {
+                String marketDrug = (String) jTable_market.getValueAt(i, nameColumn);
+                if (inventoryDrug.equals(marketDrug)) {
+                    int newQty = (int) jTable_market.getValueAt(i, qtyColumn) + 1;
+                    MarketPrice = (double) jTable_market.getValueAt(i, priceColumn);
+                    jTable_market.setValueAt(newQty, i, qtyColumn);
+                    productExists = true;
                     break;
-                } else {
-                    if (inventoryDrug.equals(marketDrug)) {
-                        int newQty = (int) jTable_market.getValueAt(i, 1) + 1;
-                        MarketPrice = (double) jTable_market.getValueAt(i, 2);
-                        jTable_market.setValueAt(newQty, i, 1);
-                        break;
-                    }
                 }
             }
-            if (newInventoryQty == 0) {
-                ((DefaultTableModel) jTable_inventory.getModel()).removeRow(row);
-            }
-            return true;
+        } 
+        if (productExists == false) {
+            int rowIndex = jTable_market.getRowCount();
+            ((DefaultTableModel) jTable_market.getModel()).addRow(new Object[]{});
+            jTable_market.setValueAt(productType, rowIndex, typeColumn);
+            jTable_market.setValueAt(inventoryDrug, rowIndex, nameColumn);
+            jTable_market.setValueAt(1, rowIndex, qtyColumn);
+            jTable_market.setValueAt(marketMap.get(inventoryDrug).getModifiedPrice(), rowIndex, priceColumn);
         }
-        return false;
+
+        if (newInventoryQty == 0) {
+            ((DefaultTableModel) jTable_inventory.getModel()).removeRow(row);
+        }
+        return true;
     }
 
     private void autoSell() {
@@ -340,17 +362,13 @@ public class GUI_Main extends javax.swing.JFrame {
         }
     }
 
-    private void setLife(int input) {
-        int life = engine.getPlayer().getLife();
-        int damage = input;
-        engine.getPlayer().setLife(life - damage);
+    private void updateLife() {
         int newLife = engine.getPlayer().getLife();
         jProgressBar_life.setValue(newLife);
         jProgressBar_life.setString(newLife + "% health");
     }
 
-    private void setDays(int input) {
-        engine.getPlayer().setDays(input);
+    private void updateDays() {
         int newDay = engine.getPlayer().getDays();
         jProgressBar_days.setValue(newDay);
         jProgressBar_days.setString(newDay + " days left");
@@ -378,7 +396,6 @@ public class GUI_Main extends javax.swing.JFrame {
         jLabel_selectionLeft = new javax.swing.JLabel();
         jTextField_inputName = new javax.swing.JTextField();
         jProgressBar_life = new javax.swing.JProgressBar();
-        jLabel_TEXT_location = new javax.swing.JLabel();
         jLabel_location = new javax.swing.JLabel();
         jProgressBar_days = new javax.swing.JProgressBar();
         jButton_newGame = new javax.swing.JButton();
@@ -393,10 +410,8 @@ public class GUI_Main extends javax.swing.JFrame {
         jPanel_location = new javax.swing.JPanel();
         jButton_travel = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        jTable_airport = new javax.swing.JTable();
         jLabel1 = new javax.swing.JLabel();
-        jScrollPane_countries = new javax.swing.JScrollPane();
-        jList_countries = new javax.swing.JList();
         jPanel1 = new javax.swing.JPanel();
         jButton_buy = new javax.swing.JButton();
         jButton_sell = new javax.swing.JButton();
@@ -404,7 +419,7 @@ public class GUI_Main extends javax.swing.JFrame {
         jButton_bulkSell = new javax.swing.JButton();
         jButton_bulkBuy = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTextArea_event = new javax.swing.JTextArea();
+        jTextArea_eventMessage = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Thug Life 0.1");
@@ -503,18 +518,14 @@ public class GUI_Main extends javax.swing.JFrame {
         jProgressBar_life.setStringPainted(true);
         jPanel_player.add(jProgressBar_life, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 60, -1, 20));
 
-        jLabel_TEXT_location.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel_TEXT_location.setText("Location:");
-        jPanel_player.add(jLabel_TEXT_location, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 150, -1, -1));
-
         jLabel_location.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel_location.setText("current location");
-        jPanel_player.add(jLabel_location, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 150, -1, -1));
+        jLabel_location.setText("Location: current location");
+        jPanel_player.add(jLabel_location, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 150, -1, -1));
 
         jProgressBar_days.setStringPainted(true);
         jPanel_player.add(jProgressBar_days, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 90, -1, 20));
 
-        getContentPane().add(jPanel_player, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 40, 420, 180));
+        getContentPane().add(jPanel_player, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 40, 480, 180));
 
         jButton_newGame.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jButton_newGame.setText("New game");
@@ -534,14 +545,14 @@ public class GUI_Main extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Name", "Qty", "Price"
+                "Type", "Name", "Qty", "Price"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.Integer.class, java.lang.Double.class
+                java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Double.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false
+                false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -560,7 +571,7 @@ public class GUI_Main extends javax.swing.JFrame {
         });
         jScrollPane_market.setViewportView(jTable_market);
         if (jTable_market.getColumnModel().getColumnCount() > 0) {
-            jTable_market.getColumnModel().getColumn(0).setPreferredWidth(100);
+            jTable_market.getColumnModel().getColumn(1).setPreferredWidth(100);
         }
 
         jPanel_market.add(jScrollPane_market, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 40, 280, 220));
@@ -580,14 +591,14 @@ public class GUI_Main extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Name", "Qty", "Avg. price"
+                "Type", "Name", "Qty", "Avg. price"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.Integer.class, java.lang.Double.class
+                java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Double.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false
+                false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -605,7 +616,7 @@ public class GUI_Main extends javax.swing.JFrame {
         });
         jScrollPane_inventory.setViewportView(jTable_inventory);
         if (jTable_inventory.getColumnModel().getColumnCount() > 0) {
-            jTable_inventory.getColumnModel().getColumn(0).setPreferredWidth(100);
+            jTable_inventory.getColumnModel().getColumn(1).setPreferredWidth(100);
         }
 
         jPanel_inventory.add(jScrollPane_inventory, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 40, 300, 220));
@@ -627,9 +638,9 @@ public class GUI_Main extends javax.swing.JFrame {
                 jButton_travelActionPerformed(evt);
             }
         });
-        jPanel_location.add(jButton_travel, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 180, -1, -1));
+        jPanel_location.add(jButton_travel, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 160, 60, 40));
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        jTable_airport.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -652,23 +663,13 @@ public class GUI_Main extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(jTable_airport);
 
-        jPanel_location.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 30, 200, 120));
+        jPanel_location.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 30, 220, 120));
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jLabel1.setText("Airport");
         jPanel_location.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, -1, -1));
-
-        jList_countries.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jList_countries.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "Denmark", "Columbia" };
-            public int getSize() { return strings.length; }
-            public Object getElementAt(int i) { return strings[i]; }
-        });
-        jScrollPane_countries.setViewportView(jList_countries);
-
-        jPanel_location.add(jScrollPane_countries, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 160, 160, 50));
 
         getContentPane().add(jPanel_location, new org.netbeans.lib.awtextra.AbsoluteConstraints(520, 20, 260, 220));
 
@@ -720,9 +721,9 @@ public class GUI_Main extends javax.swing.JFrame {
 
         getContentPane().add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 450, 100, 110));
 
-        jTextArea_event.setColumns(20);
-        jTextArea_event.setRows(5);
-        jScrollPane2.setViewportView(jTextArea_event);
+        jTextArea_eventMessage.setColumns(20);
+        jTextArea_eventMessage.setRows(5);
+        jScrollPane2.setViewportView(jTextArea_eventMessage);
 
         getContentPane().add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 230, 420, 60));
 
@@ -735,7 +736,10 @@ public class GUI_Main extends javax.swing.JFrame {
 
         if (!name.isEmpty()) {
 
-            engine.createPlayer(name, engine.getStartCredits());
+            //engine.createPlayer(name, engine.getStartCredits());
+            engine.getPlayer().setName(name);
+            engine.getPlayer().setCredits(50000.00);
+            prepareRound();
             jButton_buy.setEnabled(true);
             jButton_sell.setEnabled(true);
             jButton_bulkBuy.setEnabled(true);
@@ -752,8 +756,8 @@ public class GUI_Main extends javax.swing.JFrame {
             jButton_newGame.setVisible(false);
             jProgressBar_days.setMinimum(0);
             jProgressBar_days.setMaximum(engine.getPlayer().getDays());
-            setLife(0);
-            setDays(0);
+            updateLife();
+            updateDays();
             jProgressBar_days.setVisible(true);
             jProgressBar_life.setVisible(true);
         }
@@ -775,21 +779,23 @@ public class GUI_Main extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton_newGameActionPerformed
 
     private void jButton_travelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_travelActionPerformed
-        setDays(1);
         int currentDay = engine.getPlayer().getDays();
-        if (currentDay >= 0) {
-            int index = jList_countries.getSelectedIndex();
-            engine.setActiveCountry((String) listmodel.getElementAt(index));
+        double ticketPrice = (double) jTable_airport.getValueAt(jTable_airport.getSelectedRow(), 1);
+        if (currentDay >= 0 && ticketPrice <= engine.getCredits()) {
+            engine.getPlayer().setDays(-1);
+            updateDays();
+            engine.setActiveCountry((String) jTable_airport.getValueAt(jTable_airport.getSelectedRow(), 0));
             setLocationText();
-            marketMap = engine.travel();
             prepareRound();
+            engine.calculateCredits(-ticketPrice);
+            jLabel_money.setText(doubleCreditFormat.format(engine.getCredits()) + " $");
         }
         if (currentDay == 0) {
             jButton_travel.setText("Cash in!");
         }
         if (currentDay == -1) {
             autoSell(); //sell everything in inventory
-            engine.savePlayer("players.txt"); //save player
+            engine.savePlayerToHighscore("players.txt"); //save player
             GUI_Highscore highscore = new GUI_Highscore((Engine) engine);
             highscore.setVisible(true);
             highscore.setAgainVisibility(true);
@@ -889,16 +895,21 @@ public class GUI_Main extends javax.swing.JFrame {
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
+
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(GUI_Main.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(GUI_Main.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(GUI_Main.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(GUI_Main.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(GUI_Main.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(GUI_Main.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(GUI_Main.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(GUI_Main.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
@@ -921,7 +932,6 @@ public class GUI_Main extends javax.swing.JFrame {
     private javax.swing.JButton jButton_travel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel_TEXT_info;
-    private javax.swing.JLabel jLabel_TEXT_location;
     private javax.swing.JLabel jLabel_TEXT_market;
     private javax.swing.JLabel jLabel_TEXT_market1;
     private javax.swing.JLabel jLabel_TEXT_money;
@@ -932,7 +942,6 @@ public class GUI_Main extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel_name;
     private javax.swing.JLabel jLabel_selectionLeft;
     private javax.swing.JLabel jLabel_selectionRight;
-    private javax.swing.JList jList_countries;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel_inventory;
@@ -943,13 +952,12 @@ public class GUI_Main extends javax.swing.JFrame {
     private javax.swing.JProgressBar jProgressBar_life;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JScrollPane jScrollPane_countries;
     private javax.swing.JScrollPane jScrollPane_inventory;
     private javax.swing.JScrollPane jScrollPane_market;
-    private javax.swing.JTable jTable1;
+    private javax.swing.JTable jTable_airport;
     private javax.swing.JTable jTable_inventory;
     private javax.swing.JTable jTable_market;
-    private javax.swing.JTextArea jTextArea_event;
+    private javax.swing.JTextArea jTextArea_eventMessage;
     private javax.swing.JTextField jTextField_inputName;
     // End of variables declaration//GEN-END:variables
 }

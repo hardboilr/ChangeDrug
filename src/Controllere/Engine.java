@@ -6,7 +6,7 @@ package Controllere;
 import Entities.Player;
 import Entities.World;
 import Entities.Country;
-import Entities.Drug;
+import Entities.Product;
 import Entities.Event;
 import Entities.FileHandler;
 import Interfaces.EngineInterface;
@@ -20,14 +20,14 @@ import java.util.Random;
 public class Engine implements EngineInterface {
 
     private Map<String, Country> countries;
-    private Map<String, Drug> inv;
-    private List<Event> events;
+    private Map<String, Product> inv;
+    private Map<String, Event> eventMap;
     private Player player;
     private String activeCountry;
     private int randomUpOrDown;
     private Country tempCountry;
     private final int DAY_CYCLE = 20;
-    private final double START_CREDITS = 5000.00;
+//    private final double START_CREDITS = 50000.00;
     private int day;
     private List<Player> playerList;
 
@@ -38,18 +38,20 @@ public class Engine implements EngineInterface {
         random = new Random();
         activeCountry = "Denmark";
         playerList = new ArrayList<>();
-        events = new ArrayList<>();
+        eventMap = new HashMap<>();
         inv = new HashMap();
         day = DAY_CYCLE;
     }
 
     @Override
-    public ArrayList getCountries() {
-        ArrayList<String> countryArrayList = new ArrayList<>();
-        for (String key : countries.keySet()) {
-            countryArrayList.add(key);
+    public ArrayList<Country> getCountries() {
+        ArrayList<Country> possibleTravelDestinations = new ArrayList<>();
+        for (Country country : countries.values()) {
+            if (!country.getName().equals(activeCountry)) {
+                possibleTravelDestinations.add(country);
+            }
         }
-        return countryArrayList;
+        return possibleTravelDestinations;
     }
 
     @Override
@@ -63,11 +65,11 @@ public class Engine implements EngineInterface {
     }
 
     @Override
-    public void addToInventory(Drug drugInput) {
-        Drug drug = drugInput;
+    public void addToInventory(Product drugInput) {
+        Product drug = drugInput;
         String key = drug.getName();
         if (inv.containsKey(key)) {
-            Drug temp = inv.get(key);
+            Product temp = inv.get(key);
             inv.remove(key);
             temp.setModifiedAvail(temp.getModifiedAvail() + 1);
             inv.put(temp.getName(), temp);
@@ -80,7 +82,7 @@ public class Engine implements EngineInterface {
     public void subtractFromInventory(String input) {
         String key = input;
         if (inv.containsKey(key)) {
-            Drug temp = inv.get(key);
+            Product temp = inv.get(key);
             inv.remove(key);
             temp.setModifiedAvail(temp.getModifiedAvail() - 1);
             inv.put(key, temp);
@@ -91,18 +93,21 @@ public class Engine implements EngineInterface {
     }
 
     @Override
-    public Drug getInventoryDrug(String key) {
-        Drug inventoryDrug = inv.get(key);
+    public Product getInventoryDrug(String key) {
+        Product inventoryDrug = inv.get(key);
         return inventoryDrug;
     }
 
     @Override
     public Map travel() {
         tempCountry = (Country) countries.get(activeCountry);
-        Map<String, Drug> tempMap = tempCountry.getDrugs();
+        Map<String, Product> tempMap = tempCountry.getDrugs();
         countries.remove(activeCountry);
-
-        for (Drug drug : tempMap.values()) {
+        eventMap.clear();
+        if (player.getDays() != player.getDayCycle()) {
+            createEvents();
+        }
+        for (Product drug : tempMap.values()) {
             drug.setModifiedPrice(calculatePrice(drug.getBasePrice()));
             int goldenNumber = (int) ((Math.random() * 100) + 1);
             randomUpOrDown = random.nextInt(2);
@@ -114,38 +119,63 @@ public class Engine implements EngineInterface {
                 }
             }
             drug.setModifiedAvail(calculateAvailability(drug.getBaseAvail()));
-
         }
         countries.put(tempCountry.getName(), tempCountry);
-
         return tempMap;
-
-    }
-
-    private List createEvents() {
-        Event event1 = new Event("customAuthority", "You are captured by the Custom Authority", 5, 0.10, 0.00, 0.50);
-        events.add(event1);
-
-        return events;
-    }
-
-    @Override
-    public List getEvents() {
-        List<String> tempArray = new ArrayList();
-        for (Event event : events) {
-            Random random = new Random();
-            int prob = random.nextInt(100) + 1;
-            if (prob <= event.getProbability()) {
-                tempArray.add(event.getDescription());
-
-            }
-        }
-        return tempArray;
     }
 
     @Override
     public void createPlayer(String input1, double input2) {
         player = new Player(input1, input2);
+    }
+
+    @Override
+    public List getEvents() {
+        List<String> eventDescrp = new ArrayList();
+        for (Event event : eventMap.values()) {
+            Random random = new Random();
+            int prob = random.nextInt(100) + 1;
+            if (prob <= event.getProbability()) {
+                eventDescrp.add(event.getDescription());
+                player.setLife((int) (player.getLife() - (player.getLife() * event.getLifeModifier())));
+                player.setCredits(player.getCredits() - (player.getCredits() * event.getCreditsModifier()));
+                for (Product drug : inv.values()) {
+                    drug.setModifiedAvail((int) (drug.getModifiedAvail() * event.getDrugModifier()));
+                }
+            }
+        }
+        return eventDescrp;
+    }
+
+    private void createEvents() {
+        Event event1 = new Event("customAuthority", "You are captured by the Custom Authority", 100, 0.10, 0.00, 0.50);
+        Event event2 = new Event("angryPusher", "You met an angry Pusher", 100, 0.20, 0.00, 1);
+        eventMap.put(event1.getName(), event1);
+        eventMap.put(event2.getName(), event2);
+        
+        for (Event event : eventMap.values()) {
+            switch (event.getName()) {
+
+                case "customAuthority":
+                    if (inv.containsKey("High friends")) {
+                        event.setProbability(-2);
+                        
+                    }
+                System.out.println("Prob for customAuthority: " + event.getProbability());
+                case "angryPusher":
+                    if (inv.containsKey("Beretta92F")) {
+                        event.setProbability(-2);
+                        
+                    }
+                    if (inv.containsKey("High friends")) {
+                        event.setProbability(-1);
+                    }
+                    if (inv.containsKey("Generous")) {
+                        event.setProbability(-1);
+                    }
+                System.out.println("Prob for angryPusher: " + event.getProbability());
+            }
+        }
     }
 
     private double calculatePrice(double basePrice) {
@@ -191,10 +221,10 @@ public class Engine implements EngineInterface {
         return player.getCredits();
     }
 
-    @Override
-    public double getStartCredits() {
-        return START_CREDITS;
-    }
+//    @Override
+//    public double getStartCredits() {
+//        return START_CREDITS;
+//    }
 
     @Override
     public Player getPlayer() {
@@ -209,7 +239,7 @@ public class Engine implements EngineInterface {
     }
 
     @Override
-    public void savePlayer(String filename) {
+    public void savePlayerToHighscore(String filename) {
         playerList.add(player);
         FileHandler.savePlayer(playerList, filename);
     }

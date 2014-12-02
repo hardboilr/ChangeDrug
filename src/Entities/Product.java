@@ -9,12 +9,13 @@ package Entities;
  *
  * @author Tobias
  */
-public class Drug {
-    private String name;
+public class Product {
+    private String type, name;
     private double basePrice, modifiedPrice;
     private int baseAvail, modifiedAvail, goldenNumber;
 
-    public Drug(String nameInput, double basePriceInput, double modifiedPriceInput, int baseAvailInput, int modifiedAvailInput, int goldenNumber) {
+    public Product(String typeInput, String nameInput, double basePriceInput, double modifiedPriceInput, int baseAvailInput, int modifiedAvailInput, int goldenNumber) {
+        this.type = typeInput;
         this.name = nameInput;
         this.basePrice = basePriceInput;
         this.modifiedPrice = modifiedPriceInput;
@@ -73,6 +74,14 @@ public class Drug {
 
     public void setGoldenNumber(int goldenNumber) {
         this.goldenNumber = goldenNumber;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
     
     

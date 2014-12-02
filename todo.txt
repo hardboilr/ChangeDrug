@@ -1,9 +1,15 @@
-det skal ikke være muligt at rejse uden at der er foretaget en country-selection
+
 
 Nice to have:
 (4. Hvis inventory er tomt og han ikke har råd til at købe varer på markedet, så slutter spillet og man går videre til highscore)
 
-Implementering af events + liv 
+mangler at kunne købe liv
+hospital event
+mafia event
+girl/boyfriend event
+opdatere uml
 
-Noter:
-vi kan lave en "jLabel_daysLeftPropertyChange", så vi kan lytte på hvad en label skriver og køre noget kode based on that. Nice nok
+travel 1st class item
+minion pusher
+
+
