@@ -17,6 +17,7 @@ import java.util.Map;
 public class Country {
     
     private String name;
+    private double ticketPrice;
     private Map<String, Drug> drugs;
     private Drug heroin = new Drug("Heroin", 1600.00, 0.0, 15, 0, 10);
     private Drug cocaine = new Drug("Cocaine", 1200.00, 0.0, 30, 0, 15);
@@ -30,8 +31,9 @@ public class Country {
     private Drug valium = new Drug("Valium", 290, 0.0, 80, 0, 7);
     
     
-    public Country(String nameInput){
+    public Country(String nameInput, double ticketInput){
         this.name = nameInput;
+        this.ticketPrice = ticketInput;
         drugs = new HashMap();
         drugs.put(heroin.getName(),heroin);
         drugs.put(cocaine.getName(), cocaine);
@@ -58,6 +60,16 @@ public class Country {
     public Map getDrugs() {
         return drugs;
     }
+
+    public double getTicketPrice() {
+        return ticketPrice;
+    }
+
+    public void setTicketPrice(int ticketPrice) {
+        this.ticketPrice = ticketPrice;
+    }
+    
+    
 
     
     

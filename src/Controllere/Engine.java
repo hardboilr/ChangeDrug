@@ -42,17 +42,27 @@ public class Engine implements EngineInterface {
         playerList = new ArrayList<>();
         events = new ArrayList<>();
         inv = new HashMap();
-       
+  
         day = DAY_CYCLE;
+       
     }
+    
+    @Override
+    public void createPlayer(String input1, double input2) {
+        player = new Player(input1, input2);
+    }
+    
 
     @Override
-    public ArrayList getCountries() {
-        ArrayList<String> countryArrayList = new ArrayList<>();
-        for (String key : countries.keySet()) {
-            countryArrayList.add(key);
+    public ArrayList<Country> getCountries() {
+        ArrayList<Country> possibleTravelDestinations = new ArrayList<>();
+        for(Country country: countries.values()){
+            if(!country.getName().equals(activeCountry)){
+              possibleTravelDestinations.add(country);
+            } 
         }
-        return countryArrayList;
+        
+        return possibleTravelDestinations;
     }
 
     @Override
@@ -65,32 +75,14 @@ public class Engine implements EngineInterface {
         return activeCountry;
     }
     
-    @Override
-    public void addToInventory(Drug drugInput){
-        Drug drug = drugInput;
-        String key = drug.getName();
-        if(inv.containsKey(key)){
-            Drug temp = inv.get(key);
-            inv.remove(key);
-            temp.setModifiedAvail(temp.getModifiedAvail()+1);
-            inv.put(temp.getName(),temp);
-        } else {
-            inv.put(key, drug);
-        }
-        
-        
-    }
-    @Override
-    public Drug getInventoryDrug(String key){
-        Drug inventoryDrug = inv.get(key);
-        return inventoryDrug;
-    }
 
     @Override
     public Map travel() {
         tempCountry = (Country) countries.get(activeCountry);
         Map<String, Drug> tempMap = tempCountry.getDrugs();
         countries.remove(activeCountry);
+        events.clear();
+        createEvents();
 
         for (Drug drug : tempMap.values()) {
             drug.setModifiedPrice(calculatePrice(drug.getBasePrice()));
@@ -112,35 +104,65 @@ public class Engine implements EngineInterface {
 
     }
     
-    private List createEvents() {
+    @Override
+    public void addToInventory(Drug drugInput) {
+        Drug drug = drugInput;
+        String key = drug.getName();
+        if (inv.containsKey(key) == true) {
+            Drug temp = inv.get(key);
+            inv.remove(key);
+            temp.setModifiedAvail(temp.getModifiedAvail() + 1);
+            inv.put(temp.getName(), temp);
+        } else {
+            inv.put(key, drug);
+        }
+
+    }
+    
+    @Override
+    public Drug getInventoryDrug(String drugkey){
+        return inv.get(drugkey);
+    }
+    
+    @Override
+    public void removeInventoryDrug(String drugkey){
+        inv.remove(drugkey);
+    }
+    
+    @Override
+    public Map<String, Drug> getInventory(){
+        return inv;
+    }
+    
+    private void createEvents() {
         Event event1 = new Event("customAuthority", "You are captured by the Custom Authority", 5, 0.10, 0.00, 0.50);
+        Event event2 = new Event("Angry Pusher", "You met an angry Pusher", 5, 0.10, 0.00, 1);
+        
+        
         events.add(event1);
-        
-        
-        
-        
-        return events;
+        events.add(event2);
     }
     
     @Override
     public List getEvents() {
-        List<String> tempArray = new ArrayList();
-        for (Event event : events) {
+        List<String> eventDescrp = new ArrayList();
+        for(int i = 0; i < events.size(); i++) {
             Random random = new Random();
-            int prob = random.nextInt(100)+1;
+            int prob = random.nextInt(100) + 1;
+            Event event = events.get(i);
             if (prob <= event.getProbability()) {
-                tempArray.add(event.getDescription());
-                
+                eventDescrp.add(event.getDescription());
+                player.setLife( (int) (player.getLife() - (player.getLife() * event.getLifeModifier())));
+                player.setCredits(player.getCredits() - (player.getCredits()* event.getCreditsModifier()));
+                for(Drug drug : inv.values()){
+                    drug.setModifiedAvail((int)(drug.getModifiedAvail() * event.getDrugModifier()));
+                }
                 
             }
         }
-        return tempArray;
+        return eventDescrp;
     }
     
-    @Override
-    public void createPlayer(String input1, double input2) {
-        player = new Player(input1, input2);
-    }
 
     private double calculatePrice(double basePrice) {
 
@@ -197,19 +219,13 @@ public class Engine implements EngineInterface {
     }
     
     @Override
-    public void addPlayer() {
-        playerList.add(player);
-        
-    }
-
-    @Override
-    public void savePlayer(String filename) {
+    public void savePlayerToHighscore(String filename) {
         playerList.add(player);
         FileHandler.savePlayer(playerList, filename);
     }
 
     @Override
-    public List<Player> loadPlayers(String filename) {
+    public List<Player> loadHighscore(String filename) {
         playerList = FileHandler.loadPlayers(filename);
         Collections.sort(playerList);
         return playerList;

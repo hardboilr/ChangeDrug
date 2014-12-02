@@ -4,6 +4,7 @@
 package Boundaries;
 
 import Controllere.Engine;
+import Entities.Country;
 import Entities.Drug;
 import Entities.Event;
 import Interfaces.EngineInterface;
@@ -14,11 +15,11 @@ import java.util.List;
 import java.util.Map;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
-import javax.swing.UIDefaults;
 import javax.swing.table.DefaultTableModel;
 
 public class GUI_Main extends javax.swing.JFrame {
     private Map<String, Drug> marketMap;
+    private Map<String, Drug> inventoryMap;
 
     //Images
     private final ImageIcon selectionArrow_right_pressed_icon;
@@ -48,12 +49,10 @@ public class GUI_Main extends javax.swing.JFrame {
         initComponents();
         this.setLocationRelativeTo(null); //place window in center of screen
         engine = new Engine();
-        marketMap = engine.travel();
-        jList_countries.setModel(listmodel);
         prepareRound();
         setLocationText();
         formatTables();
-        engine.loadPlayers("players.txt");
+        engine.loadHighscore("players.txt");
         doubleCreditFormat = new DecimalFormat("0.00");
 
         nextImg = 0;
@@ -107,38 +106,64 @@ public class GUI_Main extends javax.swing.JFrame {
         //Fill [jList_countries]-list with countries 
         //fill [jTable_market]-table with drugs
         //---------------------------------------------
-
-        List<Event> eventList = engine.getEvents();
+        List<String> eventList = engine.getEvents();
         if (eventList.size() > 0) {
-            for (Event event : eventList) {
-                jTextArea_event.setText(event.getDescription());
-
+            System.out.println(eventList.size());
+            for (String eventDescrip : eventList) {
+                String descrip = eventDescrip;
+                jTextArea_event.setText(descrip);
+                setLife((int)10);
             }
+            
 
         }
-
-        //fill country list
-        listmodel.clear();
+        //fill country table
+        ((DefaultTableModel) jTableAirport.getModel()).setRowCount(0);
         for (int i = 0; i < engine.getCountries().size(); i++) {
-            String country = (String) engine.getCountries().get(i);
-            listmodel.addElement(country.toUpperCase().charAt(0) + country.substring(1));
+            Country country = (Country) engine.getCountries().get(i);
+            String countryName = country.getName().toUpperCase().charAt(0) + country.getName().substring(1);
+            double ticketPrice = country.getTicketPrice();
+            ((DefaultTableModel) jTableAirport.getModel()).addRow(new Object[]{});
+            jTableAirport.setValueAt(countryName, i, 0);
+            jTableAirport.setValueAt(ticketPrice, i, 1);
+
         }
 
         // fill market table
         ((DefaultTableModel) jTable_market.getModel()).setRowCount(0);
-        
+        marketMap = engine.travel();
         int count = 0;
         for (Drug drug : marketMap.values()) {
-            String name = drug.getName();
-            Double price = drug.getModifiedPrice();
+            String marName = drug.getName();
+            double marketDrugPrice = drug.getModifiedPrice();
             avail = drug.getModifiedAvail();
 
             ((DefaultTableModel) jTable_market.getModel()).addRow(new Object[]{});
-            jTable_market.setValueAt(name, count, 0);
+            jTable_market.setValueAt(marName, count, 0);
             jTable_market.setValueAt(avail, count, 1);
-            jTable_market.setValueAt(price, count, 2);
+            jTable_market.setValueAt(marketDrugPrice, count, 2);
             count++;
         }
+        
+        count = 0;
+        //fill inventory table
+         ((DefaultTableModel) jTable_inventory.getModel()).setRowCount(0);
+         inventoryMap = engine.getInventory();
+         for(Drug drug : inventoryMap.values()){
+             String invName = drug.getName();
+             double inventoryDrugPrice = drug.getModifiedPrice();
+             int qty = drug.getModifiedAvail();
+             
+             ((DefaultTableModel) jTable_inventory.getModel()).addRow(new Object[]{});
+             jTable_inventory.setValueAt(invName, count, 0);
+             jTable_inventory.setValueAt(qty, count, 1);
+             jTable_inventory.setValueAt(inventoryDrugPrice, count, 2);
+             count++;
+         }
+         
+         
+        
+        
     }
 
     private void changeCharacterIcon() {
@@ -200,7 +225,7 @@ public class GUI_Main extends javax.swing.JFrame {
             selectedDrug = marketMap.get(marketDrug);
             int qty = selectedDrug.getModifiedAvail();
             price = selectedDrug.getModifiedPrice();
-            subtract = selectedDrug.getModifiedAvail() - 1;
+            subtract = qty - 1;
         } catch (ArrayIndexOutOfBoundsException ex) {
             sufficiantCredits = -1.00;
         }
@@ -252,9 +277,11 @@ public class GUI_Main extends javax.swing.JFrame {
             if (subtract == 0) {
                 System.out.println("Slettes den tomme række");
                 ((DefaultTableModel) jTable_market.getModel()).removeRow(row);
+                
             }
             return true;
         }
+        jTextArea_event.setText("not enough money");
         return false;
     }
 
@@ -268,36 +295,44 @@ public class GUI_Main extends javax.swing.JFrame {
         int row = jTable_inventory.getSelectedRow();
         String inventoryDrug = "";
         int subtract;
+        Drug selectedDrug;
         try {
             inventoryDrug = (String) jTable_inventory.getValueAt(row, 0);
-            int qty = (int) jTable_inventory.getValueAt(row, 1);
-            price = (double) jTable_inventory.getValueAt(row, 2);
+            selectedDrug = engine.getInventoryDrug(inventoryDrug);
+            int qty = selectedDrug.getModifiedAvail();
+            price = marketMap.get(inventoryDrug).getModifiedPrice();
             subtract = qty - 1;
         } catch (ArrayIndexOutOfBoundsException ex) {
+            jTextArea_event.setText("Nothing to sell");
             subtract = -1;
         }
 
         if (subtract >= 0) {
             jTable_inventory.setValueAt(subtract, row, 1);
+            engine.getInventoryDrug(inventoryDrug).setModifiedAvail(subtract);
             for (int i = 0; i <= jTable_market.getRowCount(); i++) {
                 String marketDrug = (String) jTable_market.getValueAt(i, 0);
                 if (marketDrug == null) {
                     int add = 1;
                     jTable_market.setValueAt(inventoryDrug, i, 0);
                     jTable_market.setValueAt(add, i, 1);
-                    jTable_market.setValueAt(price, i, 2);
+                    marketMap.get(marketDrug).setModifiedAvail(add);
+                    jTable_market.setValueAt(marketMap.get(marketDrug).getModifiedPrice(), i, 2);
                     break;
-                } else {
-                    if (inventoryDrug.equals(marketDrug)) {
-                        int newQty = (int) jTable_market.getValueAt(i, 1) + 1;
-                        price = (double) jTable_market.getValueAt(i, 2);
+                } else if (inventoryDrug.equals(marketDrug)){
+                        
+                        Drug addedDrug = marketMap.get(marketDrug);
+                        marketMap.get(marketDrug).setModifiedAvail(addedDrug.getModifiedAvail()+1);
+                        int newQty = marketMap.get(marketDrug).getModifiedAvail();
+                        double marPrice = addedDrug.getModifiedPrice();
                         jTable_market.setValueAt(newQty, i, 1);
                         break;
                     }
-                }
+                
             }
             if (subtract == 0) {
                 ((DefaultTableModel) jTable_inventory.getModel()).removeRow(row);
+                engine.removeInventoryDrug(inventoryDrug);
             }
             return true;
         }
@@ -400,10 +435,8 @@ public class GUI_Main extends javax.swing.JFrame {
         jPanel_location = new javax.swing.JPanel();
         jButton_travel = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        jTableAirport = new javax.swing.JTable();
         jLabel1 = new javax.swing.JLabel();
-        jScrollPane_countries = new javax.swing.JScrollPane();
-        jList_countries = new javax.swing.JList();
         jPanel1 = new javax.swing.JPanel();
         jButton_buy = new javax.swing.JButton();
         jButton_sell = new javax.swing.JButton();
@@ -461,7 +494,7 @@ public class GUI_Main extends javax.swing.JFrame {
         jLabel_name.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel_name.setText("Hardboilr");
         jLabel_name.setPreferredSize(new java.awt.Dimension(70, 20));
-        jPanel_player.add(jLabel_name, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 20, 130, 30));
+        jPanel_player.add(jLabel_name, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 20, 130, 40));
 
         jLabel_TEXT_money.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel_TEXT_money.setText("Money:");
@@ -503,7 +536,7 @@ public class GUI_Main extends javax.swing.JFrame {
 
         jTextField_inputName.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jTextField_inputName.setPreferredSize(new java.awt.Dimension(70, 20));
-        jPanel_player.add(jTextField_inputName, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 20, 130, 30));
+        jPanel_player.add(jTextField_inputName, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 30, 130, 30));
 
         jProgressBar_life.setBackground(new java.awt.Color(204, 0, 0));
         jProgressBar_life.setName(""); // NOI18N
@@ -634,9 +667,9 @@ public class GUI_Main extends javax.swing.JFrame {
                 jButton_travelActionPerformed(evt);
             }
         });
-        jPanel_location.add(jButton_travel, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 180, -1, -1));
+        jPanel_location.add(jButton_travel, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 150, -1, -1));
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        jTableAirport.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -659,25 +692,15 @@ public class GUI_Main extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(jTableAirport);
 
-        jPanel_location.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 30, 200, 120));
+        jPanel_location.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 30, 240, 120));
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jLabel1.setText("Airport");
         jPanel_location.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, -1, -1));
 
-        jList_countries.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jList_countries.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "Denmark", "Columbia" };
-            public int getSize() { return strings.length; }
-            public Object getElementAt(int i) { return strings[i]; }
-        });
-        jScrollPane_countries.setViewportView(jList_countries);
-
-        jPanel_location.add(jScrollPane_countries, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 160, 160, 50));
-
-        getContentPane().add(jPanel_location, new org.netbeans.lib.awtextra.AbsoluteConstraints(520, 20, 260, 220));
+        getContentPane().add(jPanel_location, new org.netbeans.lib.awtextra.AbsoluteConstraints(520, 40, 260, 180));
 
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -784,19 +807,20 @@ public class GUI_Main extends javax.swing.JFrame {
     private void jButton_travelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_travelActionPerformed
         setDays(1);
         int currentDay = engine.getPlayer().getDays();
-        if (currentDay >= 0) {
-            int index = jList_countries.getSelectedIndex();
-            engine.setActiveCountry((String) listmodel.getElementAt(index));
+        double ticketPrice = (double) jTableAirport.getValueAt(jTableAirport.getSelectedRow(),1);
+        if (currentDay >= 0 && ticketPrice <= engine.getCredits()) {
+            engine.setActiveCountry((String)jTableAirport.getValueAt(jTableAirport.getSelectedRow(),0));
             setLocationText();
-            engine.travel();
             prepareRound();
+            engine.calculateCredits(-ticketPrice);
+            jLabel_money.setText(doubleCreditFormat.format(engine.getCredits()) + " $");
         }
         if (currentDay == 0) {
             jButton_travel.setText("Cash in!");
         }
         if (currentDay == -1) {
             autoSell(); //sell everything in inventory
-            engine.savePlayer("players.txt"); //save player
+            engine.savePlayerToHighscore("players.txt"); //save player
             GUI_Highscore highscore = new GUI_Highscore((Engine) engine);
             highscore.setVisible(true);
             highscore.setAgainVisibility(true);
@@ -939,7 +963,6 @@ public class GUI_Main extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel_name;
     private javax.swing.JLabel jLabel_selectionLeft;
     private javax.swing.JLabel jLabel_selectionRight;
-    private javax.swing.JList jList_countries;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel_inventory;
@@ -950,10 +973,9 @@ public class GUI_Main extends javax.swing.JFrame {
     private javax.swing.JProgressBar jProgressBar_life;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JScrollPane jScrollPane_countries;
     private javax.swing.JScrollPane jScrollPane_inventory;
     private javax.swing.JScrollPane jScrollPane_market;
-    private javax.swing.JTable jTable1;
+    private javax.swing.JTable jTableAirport;
     private javax.swing.JTable jTable_inventory;
     private javax.swing.JTable jTable_market;
     private javax.swing.JTextArea jTextArea_event;

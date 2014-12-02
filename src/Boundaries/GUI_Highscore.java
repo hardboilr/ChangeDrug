@@ -29,7 +29,7 @@ public class GUI_Highscore extends javax.swing.JFrame {
         this.engine = input;
         initComponents();
         jButton_again.setVisible(false);
-        playerList = engine.loadPlayers("players.txt");
+        playerList = engine.loadHighscore("players.txt");
         addData();
     }
 

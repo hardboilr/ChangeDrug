@@ -31,6 +31,10 @@ public interface EngineInterface  {
     
     public Drug getInventoryDrug(String key);
     
+    public Map<String, Drug> getInventory();
+    
+    public void removeInventoryDrug(String drugkey);
+    
     public void createPlayer(String input1, double input2);
     
     public void calculateCredits(double price);
@@ -42,11 +46,9 @@ public interface EngineInterface  {
     
     public Player getPlayer();
     
-    public void addPlayer();
+    public void savePlayerToHighscore(String filename);
     
-    public void savePlayer(String filename);
-    
-    public List<Player> loadPlayers(String filename);
+    public List<Player> loadHighscore(String filename);
     
     
     
