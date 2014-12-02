@@ -28,11 +28,9 @@ public class Engine implements EngineInterface {
     private Country tempCountry;
     private final int DAY_CYCLE = 20;
     private final double START_CREDITS = 5000.00;
-    
     private int day;
     private List<Player> playerList;
-    
-    
+
     Random random;
 
     public Engine() {
@@ -74,7 +72,40 @@ public class Engine implements EngineInterface {
     public String getActiveCountry() {
         return activeCountry;
     }
-    
+
+    @Override
+    public void addToInventory(Drug drugInput) {
+        Drug drug = drugInput;
+        String key = drug.getName();
+        if (inv.containsKey(key)) {
+            Drug temp = inv.get(key);
+            inv.remove(key);
+            temp.setModifiedAvail(temp.getModifiedAvail() + 1);
+            inv.put(temp.getName(), temp);
+        } else {
+            inv.put(key, drug);
+        }
+    }
+
+    @Override
+    public void removeFromInventory(String input) {
+        String key = input;
+        if (inv.containsKey(key)) {
+            Drug temp = inv.get(key);
+            inv.remove(key);
+            temp.setModifiedAvail(temp.getModifiedAvail() - 1);
+            inv.put(key, temp);
+            if (temp.getModifiedAvail() == 0) {
+                inv.remove(key);
+            }
+        }
+    }
+
+    @Override
+    public Drug getInventoryDrug(String key) {
+        Drug inventoryDrug = inv.get(key);
+        return inventoryDrug;
+    }
 
     @Override
     public Map travel() {
@@ -88,15 +119,15 @@ public class Engine implements EngineInterface {
             drug.setModifiedPrice(calculatePrice(drug.getBasePrice()));
             int goldenNumber = (int) ((Math.random() * 100) + 1);
             randomUpOrDown = random.nextInt(2);
-            if(goldenNumber >= 1 && goldenNumber <= drug.getGoldenNumber()){
-                if(randomUpOrDown == 1){
+            if (goldenNumber >= 1 && goldenNumber <= drug.getGoldenNumber()) {
+                if (randomUpOrDown == 1) {
                     drug.setModifiedPrice(drug.getModifiedPrice() * 10);
                 } else {
                     drug.setModifiedPrice(drug.getModifiedPrice() / 10);
                 }
             }
             drug.setModifiedAvail(calculateAvailability(drug.getBaseAvail()));
-            
+
         }
         countries.put(tempCountry.getName(), tempCountry);
 
@@ -135,22 +166,28 @@ public class Engine implements EngineInterface {
     }
     
     private void createEvents() {
+
+    private List createEvents() {
         Event event1 = new Event("customAuthority", "You are captured by the Custom Authority", 5, 0.10, 0.00, 0.50);
         Event event2 = new Event("Angry Pusher", "You met an angry Pusher", 5, 0.10, 0.00, 1);
         
         
         events.add(event1);
-        events.add(event2);
     }
-    
+
     @Override
     public List getEvents() {
         List<String> eventDescrp = new ArrayList();
         for(int i = 0; i < events.size(); i++) {
             Random random = new Random();
             int prob = random.nextInt(100) + 1;
-            Event event = events.get(i);
+        events.add(event2);
             if (prob <= event.getProbability()) {
+            Event event = events.get(i);
+            }
+        }
+        return eventDescrp;
+    }
                 eventDescrp.add(event.getDescription());
                 player.setLife( (int) (player.getLife() - (player.getLife() * event.getLifeModifier())));
                 player.setCredits(player.getCredits() - (player.getCredits()* event.getCreditsModifier()));
@@ -158,11 +195,6 @@ public class Engine implements EngineInterface {
                     drug.setModifiedAvail((int)(drug.getModifiedAvail() * event.getDrugModifier()));
                 }
                 
-            }
-        }
-        return eventDescrp;
-    }
-    
 
     private double calculatePrice(double basePrice) {
 
@@ -206,20 +238,19 @@ public class Engine implements EngineInterface {
     public double getCredits() {
         return player.getCredits();
     }
-    
-    @Override 
+
+    @Override
     public double getStartCredits() {
         return START_CREDITS;
     }
-    
+
     @Override
     public Player getPlayer() {
         return player;
-        
+
     }
-    
+
     @Override
-    public void savePlayerToHighscore(String filename) {
         playerList.add(player);
         FileHandler.savePlayer(playerList, filename);
     }
@@ -231,10 +262,10 @@ public class Engine implements EngineInterface {
         return playerList;
     }
 
-    
-  
-
-   
-
-
 }
+    
+
+    @Override
+    public void createPlayer(String input1, double input2) {
+        player = new Player(input1, input2);
+    }

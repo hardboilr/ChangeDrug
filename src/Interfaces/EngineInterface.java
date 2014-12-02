@@ -28,6 +28,8 @@ public interface EngineInterface  {
     public ArrayList getCountries();
     
     public void addToInventory(Drug drugInput);
+    public void removeFromInventory(String input);
+    
     
     public Drug getInventoryDrug(String key);
     
@@ -49,6 +51,7 @@ public interface EngineInterface  {
     public void savePlayerToHighscore(String filename);
     
     public List<Player> loadHighscore(String filename);
+    
     
     
     
