@@ -127,7 +127,6 @@ public class GUI_Main extends javax.swing.JFrame {
 
         // fill market table
         ((DefaultTableModel) jTable_market.getModel()).setRowCount(0);
-
         int count = 0;
         for (Drug drug : marketMap.values()) {
             String name = drug.getName();
