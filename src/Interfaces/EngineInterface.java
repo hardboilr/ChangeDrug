@@ -28,7 +28,7 @@ public interface EngineInterface  {
     public ArrayList getCountries();
     
     public void addToInventory(Drug drugInput);
-    public void removeFromInventory(String input);
+    public void subtractFromInventory(String input);
     
     
     public Drug getInventoryDrug(String key);

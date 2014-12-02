@@ -271,7 +271,7 @@ public class GUI_Main extends javax.swing.JFrame {
         }
 
         if (newInventoryQty >= 0) {
-            engine.removeFromInventory(inventoryDrug);
+            engine.subtractFromInventory(inventoryDrug);
             jTable_inventory.setValueAt(newInventoryQty, row, 1);
             for (int i = 0; i <= jTable_market.getRowCount(); i++) {
                 String marketDrug = (String) jTable_market.getValueAt(i, 0);

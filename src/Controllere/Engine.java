@@ -77,7 +77,7 @@ public class Engine implements EngineInterface {
     }
 
     @Override
-    public void removeFromInventory(String input) {
+    public void subtractFromInventory(String input) {
         String key = input;
         if (inv.containsKey(key)) {
             Drug temp = inv.get(key);
