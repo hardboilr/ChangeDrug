@@ -26,7 +26,12 @@ public class Player implements Comparable {
     }
 
     public void setLife(int life) {
-        this.life = life;
+        if((this.life + life) <= 100){
+            this.life += life;
+        } else{
+            this.life = 100;
+        }
+        
     }
 
     public double getCredits() {

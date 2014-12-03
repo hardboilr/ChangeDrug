@@ -3,6 +3,7 @@
  */
 package Interfaces;
 
+import Entities.Medicin;
 import Entities.Product;
 import Entities.Player;
 import java.util.ArrayList;
@@ -26,6 +27,8 @@ public interface EngineInterface  {
     public List getEvents();
     
     public ArrayList getCountries();
+    
+    public Map<String, Medicin> getMedicin();
     
     public void addToInventory(Product drugInput);
     public void subtractFromInventory(String input);

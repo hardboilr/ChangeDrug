@@ -7,6 +7,7 @@ import Controllere.Engine;
 import Entities.Country;
 import Entities.Product;
 import Entities.Event;
+import Entities.Medicin;
 import Interfaces.EngineInterface;
 import java.awt.Color;
 import java.text.DecimalFormat;
@@ -20,6 +21,7 @@ import javax.swing.table.DefaultTableModel;
 public class GUI_Main extends javax.swing.JFrame {
 
     private Map<String, Product> marketMap;
+    private Map<String, Medicin> medicinMap;
 
     private final int typeColumn = 0;
     private final int nameColumn = 1;
@@ -56,6 +58,7 @@ public class GUI_Main extends javax.swing.JFrame {
         engine = new Engine();
         engine.createPlayer("", 0.00);
         marketMap = engine.travel();
+        medicinMap = engine.getMedicin();
         //prepareRound();
         setLocationText();
         formatTables();
@@ -136,10 +139,23 @@ public class GUI_Main extends javax.swing.JFrame {
             jTable_airport.setValueAt(countryName, i, 0);
             jTable_airport.setValueAt(ticketPrice, i, 1);
         }
+        
+        
+        //fill hospital table
+        ((DefaultTableModel) jTable_hospital.getModel()).setRowCount(0);
+        int count = 0;
+        for (Medicin medicin: medicinMap.values()) {
+            String medicinName = medicin.getName().toUpperCase().charAt(0) + medicin.getName().substring(1);
+            double medicinPrice = medicin.getPrice();
+            ((DefaultTableModel) jTable_hospital.getModel()).addRow(new Object[]{});
+            jTable_hospital.setValueAt(medicinName, count, 0);
+            jTable_hospital.setValueAt(medicinPrice, count, 1);
+            count++;
+        }
 
         // fill market table
         ((DefaultTableModel) jTable_market.getModel()).setRowCount(0);
-        int count = 0;
+        count = 0;
         for (Product product : marketMap.values()) {
             String productType = product.getType();
             String name = product.getName();
@@ -407,11 +423,6 @@ public class GUI_Main extends javax.swing.JFrame {
         jScrollPane_inventory = new javax.swing.JScrollPane();
         jTable_inventory = new javax.swing.JTable();
         jLabel_TEXT_market = new javax.swing.JLabel();
-        jPanel_location = new javax.swing.JPanel();
-        jButton_travel = new javax.swing.JButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTable_airport = new javax.swing.JTable();
-        jLabel1 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         jButton_buy = new javax.swing.JButton();
         jButton_sell = new javax.swing.JButton();
@@ -420,6 +431,19 @@ public class GUI_Main extends javax.swing.JFrame {
         jButton_bulkBuy = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTextArea_eventMessage = new javax.swing.JTextArea();
+        jTabbedPane1 = new javax.swing.JTabbedPane();
+        jPanel_location = new javax.swing.JPanel();
+        jButton_travel = new javax.swing.JButton();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        jTable_airport = new javax.swing.JTable();
+        jPanel_Hospital = new javax.swing.JPanel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        jTable_hospital = new javax.swing.JTable();
+        jButton_buyMedicin = new javax.swing.JButton();
+        jPanel_bank = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        jButton2 = new javax.swing.JButton();
+        jTextField1 = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Thug Life 0.1");
@@ -572,15 +596,19 @@ public class GUI_Main extends javax.swing.JFrame {
         jScrollPane_market.setViewportView(jTable_market);
         if (jTable_market.getColumnModel().getColumnCount() > 0) {
             jTable_market.getColumnModel().getColumn(1).setPreferredWidth(100);
+            jTable_market.getColumnModel().getColumn(2).setResizable(false);
+            jTable_market.getColumnModel().getColumn(2).setPreferredWidth(40);
+            jTable_market.getColumnModel().getColumn(3).setResizable(false);
+            jTable_market.getColumnModel().getColumn(3).setPreferredWidth(60);
         }
 
-        jPanel_market.add(jScrollPane_market, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 40, 280, 220));
+        jPanel_market.add(jScrollPane_market, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 40, 300, 220));
 
         jLabel_TEXT_market1.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         jLabel_TEXT_market1.setText("Market");
         jPanel_market.add(jLabel_TEXT_market1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, -1, -1));
 
-        getContentPane().add(jPanel_market, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 300, 310, 270));
+        getContentPane().add(jPanel_market, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 300, 320, 270));
 
         jPanel_inventory.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jPanel_inventory.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -617,61 +645,19 @@ public class GUI_Main extends javax.swing.JFrame {
         jScrollPane_inventory.setViewportView(jTable_inventory);
         if (jTable_inventory.getColumnModel().getColumnCount() > 0) {
             jTable_inventory.getColumnModel().getColumn(1).setPreferredWidth(100);
+            jTable_inventory.getColumnModel().getColumn(2).setResizable(false);
+            jTable_inventory.getColumnModel().getColumn(2).setPreferredWidth(40);
+            jTable_inventory.getColumnModel().getColumn(3).setResizable(false);
+            jTable_inventory.getColumnModel().getColumn(3).setPreferredWidth(60);
         }
 
-        jPanel_inventory.add(jScrollPane_inventory, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 40, 300, 220));
+        jPanel_inventory.add(jScrollPane_inventory, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 40, 310, 220));
 
         jLabel_TEXT_market.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         jLabel_TEXT_market.setText("Inventory");
         jPanel_inventory.add(jLabel_TEXT_market, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, -1, -1));
 
-        getContentPane().add(jPanel_inventory, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 300, 310, 270));
-
-        jPanel_location.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        jPanel_location.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        jButton_travel.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jButton_travel.setText("Go!");
-        jButton_travel.setToolTipText("");
-        jButton_travel.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton_travelActionPerformed(evt);
-            }
-        });
-        jPanel_location.add(jButton_travel, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 160, 60, 40));
-
-        jTable_airport.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "Country", "Ticketprice"
-            }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.String.class, java.lang.Integer.class
-            };
-            boolean[] canEdit = new boolean [] {
-                false, false
-            };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
-        jScrollPane1.setViewportView(jTable_airport);
-
-        jPanel_location.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 30, 220, 120));
-
-        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        jLabel1.setText("Airport");
-        jPanel_location.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, -1, -1));
-
-        getContentPane().add(jPanel_location, new org.netbeans.lib.awtextra.AbsoluteConstraints(520, 20, 260, 220));
+        getContentPane().add(jPanel_inventory, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 300, 330, 270));
 
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -726,6 +712,174 @@ public class GUI_Main extends javax.swing.JFrame {
         jScrollPane2.setViewportView(jTextArea_eventMessage);
 
         getContentPane().add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 230, 420, 60));
+
+        jPanel_location.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        jButton_travel.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jButton_travel.setText("Travel");
+        jButton_travel.setToolTipText("");
+        jButton_travel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton_travelActionPerformed(evt);
+            }
+        });
+
+        jTable_airport.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Country", "Ticketprice"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.Double.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane4.setViewportView(jTable_airport);
+        if (jTable_airport.getColumnModel().getColumnCount() > 0) {
+            jTable_airport.getColumnModel().getColumn(0).setResizable(false);
+            jTable_airport.getColumnModel().getColumn(1).setResizable(false);
+        }
+
+        javax.swing.GroupLayout jPanel_locationLayout = new javax.swing.GroupLayout(jPanel_location);
+        jPanel_location.setLayout(jPanel_locationLayout);
+        jPanel_locationLayout.setHorizontalGroup(
+            jPanel_locationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel_locationLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel_locationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel_locationLayout.createSequentialGroup()
+                        .addComponent(jButton_travel, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPanel_locationLayout.createSequentialGroup()
+                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                        .addContainerGap())))
+        );
+        jPanel_locationLayout.setVerticalGroup(
+            jPanel_locationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel_locationLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton_travel)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jTabbedPane1.addTab("Airport", jPanel_location);
+
+        jPanel_Hospital.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        jTable_hospital.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Medicin", "Price"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.Double.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane3.setViewportView(jTable_hospital);
+        if (jTable_hospital.getColumnModel().getColumnCount() > 0) {
+            jTable_hospital.getColumnModel().getColumn(0).setResizable(false);
+            jTable_hospital.getColumnModel().getColumn(1).setResizable(false);
+        }
+
+        jButton_buyMedicin.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jButton_buyMedicin.setText("Buy");
+        jButton_buyMedicin.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton_buyMedicinActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel_HospitalLayout = new javax.swing.GroupLayout(jPanel_Hospital);
+        jPanel_Hospital.setLayout(jPanel_HospitalLayout);
+        jPanel_HospitalLayout.setHorizontalGroup(
+            jPanel_HospitalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel_HospitalLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel_HospitalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addGroup(jPanel_HospitalLayout.createSequentialGroup()
+                        .addComponent(jButton_buyMedicin)
+                        .addGap(0, 168, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+        jPanel_HospitalLayout.setVerticalGroup(
+            jPanel_HospitalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel_HospitalLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton_buyMedicin)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jTabbedPane1.addTab("Hospital", jPanel_Hospital);
+
+        jPanel_bank.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        jLabel1.setText("Borrow some cash max 10.000$");
+
+        jButton2.setText("Loan");
+
+        javax.swing.GroupLayout jPanel_bankLayout = new javax.swing.GroupLayout(jPanel_bank);
+        jPanel_bank.setLayout(jPanel_bankLayout);
+        jPanel_bankLayout.setHorizontalGroup(
+            jPanel_bankLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel_bankLayout.createSequentialGroup()
+                .addGroup(jPanel_bankLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel_bankLayout.createSequentialGroup()
+                        .addGap(14, 14, 14)
+                        .addComponent(jButton2))
+                    .addGroup(jPanel_bankLayout.createSequentialGroup()
+                        .addGap(26, 26, 26)
+                        .addGroup(jPanel_bankLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel1))))
+                .addContainerGap(28, Short.MAX_VALUE))
+        );
+        jPanel_bankLayout.setVerticalGroup(
+            jPanel_bankLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel_bankLayout.createSequentialGroup()
+                .addGap(48, 48, 48)
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(25, 25, 25)
+                .addComponent(jButton2)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jTabbedPane1.addTab("Loan Shark", jPanel_bank);
+
+        getContentPane().add(jTabbedPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(510, 10, 280, 210));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -881,6 +1035,19 @@ public class GUI_Main extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jButton_bulkBuyActionPerformed
 
+    private void jButton_buyMedicinActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_buyMedicinActionPerformed
+      String medicinName = (String) jTable_hospital.getValueAt(jTable_hospital.getSelectedRow(), 0);
+        System.out.println(medicinName);
+      double medicinPrice = (double) jTable_hospital.getValueAt(jTable_hospital.getSelectedRow(), 1);
+      if(medicinPrice <= engine.getCredits()){
+          engine.calculateCredits(-medicinPrice);
+          jLabel_money.setText(doubleCreditFormat.format(engine.getCredits()) + " $");
+          int lifemodifier = medicinMap.get(medicinName).getHealing();
+          engine.getPlayer().setLife(lifemodifier);
+          updateLife();
+      }
+    }//GEN-LAST:event_jButton_buyMedicinActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -922,9 +1089,11 @@ public class GUI_Main extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton_bulkBuy;
     private javax.swing.JButton jButton_bulkSell;
     private javax.swing.JButton jButton_buy;
+    private javax.swing.JButton jButton_buyMedicin;
     private javax.swing.JButton jButton_confirm;
     private javax.swing.JButton jButton_highscore;
     private javax.swing.JButton jButton_newGame;
@@ -944,20 +1113,26 @@ public class GUI_Main extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel_selectionRight;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel_Hospital;
+    private javax.swing.JPanel jPanel_bank;
     private javax.swing.JPanel jPanel_inventory;
     private javax.swing.JPanel jPanel_location;
     private javax.swing.JPanel jPanel_market;
     private javax.swing.JPanel jPanel_player;
     private javax.swing.JProgressBar jProgressBar_days;
     private javax.swing.JProgressBar jProgressBar_life;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane_inventory;
     private javax.swing.JScrollPane jScrollPane_market;
+    private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTable jTable_airport;
+    private javax.swing.JTable jTable_hospital;
     private javax.swing.JTable jTable_inventory;
     private javax.swing.JTable jTable_market;
     private javax.swing.JTextArea jTextArea_eventMessage;
+    private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField_inputName;
     // End of variables declaration//GEN-END:variables
 }

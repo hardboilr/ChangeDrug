@@ -29,6 +29,25 @@ public class World {
         countries.put(afghanistan.getName(), afghanistan);
         return countries;
     }
+    
+    public static HashMap hospital(){
+        HashMap medicin = new HashMap<>();
+        Medicin med1 = new Medicin("Medicin1", 50.00, 2);
+        Medicin med2 = new Medicin("Medicin2", 150.00, 10);
+        Medicin med3 = new Medicin("Medicin3", 500.00, 25);
+        Medicin med4 = new Medicin("Medicin4", 5000.00,50);
+        Medicin med5 = new Medicin("Medicin5", 200.00,15);
+        
+        medicin.put(med1.getName(), med1);
+        medicin.put(med2.getName(), med2);
+        medicin.put(med3.getName(), med3);
+        medicin.put(med4.getName(), med4);
+        medicin.put(med5.getName(), med5);
+        
+        return medicin;
+        
+    }
+    
 }
 
 

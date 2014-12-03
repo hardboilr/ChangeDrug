@@ -9,6 +9,7 @@ import Entities.Country;
 import Entities.Product;
 import Entities.Event;
 import Entities.FileHandler;
+import Entities.Medicin;
 import Interfaces.EngineInterface;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,6 +23,7 @@ public class Engine implements EngineInterface {
     private Map<String, Country> countries;
     private Map<String, Product> inv;
     private Map<String, Event> eventMap;
+    private Map<String, Medicin> medicin;
     private Player player;
     private String activeCountry;
     private int randomUpOrDown;
@@ -35,6 +37,7 @@ public class Engine implements EngineInterface {
 
     public Engine() {
         countries = World.createWorld();
+        medicin = World.hospital();
         random = new Random();
         activeCountry = "Denmark";
         playerList = new ArrayList<>();
@@ -52,6 +55,12 @@ public class Engine implements EngineInterface {
             }
         }
         return possibleTravelDestinations;
+    }
+    
+    @Override
+    public Map<String, Medicin> getMedicin(){
+        return medicin;
+        
     }
 
     @Override
@@ -137,7 +146,7 @@ public class Engine implements EngineInterface {
             int prob = random.nextInt(100) + 1;
             if (prob <= event.getProbability()) {
                 eventDescrp.add(event.getDescription());
-                player.setLife((int) (player.getLife() - (player.getLife() * event.getLifeModifier())));
+                player.setLife((int) - (player.getLife() * event.getLifeModifier()));
                 player.setCredits(player.getCredits() - (player.getCredits() * event.getCreditsModifier()));
                 for (Product drug : inv.values()) {
                     drug.setModifiedAvail((int) (drug.getModifiedAvail() * event.getDrugModifier()));
