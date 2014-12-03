@@ -117,6 +117,7 @@ public class Engine implements EngineInterface {
         Map<String, Product> tempMap = tempCountry.getDrugs();
         countries.remove(activeCountry);
         eventMap.clear();
+        calculateLoanWithInterestRate();
         if (player.getDays() != player.getDayCycle()) {
             createEvents();
         }
@@ -167,12 +168,14 @@ public class Engine implements EngineInterface {
         Event event4 = new Event ("hospital", "You have been injured, and you need to go to the hospital", 5, 0.40, 0.00, 1);
         Event event5 = new Event("minionPusher", "You have hired a local pusher, and gets his profits", 5, 0.00, -0.15, 1);
         Event event6 = new Event("girlfriend", "You are lucky and got a new Girlfriend", 5, 0.00, -0.5, 1);
+        Event event7 = new Event("loanShark", "You were beaten by the loan shark, because you have an unpaid deposit", 0, .40, 0.00, 1);
         eventMap.put(event1.getName(), event1);
         eventMap.put(event2.getName(), event2);
         eventMap.put(event3.getName(), event3);
         eventMap.put(event4.getName(), event4);
         eventMap.put(event5.getName(), event5);
         eventMap.put(event6.getName(), event6);
+        eventMap.put(event7.getName(), event7);
         
         
         for (Event event : eventMap.values()) {
@@ -188,6 +191,7 @@ public class Engine implements EngineInterface {
                     if(inv.containsKey("Travel 1.Class")){
                         event.setProbability(-1);
                     }
+                break;
                 
                 case "angryPusher":
                     if (inv.containsKey("Beretta92F")) {
@@ -200,6 +204,7 @@ public class Engine implements EngineInterface {
                     if (inv.containsKey("Generous")) {
                         event.setProbability(-1);
                     }
+                break;
                 
                 case "mafiaTerritory":
                     if (inv.containsKey("High friends")) {
@@ -208,6 +213,7 @@ public class Engine implements EngineInterface {
                     if (inv.containsKey("Beretta92F")) {
                         event.setProbability(-1);    
                     }
+                break;
                 
                 case "minionPusher":
                     if (inv.containsKey("High friends")) {
@@ -219,6 +225,7 @@ public class Engine implements EngineInterface {
                     if (inv.containsKey("Nice clothes")){
                         event.setProbability(+2);
                     }
+                break;
                 
                 case "girlfriend":
                     if (inv.containsKey("Nice clothes")){
@@ -233,7 +240,13 @@ public class Engine implements EngineInterface {
                     if (inv.containsKey("Generous")) {
                         event.setProbability(+4);
                     }
-
+                break;
+                
+                case "loanShark":
+                    if (player.getLoanDays() == 0 && player.getLoan() > 1) {
+                        event.setProbability(+40);    
+                    }
+                break;
             }
         }
     }
@@ -269,12 +282,19 @@ public class Engine implements EngineInterface {
             return sum;
         }
     }
+    
+    private void calculateLoanWithInterestRate(){
+        double interestRate = 0.35;
+        double newLoan = player.getLoan() + (player.getLoan()* interestRate);
+        player.setLoan(newLoan);
+    }
 
     @Override
     public void calculateCredits(double price) {
         double credits = player.getCredits() + price;
         player.setCredits(credits);
     }
+    
 
     @Override
     public double getCredits() {

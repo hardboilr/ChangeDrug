@@ -6,8 +6,8 @@ package Entities;
 public class Player implements Comparable {
     
     private String name;
-    private int life, days;
-    private double credits;
+    private int life, days, loanDays;
+    private double credits, loan;
     private final int DAY_CYCLE = 20;
     
     public Player(String input1, double input2) {
@@ -15,6 +15,8 @@ public class Player implements Comparable {
         this.life = 100;
         this.credits = input2;
         this.days = DAY_CYCLE;
+        this.loan = 0.0;
+        this.loanDays = 0;
     }
 
     public int getLife() {
@@ -54,10 +56,35 @@ public class Player implements Comparable {
         days = days + input;
     }
 
+    public int getLoanDays() {
+        return loanDays;
+    }
+
+    public void setLoanDays(int loanDays) {
+        if((this.loanDays + loanDays) >= 0){
+            this.loanDays += loanDays;
+        } else{
+            this.loanDays = 0;
+        }
+
+    }
+    
+    public void refund(double refundInput){
+        this.loan -= refundInput;
+    }
+
     public String getName() {
         return name;
     }
-    
+
+    public double getLoan() {
+        return loan;
+    }
+
+    public void setLoan(double loan) {
+        this.loan = loan;
+        this.credits += loan;
+    }
     
     
     @Override
