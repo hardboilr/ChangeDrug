@@ -88,6 +88,7 @@ public class GUI_Main extends javax.swing.JFrame {
         jLabel_name.setVisible(false);
         jTextField_inputName.setVisible(false);
         jLabel_money.setVisible(false);
+        jLabel_loan.setVisible(false);
         jButton_confirm.setVisible(false);
 
         //deactivate buttons
@@ -415,6 +416,8 @@ public class GUI_Main extends javax.swing.JFrame {
         jProgressBar_life = new javax.swing.JProgressBar();
         jLabel_location = new javax.swing.JLabel();
         jProgressBar_days = new javax.swing.JProgressBar();
+        jLabel_TEXT_loan = new javax.swing.JLabel();
+        jLabel_loan = new javax.swing.JLabel();
         jButton_newGame = new javax.swing.JButton();
         jPanel_market = new javax.swing.JPanel();
         jScrollPane_market = new javax.swing.JScrollPane();
@@ -443,8 +446,11 @@ public class GUI_Main extends javax.swing.JFrame {
         jButton_buyMedicin = new javax.swing.JButton();
         jPanel_bank = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        jButton2 = new javax.swing.JButton();
-        jTextField1 = new javax.swing.JTextField();
+        jTextfield_loanAmount = new javax.swing.JTextField();
+        jButton_loan1Day = new javax.swing.JButton();
+        jLabel3 = new javax.swing.JLabel();
+        jButton_loan1Week = new javax.swing.JButton();
+        jButton_loanRefund = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Thug Life 0.1");
@@ -545,10 +551,20 @@ public class GUI_Main extends javax.swing.JFrame {
 
         jLabel_location.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel_location.setText("Location: current location");
-        jPanel_player.add(jLabel_location, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 150, -1, -1));
+        jPanel_player.add(jLabel_location, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 160, -1, -1));
 
         jProgressBar_days.setStringPainted(true);
         jPanel_player.add(jProgressBar_days, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 90, -1, 20));
+
+        jLabel_TEXT_loan.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel_TEXT_loan.setText("Loan");
+        jLabel_TEXT_loan.setToolTipText("");
+        jPanel_player.add(jLabel_TEXT_loan, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 140, -1, 20));
+
+        jLabel_loan.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel_loan.setText("0");
+        jLabel_loan.setToolTipText("");
+        jPanel_player.add(jLabel_loan, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 140, -1, 20));
 
         getContentPane().add(jPanel_player, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 40, 480, 180));
 
@@ -712,7 +728,7 @@ public class GUI_Main extends javax.swing.JFrame {
         jTextArea_eventMessage.setRows(5);
         jScrollPane2.setViewportView(jTextArea_eventMessage);
 
-        getContentPane().add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 230, 420, 60));
+        getContentPane().add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 230, 480, 60));
 
         jPanel_location.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
@@ -848,7 +864,28 @@ public class GUI_Main extends javax.swing.JFrame {
 
         jLabel1.setText("Borrow some cash max 10.000$");
 
-        jButton2.setText("Loan");
+        jButton_loan1Day.setText("1 Day ");
+        jButton_loan1Day.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton_loan1DayActionPerformed(evt);
+            }
+        });
+
+        jLabel3.setText("35% interest rate");
+
+        jButton_loan1Week.setText("1 Week");
+        jButton_loan1Week.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton_loan1WeekActionPerformed(evt);
+            }
+        });
+
+        jButton_loanRefund.setText("Refund");
+        jButton_loanRefund.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton_loanRefundActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel_bankLayout = new javax.swing.GroupLayout(jPanel_bank);
         jPanel_bank.setLayout(jPanel_bankLayout);
@@ -856,26 +893,35 @@ public class GUI_Main extends javax.swing.JFrame {
             jPanel_bankLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel_bankLayout.createSequentialGroup()
                 .addGroup(jPanel_bankLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jTextfield_loanAmount, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel_bankLayout.createSequentialGroup()
-                        .addGap(14, 14, 14)
-                        .addComponent(jButton2))
+                        .addComponent(jButton_loan1Day, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton_loan1Week, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton_loanRefund, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel_bankLayout.createSequentialGroup()
-                        .addGap(26, 26, 26)
+                        .addContainerGap()
                         .addGroup(jPanel_bankLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel1))))
-                .addContainerGap(28, Short.MAX_VALUE))
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel3))))
+                .addContainerGap(15, Short.MAX_VALUE))
         );
         jPanel_bankLayout.setVerticalGroup(
             jPanel_bankLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel_bankLayout.createSequentialGroup()
-                .addGap(48, 48, 48)
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(25, 25, 25)
-                .addComponent(jButton2)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap()
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jTextfield_loanAmount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel_bankLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton_loan1Day, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton_loan1Week, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton_loanRefund, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(24, 24, 24))
         );
 
         jTabbedPane1.addTab("Loan Shark", jPanel_bank);
@@ -905,6 +951,8 @@ public class GUI_Main extends javax.swing.JFrame {
             jLabel_name.setVisible(true);
             jLabel_money.setText(doubleCreditFormat.format(engine.getCredits()) + " $");
             jLabel_money.setVisible(true);
+            jLabel_loan.setVisible(true);
+            jLabel_loan.setText(doubleCreditFormat.format(engine.getPlayer().getLoan()) + " $");
             jTextField_inputName.setVisible(false);
             jLabel_selectionLeft.setVisible(false);
             jLabel_selectionRight.setVisible(false);
@@ -939,12 +987,14 @@ public class GUI_Main extends javax.swing.JFrame {
         double ticketPrice = (double) jTable_airport.getValueAt(jTable_airport.getSelectedRow(), 1);
         if (currentDay >= 0 && ticketPrice <= engine.getCredits()) {
             engine.getPlayer().setDays(-1);
+            engine.getPlayer().setLoanDays(-1);
             updateDays();
             engine.setActiveCountry((String) jTable_airport.getValueAt(jTable_airport.getSelectedRow(), 0));
             setLocationText();
             prepareRound();
             engine.calculateCredits(-ticketPrice);
             jLabel_money.setText(doubleCreditFormat.format(engine.getCredits()) + " $");
+            jLabel_loan.setText(doubleCreditFormat.format(engine.getPlayer().getLoan()) + " $");
         }
         if (currentDay == 0) {
             jButton_travel.setText("Cash in!");
@@ -1055,6 +1105,55 @@ public class GUI_Main extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jButton_buyMedicinActionPerformed
 
+    private void jButton_loan1DayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_loan1DayActionPerformed
+        double loanAmount = Double.parseDouble(jTextfield_loanAmount.getText());
+        double maxLoan = 10001.00;//System.out.println(loanAmount);
+        double existingLoan = engine.getPlayer().getLoan();
+        int existingLoanDays = engine.getPlayer().getLoanDays();
+       if(loanAmount > -1 && loanAmount < maxLoan && (existingLoan + loanAmount) <= maxLoan){
+            engine.getPlayer().setLoan(existingLoan + loanAmount);
+            engine.getPlayer().setLoanDays(existingLoanDays + 1);
+            jLabel_money.setText(doubleCreditFormat.format(engine.getCredits()) + " $");
+            jLabel_loan.setText(doubleCreditFormat.format(engine.getPlayer().getLoan()) + " $");
+        }
+        
+        
+    }//GEN-LAST:event_jButton_loan1DayActionPerformed
+
+    private void jButton_loan1WeekActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_loan1WeekActionPerformed
+        double loanAmount = Double.parseDouble(jTextfield_loanAmount.getText());
+        double maxLoan = 10001.00;//System.out.println(loanAmount);
+        double existingLoan = engine.getPlayer().getLoan();
+        int existingLoanDays = engine.getPlayer().getLoanDays();
+        if(loanAmount > -1 && loanAmount < maxLoan && (existingLoan + loanAmount) <= maxLoan){
+            engine.getPlayer().setLoan(existingLoan + loanAmount);
+            engine.getPlayer().setLoanDays(existingLoanDays + 7);
+            jLabel_money.setText(doubleCreditFormat.format(engine.getCredits()) + " $");
+            jLabel_loan.setText(doubleCreditFormat.format(engine.getPlayer().getLoan()) + " $");
+        } // TODO add your handling code here:
+    }//GEN-LAST:event_jButton_loan1WeekActionPerformed
+
+    private void jButton_loanRefundActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_loanRefundActionPerformed
+        double refundAmount = Double.parseDouble(jTextfield_loanAmount.getText());
+        double credits = engine.getCredits();
+        double loan = engine.getPlayer().getLoan();
+        if(refundAmount <= credits && refundAmount > - 1.0){
+            System.out.println("heje");
+            if(refundAmount > loan){
+                System.out.println("hejeeeee");
+                engine.getPlayer().setLoan(loan - loan);
+                engine.calculateCredits(-loan);
+                jLabel_money.setText(doubleCreditFormat.format(engine.getCredits()) + " $");
+                jLabel_loan.setText(doubleCreditFormat.format(engine.getPlayer().getLoan()) + " $");
+            } else{
+                engine.getPlayer().setLoan(loan-refundAmount);
+                engine.calculateCredits(-refundAmount);
+                jLabel_money.setText(doubleCreditFormat.format(engine.getCredits()) + " $");
+                jLabel_loan.setText(doubleCreditFormat.format(engine.getPlayer().getLoan()) + " $");
+            }
+        }       // TODO add your handling code here:
+    }//GEN-LAST:event_jButton_loanRefundActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -1096,23 +1195,28 @@ public class GUI_Main extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton_bulkBuy;
     private javax.swing.JButton jButton_bulkSell;
     private javax.swing.JButton jButton_buy;
     private javax.swing.JButton jButton_buyMedicin;
     private javax.swing.JButton jButton_confirm;
     private javax.swing.JButton jButton_highscore;
+    private javax.swing.JButton jButton_loan1Day;
+    private javax.swing.JButton jButton_loan1Week;
+    private javax.swing.JButton jButton_loanRefund;
     private javax.swing.JButton jButton_newGame;
     private javax.swing.JButton jButton_sell;
     private javax.swing.JButton jButton_travel;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel_TEXT_info;
+    private javax.swing.JLabel jLabel_TEXT_loan;
     private javax.swing.JLabel jLabel_TEXT_market;
     private javax.swing.JLabel jLabel_TEXT_market1;
     private javax.swing.JLabel jLabel_TEXT_money;
     private javax.swing.JLabel jLabel_TEXT_name;
     private javax.swing.JLabel jLabel_characterPic;
+    private javax.swing.JLabel jLabel_loan;
     private javax.swing.JLabel jLabel_location;
     private javax.swing.JLabel jLabel_money;
     private javax.swing.JLabel jLabel_name;
@@ -1139,7 +1243,7 @@ public class GUI_Main extends javax.swing.JFrame {
     private javax.swing.JTable jTable_inventory;
     private javax.swing.JTable jTable_market;
     private javax.swing.JTextArea jTextArea_eventMessage;
-    private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField_inputName;
+    private javax.swing.JTextField jTextfield_loanAmount;
     // End of variables declaration//GEN-END:variables
 }
