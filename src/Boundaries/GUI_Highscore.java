@@ -1,19 +1,12 @@
 /**
- * @author Tobias
+ * @author Tobias & Sebastian
  */
 package Boundaries;
 
 import Controllere.Engine;
-import Entities.FileHandler;
 import Entities.Player;
 import Interfaces.EngineInterface;
-import java.awt.Frame;
-import java.awt.Window;
-import java.lang.reflect.Array;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Scanner;
-import javax.swing.table.DefaultTableModel;
 
 public class GUI_Highscore extends javax.swing.JFrame {
     
@@ -172,12 +165,9 @@ public class GUI_Highscore extends javax.swing.JFrame {
     
     private void addData() {
         for (int i = 0; i < playerList.size(); i++) {
-//            int count = 0;
             Player player = playerList.get(i);
             jTable_highscore.setValueAt(player.getName(), i, 0);
             jTable_highscore.setValueAt(player.getCredits(), i, 1);
-//            System.out.println(player.toString());
-//            count++;
         }
         
     }

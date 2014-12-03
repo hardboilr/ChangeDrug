@@ -10,50 +10,42 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-
-public interface EngineInterface  {
-
-    /**
-     * Pre:
-     * Post: set current country
-     */
+public interface EngineInterface {
 
     public void setActiveCountry(String input);
-    
+
     public String getActiveCountry();
-    
+
     public Map travel();
-    
+
     public List getEvents();
-    
+
+    public Map getEventMap();
+
     public ArrayList getCountries();
-    
+
     public Map<String, Medicin> getMedicin();
-    
+
     public void addToInventory(Product drugInput);
+
     public void subtractFromInventory(String input);
-    
-    
+
     public Product getInventoryDrug(String key);
-    
+
+    public String getInventoryDrugName(String key);
+
     public void createPlayer(String input1, double input2);
-    
+
     public void calculateCredits(double price);
-    
-    //it might be enough to use getPlayer()!
-    public double getCredits(); 
-    
-//    public double getStartCredits();
-    
+
+    public double getCredits();
+
     public Player getPlayer();
-    
+
     public void addPlayer();
-    
+
     public void savePlayerToHighscore(String filename);
-    
+
     public List<Player> loadPlayers(String filename);
-    
-    
-    
-    
+
 }

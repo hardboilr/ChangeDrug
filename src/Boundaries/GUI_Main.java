@@ -8,12 +8,10 @@ import Entities.Country;
 import Entities.Product;
 import Entities.Medicin;
 import Interfaces.EngineInterface;
-import java.awt.Color;
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.table.DefaultTableModel;
 
@@ -21,7 +19,7 @@ public class GUI_Main extends javax.swing.JFrame {
 
     private Map<String, Product> marketMap;
     private final Map<String, Medicin> medicinMap;
-    private Map<String,String> purchasedMedicin; 
+    private Map<String, String> purchasedMedicin;
 
     private final int typeColumn = 0;
     private final int nameColumn = 1;
@@ -54,16 +52,30 @@ public class GUI_Main extends javax.swing.JFrame {
     private ImageIcon icon_niceclothes_empty = null;
     private ImageIcon icon_niceclothes = null;
 
+    private Boolean hasWeapon;
+    private Boolean hasFriends;
+    private Boolean hasClothes;
+    private Boolean hasGenerous;
+    private Boolean hasFirstclass;
+    private Boolean hasRelationship;
+
     //variables
     private int nextImg;
     private int avail;
-    private double MarketPrice;
+    private double marketPrice;
 
     private final EngineInterface engine;
     private final DecimalFormat doubleCreditFormat;
 
     public GUI_Main() {
         initComponents();
+        hasWeapon = false;
+        hasFriends = false;
+        hasClothes = false;
+        hasGenerous = false;
+        hasFirstclass = false;
+        hasRelationship = false;
+
         this.setLocationRelativeTo(null); //place window in center of screen
         engine = new Engine();
         engine.createPlayer("", 0.00);
@@ -78,34 +90,30 @@ public class GUI_Main extends javax.swing.JFrame {
 
         nextImg = 0;
         //init icons
-        try {
-            icon_selectionArrow_right_pressed = new ImageIcon("./src/art/gui/selectionArrow_right_pressed.png");
-            icon_selectionArrow_right = new ImageIcon("./src/art/gui/selectionArrow_right.png");
-            icon_selectionArrow_left_pressed = new ImageIcon("./src/art/gui/selectionArrow_left_pressed.png");
-            icon_selectionArrow_left = new ImageIcon("./src/art/gui/selectionArrow_left.png");
-            icon_clemenza1 = new ImageIcon("./src/art/characters/1_clemenza.png");
-            icon_brasi2 = new ImageIcon("./src/art/characters/2_brasi.png");
-            icon_deNiro3 = new ImageIcon("./src/art/characters/3_deNiro.png");
-            icon_kay4 = new ImageIcon("./src/art/characters/4_kay.png");
-            icon_michael5 = new ImageIcon("./src/art/characters/5_michael.png");
-            icon_sollozo6 = new ImageIcon("./src/art/characters/6_sollozo.png");
-            icon_talia7 = new ImageIcon("./src/art/characters/7_talia.png");
-            icon_vitelli8 = new ImageIcon("./src/art/characters/8_vitelli.png");
-            icon_weapon_empty = new ImageIcon("./src/art/items/weapon_beretta92f_empty.png");
-            icon_weapon = new ImageIcon("./src/art/items/weapon_beretta92f.png");
-            icon_jesus_empty = new ImageIcon("./src/art/items/behaviour_jesus_empty.png");
-            icon_jesus = new ImageIcon("./src/art/items/behaviour_jesus.png");
-            icon_firstclass_empty = new ImageIcon("./src/art/items/behaviour_firstclass_empty.png");
-            icon_firstclass = new ImageIcon("./src/art/items/behaviour_firstclass.png");
-            icon_friend_vito_empty = new ImageIcon("./src/art/items/friend_vito_empty.png");
-            icon_friend_vito = new ImageIcon("./src/art/items/friend_vito.png");
-            icon_relationship_empty = new ImageIcon("./src/art/items/event_relationship_empty.png");
-            icon_relationship = new ImageIcon("./src/art/items/event_relationship.png");
-            icon_niceclothes_empty = new ImageIcon("./src/art/items/clothes_niceclothes_empty.png");
-            icon_niceclothes = new ImageIcon("./src/art/items/clothes_niceclothes.png");
-        } catch (NullPointerException ex) {
-            System.out.println("Didnt find all icons!");
-        }
+        icon_selectionArrow_right_pressed = new ImageIcon("./src/art/gui/selectionArrow_right_pressed.png");
+        icon_selectionArrow_right = new ImageIcon("./src/art/gui/selectionArrow_right.png");
+        icon_selectionArrow_left_pressed = new ImageIcon("./src/art/gui/selectionArrow_left_pressed.png");
+        icon_selectionArrow_left = new ImageIcon("./src/art/gui/selectionArrow_left.png");
+        icon_clemenza1 = new ImageIcon("./src/art/characters/1_clemenza.png");
+        icon_brasi2 = new ImageIcon("./src/art/characters/2_brasi.png");
+        icon_deNiro3 = new ImageIcon("./src/art/characters/3_deNiro.png");
+        icon_kay4 = new ImageIcon("./src/art/characters/4_kay.png");
+        icon_michael5 = new ImageIcon("./src/art/characters/5_michael.png");
+        icon_sollozo6 = new ImageIcon("./src/art/characters/6_sollozo.png");
+        icon_talia7 = new ImageIcon("./src/art/characters/7_talia.png");
+        icon_vitelli8 = new ImageIcon("./src/art/characters/8_vitelli.png");
+        icon_weapon_empty = new ImageIcon("./src/art/items/weapon_beretta92f_empty.png");
+        icon_weapon = new ImageIcon("./src/art/items/weapon_beretta92f.png");
+        icon_jesus_empty = new ImageIcon("./src/art/items/behaviour_jesus_empty.png");
+        icon_jesus = new ImageIcon("./src/art/items/behaviour_jesus.png");
+        icon_firstclass_empty = new ImageIcon("./src/art/items/behaviour_firstclass_empty.png");
+        icon_firstclass = new ImageIcon("./src/art/items/behaviour_firstclass.png");
+        icon_friend_vito_empty = new ImageIcon("./src/art/items/friend_vito_empty.png");
+        icon_friend_vito = new ImageIcon("./src/art/items/friend_vito.png");
+        icon_relationship_empty = new ImageIcon("./src/art/items/event_relationship_empty.png");
+        icon_relationship = new ImageIcon("./src/art/items/event_relationship.png");
+        icon_niceclothes_empty = new ImageIcon("./src/art/items/clothes_niceclothes_empty.png");
+        icon_niceclothes = new ImageIcon("./src/art/items/clothes_niceclothes.png");
         //hide images related to [create player]
         jLabel_characterPic.setVisible(false);
         jLabel_selectionLeft.setVisible(false);
@@ -150,7 +158,7 @@ public class GUI_Main extends javax.swing.JFrame {
         if (eventList.size() > 0) {
             for (String eventDescrip : eventList) {
                 String descrip = eventDescrip;
-                jTextArea_eventMessage.append(descrip+"\n");
+                jTextArea_eventMessage.append(descrip + "\n");
                 jTextArea_eventMessage.setCaretPosition(jTextArea_eventMessage.getDocument().getLength());
                 updateLife();
             }
@@ -244,8 +252,8 @@ public class GUI_Main extends javax.swing.JFrame {
         String productType = "";
         String selectedDrugName = "";
         int newMarketQty = 0;
-        double sufficiantCredits = engine.getCredits() - MarketPrice;;
-        MarketPrice = 0;
+        double sufficiantCredits = engine.getCredits() - marketPrice;;
+        marketPrice = 0;
         int add = 1;
         Product marketDrug;
         try {
@@ -254,8 +262,7 @@ public class GUI_Main extends javax.swing.JFrame {
             productType = (String) jTable_market.getValueAt(selectedRow, typeColumn);
             selectedDrugName = (String) jTable_market.getValueAt(selectedRow, nameColumn);
             newMarketQty = (int) jTable_market.getValueAt(selectedRow, qtyColumn) - 1;
-            MarketPrice = (double) jTable_market.getValueAt(selectedRow, priceColumn);
-
+            marketPrice = (double) jTable_market.getValueAt(selectedRow, priceColumn);
             //-------------------------------------------------------------------
         } catch (ArrayIndexOutOfBoundsException ex) {
             sufficiantCredits = -1.00;
@@ -265,7 +272,7 @@ public class GUI_Main extends javax.swing.JFrame {
             //-----------------------------------------------------------
             //update market table + create drug + add to player inv
             jTable_market.setValueAt(newMarketQty, selectedRow, qtyColumn);
-            Product drug = new Product(productType, selectedDrugName, 0, MarketPrice, 0, add, 0);
+            Product drug = new Product(productType, selectedDrugName, 0, marketPrice, 0, add, 0);
             engine.addToInventory(drug);
             checkInvForNonDrugs();
             int newInvQty = engine.getInventoryDrug(selectedDrugName).getModifiedAvail();
@@ -280,7 +287,7 @@ public class GUI_Main extends javax.swing.JFrame {
                     jTable_inventory.setValueAt(productType, 0, typeColumn);
                     jTable_inventory.setValueAt(selectedDrugName, 0, nameColumn);
                     jTable_inventory.setValueAt(newInvQty, 0, qtyColumn);
-                    jTable_inventory.setValueAt(MarketPrice, 0, priceColumn);
+                    jTable_inventory.setValueAt(marketPrice, 0, priceColumn);
                 } else {
                     boolean drugExist = false; //we have drug 
                     for (int i = 0; i < jTable_inventory.getRowCount(); i++) {
@@ -292,7 +299,7 @@ public class GUI_Main extends javax.swing.JFrame {
                             double currentInventoryPrice = (double) jTable_inventory.getValueAt(i, priceColumn);
                             int currentQuantity = (int) jTable_inventory.getValueAt(i, qtyColumn);
                             double newAveragePrice = ((currentInventoryPrice * currentQuantity)
-                                    + (MarketPrice)) / (currentQuantity + add);
+                                    + (marketPrice)) / (currentQuantity + add);
                             jTable_inventory.setValueAt(newAveragePrice, i, priceColumn);
                             break;
                         }
@@ -303,7 +310,7 @@ public class GUI_Main extends javax.swing.JFrame {
                         jTable_inventory.setValueAt(productType, rowPosition, typeColumn);
                         jTable_inventory.setValueAt(selectedDrugName, rowPosition, nameColumn);
                         jTable_inventory.setValueAt(newInvQty, rowPosition, qtyColumn);
-                        jTable_inventory.setValueAt(MarketPrice, rowPosition, priceColumn);
+                        jTable_inventory.setValueAt(marketPrice, rowPosition, priceColumn);
                     }
                 }
             }
@@ -343,7 +350,7 @@ public class GUI_Main extends javax.swing.JFrame {
                 String marketDrug = (String) jTable_market.getValueAt(i, nameColumn);
                 if (inventoryDrug.equals(marketDrug)) {
                     int newQty = (int) jTable_market.getValueAt(i, qtyColumn) + 1;
-                    MarketPrice = (double) jTable_market.getValueAt(i, priceColumn);
+                    marketPrice = (double) jTable_market.getValueAt(i, priceColumn);
                     jTable_market.setValueAt(newQty, i, qtyColumn);
                     productExists = true;
                     break;
@@ -357,17 +364,7 @@ public class GUI_Main extends javax.swing.JFrame {
                 jTable_market.setValueAt(1, rowIndex, qtyColumn);
                 jTable_market.setValueAt(marketMap.get(inventoryDrug).getModifiedPrice(), rowIndex, priceColumn);
             }
-
         }
-//        if (productExists == false) {
-//            int rowIndex = jTable_market.getRowCount();
-//            ((DefaultTableModel) jTable_market.getModel()).addRow(new Object[]{});
-//            jTable_market.setValueAt(productType, rowIndex, typeColumn);
-//            jTable_market.setValueAt(inventoryDrug, rowIndex, nameColumn);
-//            jTable_market.setValueAt(1, rowIndex, qtyColumn);
-//            jTable_market.setValueAt(marketMap.get(inventoryDrug).getModifiedPrice(), rowIndex, priceColumn);
-//        }
-
         if (newInventoryQty == 0) {
             ((DefaultTableModel) jTable_inventory.getModel()).removeRow(row);
         }
@@ -388,8 +385,8 @@ public class GUI_Main extends javax.swing.JFrame {
                 if (inventoryDrug.equals(marketDrug)) {
                     double marketPrice = (double) jTable_market.getValueAt(j, 2);
                     int newQty = (int) jTable_market.getValueAt(i, 1) + 1;
-                    this.MarketPrice = inventoryQty * marketPrice;
-                    engine.calculateCredits(this.MarketPrice);
+                    this.marketPrice = inventoryQty * marketPrice;
+                    engine.calculateCredits(this.marketPrice);
                     break;
                 }
             }
@@ -404,7 +401,7 @@ public class GUI_Main extends javax.swing.JFrame {
     private void performBuy() {
         jTable_inventory.clearSelection();
         if (buy() == true) {
-            engine.calculateCredits(-MarketPrice);
+            engine.calculateCredits(-marketPrice);
             jLabel_money.setText(doubleCreditFormat.format(engine.getCredits()) + " $");
         }
     }
@@ -412,7 +409,7 @@ public class GUI_Main extends javax.swing.JFrame {
     private void performSell() {
         jTable_market.clearSelection();
         if (sell() == true) {
-            engine.calculateCredits(MarketPrice);
+            engine.calculateCredits(marketPrice);
             jLabel_money.setText(doubleCreditFormat.format(engine.getCredits()) + " $");
         }
     }
@@ -436,31 +433,67 @@ public class GUI_Main extends javax.swing.JFrame {
         Product niceclothes = engine.getInventoryDrug("Nice clothes");
         Product firstclass = engine.getInventoryDrug("Travel 1.Class");
 
+        String affects = "Affects: ";
+        String captureAuthority = "% prob to get captured by customs\n";
+        String assaultPusher = "% prob to get assaulted by pusher\n";
+        String mafiaTerritory = "% prob to trespass on mafia territory\n";
+        String minionPusher = "% prob to get minion pusher to work for you\n";
+        String relationship = "% prob to get a local boy or girlfriend\n";
+
         if (weapon != null) {
-            System.out.println("Setting weapon icon");
-            jLabel_weapon.setIcon(icon_weapon);
-        }
-        else {
+            if (weapon.getModifiedAvail() == 1 && hasWeapon == false) {
+                jLabel_weapon.setIcon(icon_weapon);
+                jTextArea_eventMessage.append("You bought a weapon for protection\n");
+                jTextArea_eventMessage.append(affects + "-2" + assaultPusher);
+                jTextArea_eventMessage.append(affects + "-1" + mafiaTerritory);
+                hasWeapon = true;
+            }
+        } else {
             jLabel_weapon.setIcon(icon_weapon_empty);
+            hasWeapon = false;
         }
         if (friend != null) {
-            System.out.println("Setting friend icon");
-            jLabel_friend.setIcon(icon_friend_vito);
+            if (friend.getModifiedAvail() == 1 && hasFriends == false) {
+                jLabel_friend.setIcon(icon_friend_vito);
+                jTextArea_eventMessage.append("You bribed some friends in high places\n");
+                jTextArea_eventMessage.append(affects + "-2" + captureAuthority);
+                jTextArea_eventMessage.append(affects + "-1" + assaultPusher);
+                jTextArea_eventMessage.append(affects + "-2" + mafiaTerritory);
+                hasFriends = true;
+            }
         }
         if (generous != null) {
-            System.out.println("setting jesus icon");
-            jLabel_generous.setIcon(icon_jesus);
+            if (generous.getModifiedAvail() == 1 && hasGenerous == false) {
+                jLabel_generous.setIcon(icon_jesus);
+                jTextArea_eventMessage.append("You decided to be generous and spent some money partying with your friends\n");
+                jTextArea_eventMessage.append(affects + "-1" + assaultPusher);
+                jTextArea_eventMessage.append(affects + "2" + minionPusher);
+                jTextArea_eventMessage.append(affects + "4" + relationship);
+                hasGenerous = true;
+            }
         }
         if (niceclothes != null) {
-            System.out.println("setting clothing icon");
-            jLabel_niceclothes.setIcon(icon_niceclothes);
+            if (niceclothes.getModifiedAvail() == 1 && hasClothes == false) {
+                jLabel_niceclothes.setIcon(icon_niceclothes);
+                jTextArea_eventMessage.append("You bought some nice clothes\n");
+                jTextArea_eventMessage.append(affects + "-1" + captureAuthority);
+                jTextArea_eventMessage.append(affects + "2" + minionPusher);
+                jTextArea_eventMessage.append(affects + "3" + relationship);
+                hasClothes = true;
+            }
         }
         if (firstclass != null) {
-            System.out.println("setting firstclass icon");
-            jLabel_firstclass.setIcon(icon_firstclass);
+            if (firstclass.getModifiedAvail() == 1 && hasFirstclass == false) {
+                jLabel_firstclass.setIcon(icon_firstclass);
+                jTextArea_eventMessage.append("You bought a one-way ticket for first class\n");
+                jTextArea_eventMessage.append(affects + "-1" + captureAuthority);
+                jTextArea_eventMessage.append(affects + "2" + relationship);
+                hasFirstclass = true;
+            }
+        } else {
+            jLabel_firstclass.setIcon(icon_firstclass_empty);
+            hasFirstclass = false;
         }
-
-        //Product friendProduct = engine.getInventoryDrug("Weapon");
     }
 
     /**
@@ -479,20 +512,16 @@ public class GUI_Main extends javax.swing.JFrame {
         jLabel_TEXT_info = new javax.swing.JLabel();
         jLabel_TEXT_name = new javax.swing.JLabel();
         jLabel_name = new javax.swing.JLabel();
-        jLabel_TEXT_money = new javax.swing.JLabel();
         jLabel_money = new javax.swing.JLabel();
         jLabel_selectionRight = new javax.swing.JLabel();
         jLabel_selectionLeft = new javax.swing.JLabel();
         jTextField_inputName = new javax.swing.JTextField();
         jProgressBar_life = new javax.swing.JProgressBar();
-        jLabel_location = new javax.swing.JLabel();
         jProgressBar_days = new javax.swing.JProgressBar();
         jLabel_weapon = new javax.swing.JLabel();
         jLabel_friend = new javax.swing.JLabel();
         jLabel_generous = new javax.swing.JLabel();
         jLabel_firstclass = new javax.swing.JLabel();
-        jLabel_relationship = new javax.swing.JLabel();
-        jLabel7 = new javax.swing.JLabel();
         jLabel_niceclothes = new javax.swing.JLabel();
         jButton_newGame = new javax.swing.JButton();
         jPanel_market = new javax.swing.JPanel();
@@ -516,6 +545,7 @@ public class GUI_Main extends javax.swing.JFrame {
         jButton_travel = new javax.swing.JButton();
         jScrollPane4 = new javax.swing.JScrollPane();
         jTable_airport = new javax.swing.JTable();
+        jLabel_location = new javax.swing.JLabel();
         jPanel_Hospital = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         jTable_hospital = new javax.swing.JTable();
@@ -537,23 +567,23 @@ public class GUI_Main extends javax.swing.JFrame {
         setResizable(false);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jButton_highscore.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jButton_highscore.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         jButton_highscore.setText("Highscore");
         jButton_highscore.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton_highscoreActionPerformed(evt);
             }
         });
-        getContentPane().add(jButton_highscore, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 10, -1, -1));
+        getContentPane().add(jButton_highscore, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 3, -1, -1));
 
-        jButton_confirm.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jButton_confirm.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         jButton_confirm.setText("Confirm");
         jButton_confirm.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton_confirmActionPerformed(evt);
             }
         });
-        getContentPane().add(jButton_confirm, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 10, -1, -1));
+        getContentPane().add(jButton_confirm, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 3, -1, -1));
 
         jPanel_player.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jPanel_player.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -564,11 +594,11 @@ public class GUI_Main extends javax.swing.JFrame {
         jLabel_characterPic.setMaximumSize(new java.awt.Dimension(800, 600));
         jLabel_characterPic.setMinimumSize(new java.awt.Dimension(800, 600));
         jLabel_characterPic.setPreferredSize(new java.awt.Dimension(800, 600));
-        jPanel_player.add(jLabel_characterPic, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 10, 110, 160));
+        jPanel_player.add(jLabel_characterPic, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 10, 110, 160));
 
         jLabel_TEXT_info.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel_TEXT_info.setText("Info");
-        jPanel_player.add(jLabel_TEXT_info, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, -1, -1));
+        jPanel_player.add(jLabel_TEXT_info, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 6, -1, -1));
 
         jLabel_TEXT_name.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel_TEXT_name.setText("Name: ");
@@ -577,17 +607,12 @@ public class GUI_Main extends javax.swing.JFrame {
         jLabel_name.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel_name.setText("Hardboilr");
         jLabel_name.setPreferredSize(new java.awt.Dimension(70, 20));
-        jPanel_player.add(jLabel_name, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 20, 130, 30));
+        jPanel_player.add(jLabel_name, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 23, 100, 30));
 
-        jLabel_TEXT_money.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel_TEXT_money.setText("Money:");
-        jLabel_TEXT_money.setToolTipText("");
-        jPanel_player.add(jLabel_TEXT_money, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 120, -1, 20));
-
-        jLabel_money.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel_money.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
         jLabel_money.setText("5000");
         jLabel_money.setToolTipText("");
-        jPanel_player.add(jLabel_money, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 120, -1, 20));
+        jPanel_player.add(jLabel_money, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 140, -1, 30));
 
         jLabel_selectionRight.setIcon(new javax.swing.ImageIcon(getClass().getResource("/art/gui/selectionArrow_right.png"))); // NOI18N
         jLabel_selectionRight.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -601,7 +626,7 @@ public class GUI_Main extends javax.swing.JFrame {
                 jLabel_selectionRightMouseReleased(evt);
             }
         });
-        jPanel_player.add(jLabel_selectionRight, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 70, -1, -1));
+        jPanel_player.add(jLabel_selectionRight, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 70, -1, -1));
 
         jLabel_selectionLeft.setIcon(new javax.swing.ImageIcon(getClass().getResource("/art/gui/selectionArrow_left.png"))); // NOI18N
         jLabel_selectionLeft.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -615,56 +640,46 @@ public class GUI_Main extends javax.swing.JFrame {
                 jLabel_selectionLeftMouseReleased(evt);
             }
         });
-        jPanel_player.add(jLabel_selectionLeft, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 70, -1, -1));
+        jPanel_player.add(jLabel_selectionLeft, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 70, -1, -1));
 
         jTextField_inputName.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jTextField_inputName.setPreferredSize(new java.awt.Dimension(70, 20));
-        jPanel_player.add(jTextField_inputName, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 20, 130, 30));
+        jPanel_player.add(jTextField_inputName, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 25, 100, 30));
 
         jProgressBar_life.setBackground(new java.awt.Color(204, 0, 0));
         jProgressBar_life.setName(""); // NOI18N
         jProgressBar_life.setStringPainted(true);
-        jPanel_player.add(jProgressBar_life, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 60, -1, 20));
-
-        jLabel_location.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel_location.setText("Location: current location");
-        jPanel_player.add(jLabel_location, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 160, -1, -1));
+        jPanel_player.add(jProgressBar_life, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 60, 150, 30));
 
         jProgressBar_days.setStringPainted(true);
-        jPanel_player.add(jProgressBar_days, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 90, -1, 20));
+        jPanel_player.add(jProgressBar_days, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 100, 150, 30));
 
         jLabel_weapon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/art/items/weapon_beretta92f_empty.png"))); // NOI18N
         jPanel_player.add(jLabel_weapon, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 0, -1, -1));
 
         jLabel_friend.setIcon(new javax.swing.ImageIcon(getClass().getResource("/art/items/friend_vito_empty.png"))); // NOI18N
-        jPanel_player.add(jLabel_friend, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 60, -1, -1));
+        jPanel_player.add(jLabel_friend, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 54, -1, -1));
 
         jLabel_generous.setIcon(new javax.swing.ImageIcon(getClass().getResource("/art/items/behaviour_jesus_empty.png"))); // NOI18N
-        jPanel_player.add(jLabel_generous, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 0, -1, -1));
+        jLabel_generous.setToolTipText("This is a test");
+        jPanel_player.add(jLabel_generous, new org.netbeans.lib.awtextra.AbsoluteConstraints(345, 0, -1, -1));
 
         jLabel_firstclass.setIcon(new javax.swing.ImageIcon(getClass().getResource("/art/items/behaviour_firstclass_empty.png"))); // NOI18N
-        jPanel_player.add(jLabel_firstclass, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 60, -1, -1));
-
-        jLabel_relationship.setIcon(new javax.swing.ImageIcon(getClass().getResource("/art/items/event_relationship_empty.png"))); // NOI18N
-        jPanel_player.add(jLabel_relationship, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 120, -1, -1));
-
-        jLabel7.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        jLabel7.setText("x 1");
-        jPanel_player.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 140, 50, 20));
+        jPanel_player.add(jLabel_firstclass, new org.netbeans.lib.awtextra.AbsoluteConstraints(345, 58, -1, -1));
 
         jLabel_niceclothes.setIcon(new javax.swing.ImageIcon(getClass().getResource("/art/items/clothes_niceclothes_empty.png"))); // NOI18N
-        jPanel_player.add(jLabel_niceclothes, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 120, -1, -1));
+        jPanel_player.add(jLabel_niceclothes, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 114, -1, -1));
 
-        getContentPane().add(jPanel_player, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 40, 480, 190));
+        getContentPane().add(jPanel_player, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 30, -1, 180));
 
-        jButton_newGame.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jButton_newGame.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         jButton_newGame.setText("New game");
         jButton_newGame.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton_newGameActionPerformed(evt);
             }
         });
-        getContentPane().add(jButton_newGame, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 10, -1, -1));
+        getContentPane().add(jButton_newGame, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 3, -1, -1));
 
         jPanel_market.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jPanel_market.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -817,7 +832,7 @@ public class GUI_Main extends javax.swing.JFrame {
         jTextArea_eventMessage.setRows(5);
         jScrollPane2.setViewportView(jTextArea_eventMessage);
 
-        getContentPane().add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 240, 420, 50));
+        getContentPane().add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 210, 480, 90));
 
         jPanel_location.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
@@ -859,6 +874,9 @@ public class GUI_Main extends javax.swing.JFrame {
             jTable_airport.getColumnModel().getColumn(1).setResizable(false);
         }
 
+        jLabel_location.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel_location.setText("Location: current loc");
+
         javax.swing.GroupLayout jPanel_locationLayout = new javax.swing.GroupLayout(jPanel_location);
         jPanel_location.setLayout(jPanel_locationLayout);
         jPanel_locationLayout.setHorizontalGroup(
@@ -868,10 +886,10 @@ public class GUI_Main extends javax.swing.JFrame {
                 .addGroup(jPanel_locationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel_locationLayout.createSequentialGroup()
                         .addComponent(jButton_travel, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(jPanel_locationLayout.createSequentialGroup()
-                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                        .addContainerGap())))
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel_location, javax.swing.GroupLayout.DEFAULT_SIZE, 163, Short.MAX_VALUE))
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addContainerGap())
         );
         jPanel_locationLayout.setVerticalGroup(
             jPanel_locationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -879,7 +897,9 @@ public class GUI_Main extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton_travel)
+                .addGroup(jPanel_locationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton_travel)
+                    .addComponent(jLabel_location))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -1008,7 +1028,7 @@ public class GUI_Main extends javax.swing.JFrame {
                     .addGroup(jPanel_bankLayout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 14, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel_bankLayout.createSequentialGroup()
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jLabel_loan)
@@ -1026,7 +1046,7 @@ public class GUI_Main extends javax.swing.JFrame {
 
         jTabbedPane1.addTab("Loan Shark", jPanel_bank);
 
-        getContentPane().add(jTabbedPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(510, 10, 280, 210));
+        getContentPane().add(jTabbedPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(510, 10, 280, 200));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -1038,8 +1058,9 @@ public class GUI_Main extends javax.swing.JFrame {
         if (!name.isEmpty()) {
 
             //engine.createPlayer(name, engine.getStartCredits());
+            jLabel_TEXT_info.setText("Info");
             engine.getPlayer().setName(name);
-            engine.getPlayer().setCredits(50000.00);
+            engine.getPlayer().setCredits(500000.00);
             prepareRound();
             jButton_buy.setEnabled(true);
             jButton_sell.setEnabled(true);
@@ -1141,8 +1162,6 @@ public class GUI_Main extends javax.swing.JFrame {
     private void jLabel_selectionRightMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel_selectionRightMousePressed
         ++nextImg;
         jLabel_selectionRight.setIcon(icon_selectionArrow_right_pressed);
-
-
     }//GEN-LAST:event_jLabel_selectionRightMousePressed
 
     private void jLabel_selectionRightMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel_selectionRightMouseReleased
@@ -1161,12 +1180,9 @@ public class GUI_Main extends javax.swing.JFrame {
     }//GEN-LAST:event_jLabel_selectionLeftMouseReleased
 
     private void jLabel_selectionRightMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel_selectionRightMouseClicked
-
-
     }//GEN-LAST:event_jLabel_selectionRightMouseClicked
 
     private void jLabel_selectionLeftMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel_selectionLeftMouseClicked
-
     }//GEN-LAST:event_jLabel_selectionLeftMouseClicked
 
     private void jButton_highscoreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_highscoreActionPerformed
@@ -1189,7 +1205,6 @@ public class GUI_Main extends javax.swing.JFrame {
 
     private void jButton_buyMedicinActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_buyMedicinActionPerformed
         String medicinName = (String) jTable_hospital.getValueAt(jTable_hospital.getSelectedRow(), 0);
-        System.out.println(medicinName);
         double medicinPrice = (double) jTable_hospital.getValueAt(jTable_hospital.getSelectedRow(), 1);
         if (medicinPrice <= engine.getCredits()) {
             engine.calculateCredits(-medicinPrice);
@@ -1202,51 +1217,49 @@ public class GUI_Main extends javax.swing.JFrame {
 
     private void jButton_loan1DayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_loan1DayActionPerformed
         double loanAmount = Double.parseDouble(jTextfield_loanAmount.getText());
-        double maxLoan = 10001.00;//System.out.println(loanAmount);
+        double maxLoan = 10001.00;
         double existingLoan = engine.getPlayer().getLoan();
         int existingLoanDays = engine.getPlayer().getLoanDays();
-       if(loanAmount > -1 && loanAmount < maxLoan && (existingLoan + loanAmount) <= maxLoan){
+        if (loanAmount > -1 && loanAmount < maxLoan && (existingLoan + loanAmount) <= maxLoan) {
             engine.getPlayer().setLoan(existingLoan + loanAmount);
             engine.getPlayer().setLoanDays(existingLoanDays + 1);
             jLabel_money.setText(doubleCreditFormat.format(engine.getCredits()) + " $");
             jLabel_loan.setText(doubleCreditFormat.format(engine.getPlayer().getLoan()) + " $");
         }
-        
-        
+
+
     }//GEN-LAST:event_jButton_loan1DayActionPerformed
 
     private void jButton_loan1WeekActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_loan1WeekActionPerformed
         double loanAmount = Double.parseDouble(jTextfield_loanAmount.getText());
-        double maxLoan = 10001.00;//System.out.println(loanAmount);
+        double maxLoan = 10001.00;
         double existingLoan = engine.getPlayer().getLoan();
         int existingLoanDays = engine.getPlayer().getLoanDays();
-        if(loanAmount > -1 && loanAmount < maxLoan && (existingLoan + loanAmount) <= maxLoan){
+        if (loanAmount > -1 && loanAmount < maxLoan && (existingLoan + loanAmount) <= maxLoan) {
             engine.getPlayer().setLoan(existingLoan + loanAmount);
             engine.getPlayer().setLoanDays(existingLoanDays + 7);
             jLabel_money.setText(doubleCreditFormat.format(engine.getCredits()) + " $");
             jLabel_loan.setText(doubleCreditFormat.format(engine.getPlayer().getLoan()) + " $");
-        } // TODO add your handling code here:
+        }
     }//GEN-LAST:event_jButton_loan1WeekActionPerformed
 
     private void jButton_loanRefundActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_loanRefundActionPerformed
         double refundAmount = Double.parseDouble(jTextfield_loanAmount.getText());
         double credits = engine.getCredits();
         double loan = engine.getPlayer().getLoan();
-        if(refundAmount <= credits && refundAmount > - 1.0){
-            System.out.println("heje");
-            if(refundAmount > loan){
-                System.out.println("hejeeeee");
+        if (refundAmount <= credits && refundAmount > -1.0) {
+            if (refundAmount > loan) {
                 engine.getPlayer().setLoan(loan - loan);
                 engine.calculateCredits(-loan);
                 jLabel_money.setText(doubleCreditFormat.format(engine.getCredits()) + " $");
                 jLabel_loan.setText(doubleCreditFormat.format(engine.getPlayer().getLoan()) + " $");
-            } else{
-                engine.getPlayer().setLoan(loan-refundAmount);
+            } else {
+                engine.getPlayer().setLoan(loan - refundAmount);
                 engine.calculateCredits(-refundAmount);
                 jLabel_money.setText(doubleCreditFormat.format(engine.getCredits()) + " $");
                 jLabel_loan.setText(doubleCreditFormat.format(engine.getPlayer().getLoan()) + " $");
             }
-        }       // TODO add your handling code here:
+        }
     }//GEN-LAST:event_jButton_loanRefundActionPerformed
 
     /**
@@ -1304,11 +1317,9 @@ public class GUI_Main extends javax.swing.JFrame {
     private javax.swing.JButton jButton_travel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel_TEXT_info;
     private javax.swing.JLabel jLabel_TEXT_market;
     private javax.swing.JLabel jLabel_TEXT_market1;
-    private javax.swing.JLabel jLabel_TEXT_money;
     private javax.swing.JLabel jLabel_TEXT_name;
     private javax.swing.JLabel jLabel_characterPic;
     private javax.swing.JLabel jLabel_firstclass;
@@ -1319,7 +1330,6 @@ public class GUI_Main extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel_money;
     private javax.swing.JLabel jLabel_name;
     private javax.swing.JLabel jLabel_niceclothes;
-    private javax.swing.JLabel jLabel_relationship;
     private javax.swing.JLabel jLabel_selectionLeft;
     private javax.swing.JLabel jLabel_selectionRight;
     private javax.swing.JLabel jLabel_weapon;
