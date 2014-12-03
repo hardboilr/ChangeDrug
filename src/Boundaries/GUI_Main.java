@@ -527,6 +527,7 @@ public class GUI_Main extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         jButton_loan1Week = new javax.swing.JButton();
         jButton_loanRefund = new javax.swing.JButton();
+        jLabel_loan = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Thug Life 0.1");
@@ -631,16 +632,6 @@ public class GUI_Main extends javax.swing.JFrame {
 
         jProgressBar_days.setStringPainted(true);
         jPanel_player.add(jProgressBar_days, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 90, -1, 20));
-
-        jLabel_TEXT_loan.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel_TEXT_loan.setText("Loan");
-        jLabel_TEXT_loan.setToolTipText("");
-        jPanel_player.add(jLabel_TEXT_loan, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 140, -1, 20));
-
-        jLabel_loan.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel_loan.setText("0");
-        jLabel_loan.setToolTipText("");
-        jPanel_player.add(jLabel_loan, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 140, -1, 20));
 
         jLabel_weapon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/art/items/weapon_beretta92f_empty.png"))); // NOI18N
         jPanel_player.add(jLabel_weapon, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 0, -1, -1));
@@ -985,6 +976,8 @@ public class GUI_Main extends javax.swing.JFrame {
             }
         });
 
+        jLabel_loan.setText("jLabel2");
+
         javax.swing.GroupLayout jPanel_bankLayout = new javax.swing.GroupLayout(jPanel_bank);
         jPanel_bank.setLayout(jPanel_bankLayout);
         jPanel_bankLayout.setHorizontalGroup(
@@ -1001,16 +994,25 @@ public class GUI_Main extends javax.swing.JFrame {
                     .addGroup(jPanel_bankLayout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(jPanel_bankLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1)
+                            .addGroup(jPanel_bankLayout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel_loan))
                             .addComponent(jLabel3))))
-                .addContainerGap(15, Short.MAX_VALUE))
+                .addContainerGap(31, Short.MAX_VALUE))
         );
         jPanel_bankLayout.setVerticalGroup(
             jPanel_bankLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel_bankLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel_bankLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel_bankLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 14, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel_bankLayout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel_loan)
+                        .addGap(5, 5, 5)))
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jTextfield_loanAmount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1301,9 +1303,9 @@ public class GUI_Main extends javax.swing.JFrame {
     private javax.swing.JButton jButton_sell;
     private javax.swing.JButton jButton_travel;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel_TEXT_info;
-    private javax.swing.JLabel jLabel_TEXT_loan;
     private javax.swing.JLabel jLabel_TEXT_market;
     private javax.swing.JLabel jLabel_TEXT_market1;
     private javax.swing.JLabel jLabel_TEXT_money;
@@ -1312,6 +1314,7 @@ public class GUI_Main extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel_firstclass;
     private javax.swing.JLabel jLabel_friend;
     private javax.swing.JLabel jLabel_generous;
+    private javax.swing.JLabel jLabel_loan;
     private javax.swing.JLabel jLabel_location;
     private javax.swing.JLabel jLabel_money;
     private javax.swing.JLabel jLabel_name;
