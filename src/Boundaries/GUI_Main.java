@@ -29,19 +29,30 @@ public class GUI_Main extends javax.swing.JFrame {
     private final int priceColumn = 3;
 
     //Images
-    private final ImageIcon selectionArrow_right_pressed_icon;
-    private final ImageIcon selectionArrow_right_icon;
-    private final ImageIcon selectionArrow_left_pressed_icon;
-    private final ImageIcon selectionArrow_left_icon;
-    private final ImageIcon clemenza1_icon;
-    private final ImageIcon brasi2_icon;
-    private final ImageIcon deNiro3_icon;
-    private final ImageIcon kay4_icon;
-    private final ImageIcon michael5_icon;
-    private final ImageIcon sollozo6_icon;
-    private final ImageIcon talia7_icon;
-    private final ImageIcon vitelli8_icon;
-    private final ImageIcon vito9_icon;
+    private ImageIcon icon_selectionArrow_right_pressed = null;
+    private ImageIcon icon_selectionArrow_right = null;
+    private ImageIcon icon_selectionArrow_left_pressed = null;
+    private ImageIcon icon_selectionArrow_left = null;
+    private ImageIcon icon_clemenza1 = null;
+    private ImageIcon icon_brasi2 = null;
+    private ImageIcon icon_deNiro3 = null;
+    private ImageIcon icon_kay4 = null;
+    private ImageIcon icon_michael5 = null;
+    private ImageIcon icon_sollozo6 = null;
+    private ImageIcon icon_talia7 = null;
+    private ImageIcon icon_vitelli8 = null;
+    private ImageIcon icon_weapon_empty = null;
+    private ImageIcon icon_weapon = null;
+    private ImageIcon icon_jesus_empty = null;
+    private ImageIcon icon_jesus = null;
+    private ImageIcon icon_firstclass_empty = null;
+    private ImageIcon icon_firstclass = null;
+    private ImageIcon icon_friend_vito_empty = null;
+    private ImageIcon icon_friend_vito = null;
+    private ImageIcon icon_relationship_empty = null;
+    private ImageIcon icon_relationship = null;
+    private ImageIcon icon_niceclothes_empty = null;
+    private ImageIcon icon_niceclothes = null;
 
     //variables
     private int nextImg;
@@ -67,20 +78,34 @@ public class GUI_Main extends javax.swing.JFrame {
 
         nextImg = 0;
         //init icons
-        selectionArrow_right_pressed_icon = new ImageIcon("./src/art/gui/selctionArrow_right_pressed.png");
-        selectionArrow_right_icon = new ImageIcon("./src/art/gui/selctionArrow_right.png");
-        selectionArrow_left_pressed_icon = new ImageIcon("./src/art/gui/selctionArrow_left_pressed.png");
-        selectionArrow_left_icon = new ImageIcon("./src/art/gui/selctionArrow_left.png");
-        clemenza1_icon = new ImageIcon("./src/art/characters/1_clemenza.png");
-        brasi2_icon = new ImageIcon("./src/art/characters/2_brasi.png");
-        deNiro3_icon = new ImageIcon("./src/art/characters/3_deNiro.png");
-        kay4_icon = new ImageIcon("./src/art/characters/4_kay.png");
-        michael5_icon = new ImageIcon("./src/art/characters/5_michael.png");
-        sollozo6_icon = new ImageIcon("./src/art/characters/6_sollozo.png");
-        talia7_icon = new ImageIcon("./src/art/characters/7_talia.png");
-        vitelli8_icon = new ImageIcon("./src/art/characters/8_vitelli.png");
-        vito9_icon = new ImageIcon("./src/art/characters/9_vito.png");
-
+        try {
+            icon_selectionArrow_right_pressed = new ImageIcon("./src/art/gui/selectionArrow_right_pressed.png");
+            icon_selectionArrow_right = new ImageIcon("./src/art/gui/selectionArrow_right.png");
+            icon_selectionArrow_left_pressed = new ImageIcon("./src/art/gui/selectionArrow_left_pressed.png");
+            icon_selectionArrow_left = new ImageIcon("./src/art/gui/selectionArrow_left.png");
+            icon_clemenza1 = new ImageIcon("./src/art/characters/1_clemenza.png");
+            icon_brasi2 = new ImageIcon("./src/art/characters/2_brasi.png");
+            icon_deNiro3 = new ImageIcon("./src/art/characters/3_deNiro.png");
+            icon_kay4 = new ImageIcon("./src/art/characters/4_kay.png");
+            icon_michael5 = new ImageIcon("./src/art/characters/5_michael.png");
+            icon_sollozo6 = new ImageIcon("./src/art/characters/6_sollozo.png");
+            icon_talia7 = new ImageIcon("./src/art/characters/7_talia.png");
+            icon_vitelli8 = new ImageIcon("./src/art/characters/8_vitelli.png");
+            icon_weapon_empty = new ImageIcon("./src/art/items/weapon_beretta92f_empty.png");
+            icon_weapon = new ImageIcon("./src/art/items/weapon_beretta92f.png");
+            icon_jesus_empty = new ImageIcon("./src/art/items/behaviour_jesus_empty.png");
+            icon_jesus = new ImageIcon("./src/art/items/behaviour_jesus.png");
+            icon_firstclass_empty = new ImageIcon("./src/art/items/behaviour_firstclass_empty.png");
+            icon_firstclass = new ImageIcon("./src/art/items/behaviour_firstclass.png");
+            icon_friend_vito_empty = new ImageIcon("./src/art/items/friend_vito_empty.png");
+            icon_friend_vito = new ImageIcon("./src/art/items/friend_vito.png");
+            icon_relationship_empty = new ImageIcon("./src/art/items/event_relationship_empty.png");
+            icon_relationship = new ImageIcon("./src/art/items/event_relationship.png");
+            icon_niceclothes_empty = new ImageIcon("./src/art/items/clothes_niceclothes_empty.png");
+            icon_niceclothes = new ImageIcon("./src/art/items/clothes_niceclothes.png");
+        } catch (NullPointerException ex) {
+            System.out.println("Didnt find all icons!");
+        }
         //hide images related to [create player]
         jLabel_characterPic.setVisible(false);
         jLabel_selectionLeft.setVisible(false);
@@ -139,12 +164,11 @@ public class GUI_Main extends javax.swing.JFrame {
             jTable_airport.setValueAt(countryName, i, 0);
             jTable_airport.setValueAt(ticketPrice, i, 1);
         }
-        
-        
+
         //fill hospital table
         ((DefaultTableModel) jTable_hospital.getModel()).setRowCount(0);
         int count = 0;
-        for (Medicin medicin: medicinMap.values()) {
+        for (Medicin medicin : medicinMap.values()) {
             String medicinName = medicin.getName().toUpperCase().charAt(0) + medicin.getName().substring(1);
             double medicinPrice = medicin.getPrice();
             ((DefaultTableModel) jTable_hospital.getModel()).addRow(new Object[]{});
@@ -176,34 +200,31 @@ public class GUI_Main extends javax.swing.JFrame {
         //------------------------------------------------------------------------------------
         switch (nextImg) {
             case 1:
-                jLabel_characterPic.setIcon(clemenza1_icon);
+                jLabel_characterPic.setIcon(icon_clemenza1);
                 jLabel_selectionLeft.setVisible(false);
                 break;
             case 2:
-                jLabel_characterPic.setIcon(brasi2_icon);
+                jLabel_characterPic.setIcon(icon_brasi2);
                 jLabel_selectionLeft.setVisible(true);
                 break;
             case 3:
-                jLabel_characterPic.setIcon(deNiro3_icon);
+                jLabel_characterPic.setIcon(icon_deNiro3);
                 break;
             case 4:
-                jLabel_characterPic.setIcon(kay4_icon);
+                jLabel_characterPic.setIcon(icon_kay4);
                 break;
             case 5:
-                jLabel_characterPic.setIcon(michael5_icon);
+                jLabel_characterPic.setIcon(icon_michael5);
                 break;
             case 6:
-                jLabel_characterPic.setIcon(sollozo6_icon);
+                jLabel_characterPic.setIcon(icon_sollozo6);
                 break;
             case 7:
-                jLabel_characterPic.setIcon(talia7_icon);
-                break;
-            case 8:
-                jLabel_characterPic.setIcon(vitelli8_icon);
+                jLabel_characterPic.setIcon(icon_talia7);
                 jLabel_selectionRight.setVisible(true);
                 break;
-            case 9:
-                jLabel_characterPic.setIcon(vito9_icon);
+            case 8:
+                jLabel_characterPic.setIcon(icon_vitelli8);
                 jLabel_selectionRight.setVisible(false);
                 break;
         }
@@ -244,38 +265,44 @@ public class GUI_Main extends javax.swing.JFrame {
             jTable_market.setValueAt(newMarketQty, selectedRow, qtyColumn);
             Product drug = new Product(productType, selectedDrugName, 0, MarketPrice, 0, add, 0);
             engine.addToInventory(drug);
+            checkInvForNonDrugs();
             int newInvQty = engine.getInventoryDrug(selectedDrugName).getModifiedAvail();
             //-----------------------------------------------------------
-            if (jTable_inventory.getRowCount() == 0) { //is table is empty?
-                ((DefaultTableModel) jTable_inventory.getModel()).addRow(new Object[]{});
-                jTable_inventory.setValueAt(productType, 0, typeColumn);
-                jTable_inventory.setValueAt(selectedDrugName, 0, nameColumn);
-                jTable_inventory.setValueAt(newInvQty, 0, qtyColumn);
-                jTable_inventory.setValueAt(MarketPrice, 0, priceColumn);
-
-            } else {
-                boolean drugExist = false; //we have drug 
-                for (int i = 0; i < jTable_inventory.getRowCount(); i++) {
-                    String inventoryDrug = (String) jTable_inventory.getValueAt(i, nameColumn);
-                    if (selectedDrugName.equals(inventoryDrug)) { //do we already have the drug in the table?
-                        drugExist = true;
-                        jTable_inventory.setValueAt(newInvQty, i, qtyColumn);
-                        //set new average price
-                        double currentInventoryPrice = (double) jTable_inventory.getValueAt(i, priceColumn);
-                        int currentQuantity = (int) jTable_inventory.getValueAt(i, qtyColumn);
-                        double newAveragePrice = ((currentInventoryPrice * currentQuantity)
-                                + (MarketPrice)) / (currentQuantity + add);
-                        jTable_inventory.setValueAt(newAveragePrice, i, priceColumn);
-                        break;
-                    }
-                }
-                if (drugExist == false) { //we do not have the drug in the table);
-                    int rowPosition = jTable_inventory.getRowCount();
+            Boolean isEligible = true;
+            if (productType.equals("Friend") || productType.equals("Clothes") || productType.equals("Behaviour")) {
+                isEligible = false;
+            }
+            if (isEligible == true) {
+                if (jTable_inventory.getRowCount() == 0) { //is table is empty?
                     ((DefaultTableModel) jTable_inventory.getModel()).addRow(new Object[]{});
-                    jTable_inventory.setValueAt(productType, rowPosition, typeColumn);
-                    jTable_inventory.setValueAt(selectedDrugName, rowPosition, nameColumn);
-                    jTable_inventory.setValueAt(newInvQty, rowPosition, qtyColumn);
-                    jTable_inventory.setValueAt(MarketPrice, rowPosition, priceColumn);
+                    jTable_inventory.setValueAt(productType, 0, typeColumn);
+                    jTable_inventory.setValueAt(selectedDrugName, 0, nameColumn);
+                    jTable_inventory.setValueAt(newInvQty, 0, qtyColumn);
+                    jTable_inventory.setValueAt(MarketPrice, 0, priceColumn);
+                } else {
+                    boolean drugExist = false; //we have drug 
+                    for (int i = 0; i < jTable_inventory.getRowCount(); i++) {
+                        String inventoryDrug = (String) jTable_inventory.getValueAt(i, nameColumn);
+                        if (selectedDrugName.equals(inventoryDrug)) { //do we already have the drug in the table?
+                            drugExist = true;
+                            jTable_inventory.setValueAt(newInvQty, i, qtyColumn);
+                            //set new average price
+                            double currentInventoryPrice = (double) jTable_inventory.getValueAt(i, priceColumn);
+                            int currentQuantity = (int) jTable_inventory.getValueAt(i, qtyColumn);
+                            double newAveragePrice = ((currentInventoryPrice * currentQuantity)
+                                    + (MarketPrice)) / (currentQuantity + add);
+                            jTable_inventory.setValueAt(newAveragePrice, i, priceColumn);
+                            break;
+                        }
+                    }
+                    if (drugExist == false) { //we do not have the drug in the table);
+                        int rowPosition = jTable_inventory.getRowCount();
+                        ((DefaultTableModel) jTable_inventory.getModel()).addRow(new Object[]{});
+                        jTable_inventory.setValueAt(productType, rowPosition, typeColumn);
+                        jTable_inventory.setValueAt(selectedDrugName, rowPosition, nameColumn);
+                        jTable_inventory.setValueAt(newInvQty, rowPosition, qtyColumn);
+                        jTable_inventory.setValueAt(MarketPrice, rowPosition, priceColumn);
+                    }
                 }
             }
             if (newMarketQty == 0) {
@@ -283,7 +310,7 @@ public class GUI_Main extends javax.swing.JFrame {
             }
             return true;
         }
-        return false;
+        return false; //we did not have sufficiant credits
     }
 
     private boolean sell() {
@@ -305,9 +332,10 @@ public class GUI_Main extends javax.swing.JFrame {
             newInventoryQty = -1;
             return false;
         }
-        Boolean productExists = false;
         if (newInventoryQty >= 0 && jTable_market.getRowCount() > 0) {
+            Boolean productExists = false;
             engine.subtractFromInventory(inventoryDrug);
+            checkInvForNonDrugs();
             jTable_inventory.setValueAt(newInventoryQty, row, qtyColumn);
             for (int i = 0; i < jTable_market.getRowCount(); i++) {
                 String marketDrug = (String) jTable_market.getValueAt(i, nameColumn);
@@ -319,15 +347,24 @@ public class GUI_Main extends javax.swing.JFrame {
                     break;
                 }
             }
-        } 
-        if (productExists == false) {
-            int rowIndex = jTable_market.getRowCount();
-            ((DefaultTableModel) jTable_market.getModel()).addRow(new Object[]{});
-            jTable_market.setValueAt(productType, rowIndex, typeColumn);
-            jTable_market.setValueAt(inventoryDrug, rowIndex, nameColumn);
-            jTable_market.setValueAt(1, rowIndex, qtyColumn);
-            jTable_market.setValueAt(marketMap.get(inventoryDrug).getModifiedPrice(), rowIndex, priceColumn);
+            if (productExists == false) {
+                int rowIndex = jTable_market.getRowCount();
+                ((DefaultTableModel) jTable_market.getModel()).addRow(new Object[]{});
+                jTable_market.setValueAt(productType, rowIndex, typeColumn);
+                jTable_market.setValueAt(inventoryDrug, rowIndex, nameColumn);
+                jTable_market.setValueAt(1, rowIndex, qtyColumn);
+                jTable_market.setValueAt(marketMap.get(inventoryDrug).getModifiedPrice(), rowIndex, priceColumn);
+            }
+
         }
+//        if (productExists == false) {
+//            int rowIndex = jTable_market.getRowCount();
+//            ((DefaultTableModel) jTable_market.getModel()).addRow(new Object[]{});
+//            jTable_market.setValueAt(productType, rowIndex, typeColumn);
+//            jTable_market.setValueAt(inventoryDrug, rowIndex, nameColumn);
+//            jTable_market.setValueAt(1, rowIndex, qtyColumn);
+//            jTable_market.setValueAt(marketMap.get(inventoryDrug).getModifiedPrice(), rowIndex, priceColumn);
+//        }
 
         if (newInventoryQty == 0) {
             ((DefaultTableModel) jTable_inventory.getModel()).removeRow(row);
@@ -390,6 +427,40 @@ public class GUI_Main extends javax.swing.JFrame {
         jProgressBar_days.setString(newDay + " days left");
     }
 
+    private void checkInvForNonDrugs() {
+        Product weapon = engine.getInventoryDrug("Beretta92F");
+        Product friend = engine.getInventoryDrug("High friends");
+        Product generous = engine.getInventoryDrug("Generous");
+        Product niceclothes = engine.getInventoryDrug("Nice clothes");
+        Product firstclass = engine.getInventoryDrug("Travel 1.Class");
+
+        if (weapon != null) {
+            System.out.println("Setting weapon icon");
+            jLabel_weapon.setIcon(icon_weapon);
+        }
+        else {
+            jLabel_weapon.setIcon(icon_weapon_empty);
+        }
+        if (friend != null) {
+            System.out.println("Setting friend icon");
+            jLabel_friend.setIcon(icon_friend_vito);
+        }
+        if (generous != null) {
+            System.out.println("setting jesus icon");
+            jLabel_generous.setIcon(icon_jesus);
+        }
+        if (niceclothes != null) {
+            System.out.println("setting clothing icon");
+            jLabel_niceclothes.setIcon(icon_niceclothes);
+        }
+        if (firstclass != null) {
+            System.out.println("setting firstclass icon");
+            jLabel_firstclass.setIcon(icon_firstclass);
+        }
+
+        //Product friendProduct = engine.getInventoryDrug("Weapon");
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -414,6 +485,13 @@ public class GUI_Main extends javax.swing.JFrame {
         jProgressBar_life = new javax.swing.JProgressBar();
         jLabel_location = new javax.swing.JLabel();
         jProgressBar_days = new javax.swing.JProgressBar();
+        jLabel_weapon = new javax.swing.JLabel();
+        jLabel_friend = new javax.swing.JLabel();
+        jLabel_generous = new javax.swing.JLabel();
+        jLabel_firstclass = new javax.swing.JLabel();
+        jLabel_relationship = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        jLabel_niceclothes = new javax.swing.JLabel();
         jButton_newGame = new javax.swing.JButton();
         jPanel_market = new javax.swing.JPanel();
         jScrollPane_market = new javax.swing.JScrollPane();
@@ -469,7 +547,7 @@ public class GUI_Main extends javax.swing.JFrame {
                 jButton_confirmActionPerformed(evt);
             }
         });
-        getContentPane().add(jButton_confirm, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 10, -1, -1));
+        getContentPane().add(jButton_confirm, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 10, -1, -1));
 
         jPanel_player.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jPanel_player.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -480,7 +558,7 @@ public class GUI_Main extends javax.swing.JFrame {
         jLabel_characterPic.setMaximumSize(new java.awt.Dimension(800, 600));
         jLabel_characterPic.setMinimumSize(new java.awt.Dimension(800, 600));
         jLabel_characterPic.setPreferredSize(new java.awt.Dimension(800, 600));
-        jPanel_player.add(jLabel_characterPic, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 10, 110, 160));
+        jPanel_player.add(jLabel_characterPic, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 10, 110, 160));
 
         jLabel_TEXT_info.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel_TEXT_info.setText("Info");
@@ -505,7 +583,7 @@ public class GUI_Main extends javax.swing.JFrame {
         jLabel_money.setToolTipText("");
         jPanel_player.add(jLabel_money, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 120, -1, 20));
 
-        jLabel_selectionRight.setIcon(new javax.swing.ImageIcon(getClass().getResource("/art/gui/selctionArrow_right.png"))); // NOI18N
+        jLabel_selectionRight.setIcon(new javax.swing.ImageIcon(getClass().getResource("/art/gui/selectionArrow_right.png"))); // NOI18N
         jLabel_selectionRight.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jLabel_selectionRightMouseClicked(evt);
@@ -517,9 +595,9 @@ public class GUI_Main extends javax.swing.JFrame {
                 jLabel_selectionRightMouseReleased(evt);
             }
         });
-        jPanel_player.add(jLabel_selectionRight, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 70, -1, -1));
+        jPanel_player.add(jLabel_selectionRight, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 70, -1, -1));
 
-        jLabel_selectionLeft.setIcon(new javax.swing.ImageIcon(getClass().getResource("/art/gui/selctionArrow_left.png"))); // NOI18N
+        jLabel_selectionLeft.setIcon(new javax.swing.ImageIcon(getClass().getResource("/art/gui/selectionArrow_left.png"))); // NOI18N
         jLabel_selectionLeft.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jLabel_selectionLeftMouseClicked(evt);
@@ -531,7 +609,7 @@ public class GUI_Main extends javax.swing.JFrame {
                 jLabel_selectionLeftMouseReleased(evt);
             }
         });
-        jPanel_player.add(jLabel_selectionLeft, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 70, -1, -1));
+        jPanel_player.add(jLabel_selectionLeft, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 70, -1, -1));
 
         jTextField_inputName.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jTextField_inputName.setPreferredSize(new java.awt.Dimension(70, 20));
@@ -549,7 +627,29 @@ public class GUI_Main extends javax.swing.JFrame {
         jProgressBar_days.setStringPainted(true);
         jPanel_player.add(jProgressBar_days, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 90, -1, 20));
 
-        getContentPane().add(jPanel_player, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 40, 480, 180));
+        jLabel_weapon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/art/items/weapon_beretta92f_empty.png"))); // NOI18N
+        jPanel_player.add(jLabel_weapon, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 0, -1, -1));
+
+        jLabel_friend.setIcon(new javax.swing.ImageIcon(getClass().getResource("/art/items/friend_vito_empty.png"))); // NOI18N
+        jPanel_player.add(jLabel_friend, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 60, -1, -1));
+
+        jLabel_generous.setIcon(new javax.swing.ImageIcon(getClass().getResource("/art/items/behaviour_jesus_empty.png"))); // NOI18N
+        jPanel_player.add(jLabel_generous, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 0, -1, -1));
+
+        jLabel_firstclass.setIcon(new javax.swing.ImageIcon(getClass().getResource("/art/items/behaviour_firstclass_empty.png"))); // NOI18N
+        jPanel_player.add(jLabel_firstclass, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 60, -1, -1));
+
+        jLabel_relationship.setIcon(new javax.swing.ImageIcon(getClass().getResource("/art/items/event_relationship_empty.png"))); // NOI18N
+        jPanel_player.add(jLabel_relationship, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 120, -1, -1));
+
+        jLabel7.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jLabel7.setText("x 1");
+        jPanel_player.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 140, 50, 20));
+
+        jLabel_niceclothes.setIcon(new javax.swing.ImageIcon(getClass().getResource("/art/items/clothes_niceclothes_empty.png"))); // NOI18N
+        jPanel_player.add(jLabel_niceclothes, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 120, -1, -1));
+
+        getContentPane().add(jPanel_player, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 40, 480, 190));
 
         jButton_newGame.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jButton_newGame.setText("New game");
@@ -711,7 +811,7 @@ public class GUI_Main extends javax.swing.JFrame {
         jTextArea_eventMessage.setRows(5);
         jScrollPane2.setViewportView(jTextArea_eventMessage);
 
-        getContentPane().add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 230, 420, 60));
+        getContentPane().add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 240, 420, 50));
 
         jPanel_location.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
@@ -925,7 +1025,7 @@ public class GUI_Main extends javax.swing.JFrame {
         jLabel_TEXT_info.setText("Input name:");
         jLabel_selectionLeft.setVisible(true);
         jLabel_selectionRight.setVisible(true);
-        jLabel_characterPic.setIcon(clemenza1_icon);
+        jLabel_characterPic.setIcon(icon_clemenza1);
         jLabel_characterPic.setVisible(true);
         jButton_confirm.setVisible(true);
         jLabel_selectionLeft.setVisible(false);
@@ -988,24 +1088,24 @@ public class GUI_Main extends javax.swing.JFrame {
 
     private void jLabel_selectionRightMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel_selectionRightMousePressed
         ++nextImg;
-        jLabel_selectionRight.setIcon(selectionArrow_right_pressed_icon);
+        jLabel_selectionRight.setIcon(icon_selectionArrow_right_pressed);
 
 
     }//GEN-LAST:event_jLabel_selectionRightMousePressed
 
     private void jLabel_selectionRightMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel_selectionRightMouseReleased
         changeCharacterIcon();
-        jLabel_selectionRight.setIcon(selectionArrow_right_icon);
+        jLabel_selectionRight.setIcon(icon_selectionArrow_right);
     }//GEN-LAST:event_jLabel_selectionRightMouseReleased
 
     private void jLabel_selectionLeftMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel_selectionLeftMousePressed
         --nextImg;
-        jLabel_selectionLeft.setIcon(selectionArrow_left_pressed_icon);
+        jLabel_selectionLeft.setIcon(icon_selectionArrow_left_pressed);
     }//GEN-LAST:event_jLabel_selectionLeftMousePressed
 
     private void jLabel_selectionLeftMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel_selectionLeftMouseReleased
         changeCharacterIcon();
-        jLabel_selectionLeft.setIcon(selectionArrow_left_icon);
+        jLabel_selectionLeft.setIcon(icon_selectionArrow_left);
     }//GEN-LAST:event_jLabel_selectionLeftMouseReleased
 
     private void jLabel_selectionRightMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel_selectionRightMouseClicked
@@ -1036,16 +1136,16 @@ public class GUI_Main extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton_bulkBuyActionPerformed
 
     private void jButton_buyMedicinActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_buyMedicinActionPerformed
-      String medicinName = (String) jTable_hospital.getValueAt(jTable_hospital.getSelectedRow(), 0);
+        String medicinName = (String) jTable_hospital.getValueAt(jTable_hospital.getSelectedRow(), 0);
         System.out.println(medicinName);
-      double medicinPrice = (double) jTable_hospital.getValueAt(jTable_hospital.getSelectedRow(), 1);
-      if(medicinPrice <= engine.getCredits()){
-          engine.calculateCredits(-medicinPrice);
-          jLabel_money.setText(doubleCreditFormat.format(engine.getCredits()) + " $");
-          int lifemodifier = medicinMap.get(medicinName).getHealing();
-          engine.getPlayer().setLife(lifemodifier);
-          updateLife();
-      }
+        double medicinPrice = (double) jTable_hospital.getValueAt(jTable_hospital.getSelectedRow(), 1);
+        if (medicinPrice <= engine.getCredits()) {
+            engine.calculateCredits(-medicinPrice);
+            jLabel_money.setText(doubleCreditFormat.format(engine.getCredits()) + " $");
+            int lifemodifier = medicinMap.get(medicinName).getHealing();
+            engine.getPlayer().setLife(lifemodifier);
+            updateLife();
+        }
     }//GEN-LAST:event_jButton_buyMedicinActionPerformed
 
     /**
@@ -1100,17 +1200,24 @@ public class GUI_Main extends javax.swing.JFrame {
     private javax.swing.JButton jButton_sell;
     private javax.swing.JButton jButton_travel;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel_TEXT_info;
     private javax.swing.JLabel jLabel_TEXT_market;
     private javax.swing.JLabel jLabel_TEXT_market1;
     private javax.swing.JLabel jLabel_TEXT_money;
     private javax.swing.JLabel jLabel_TEXT_name;
     private javax.swing.JLabel jLabel_characterPic;
+    private javax.swing.JLabel jLabel_firstclass;
+    private javax.swing.JLabel jLabel_friend;
+    private javax.swing.JLabel jLabel_generous;
     private javax.swing.JLabel jLabel_location;
     private javax.swing.JLabel jLabel_money;
     private javax.swing.JLabel jLabel_name;
+    private javax.swing.JLabel jLabel_niceclothes;
+    private javax.swing.JLabel jLabel_relationship;
     private javax.swing.JLabel jLabel_selectionLeft;
     private javax.swing.JLabel jLabel_selectionRight;
+    private javax.swing.JLabel jLabel_weapon;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel_Hospital;

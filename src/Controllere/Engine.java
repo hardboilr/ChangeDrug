@@ -104,7 +104,11 @@ public class Engine implements EngineInterface {
     @Override
     public Product getInventoryDrug(String key) {
         Product inventoryDrug = inv.get(key);
-        return inventoryDrug;
+        if (inventoryDrug != null) {
+            System.out.println("Found it!");
+            return inventoryDrug;
+        }
+        return null;
     }
 
     @Override
