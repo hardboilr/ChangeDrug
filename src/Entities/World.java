@@ -32,11 +32,11 @@ public class World {
     
     public static HashMap hospital(){
         HashMap medicin = new HashMap<>();
-        Medicin med1 = new Medicin("Medicin1", 50.00, 2);
-        Medicin med2 = new Medicin("Medicin2", 150.00, 10);
-        Medicin med3 = new Medicin("Medicin3", 500.00, 25);
-        Medicin med4 = new Medicin("Medicin4", 5000.00,50);
-        Medicin med5 = new Medicin("Medicin5", 200.00,15);
+        Medicin med1 = new Medicin("Bandage", 50.00, 2);
+        Medicin med2 = new Medicin("Aspirin", 150.00, 5);
+        Medicin med3 = new Medicin("Bloodtransfusion", 500.00, 25);
+        Medicin med4 = new Medicin("Surgery", 5000.00,50);
+        Medicin med5 = new Medicin("Morphine", 200.00,15);
         
         medicin.put(med1.getName(), med1);
         medicin.put(med2.getName(), med2);

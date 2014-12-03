@@ -3,13 +3,7 @@
 Nice to have:
 (4. Hvis inventory er tomt og han ikke har råd til at købe varer på markedet, så slutter spillet og man går videre til highscore)
 
-mangler at kunne købe liv
-hospital event
-mafia event
-girl/boyfriend event
 opdatere uml
 
-travel 1st class item
-minion pusher
 
 

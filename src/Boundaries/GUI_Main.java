@@ -6,22 +6,22 @@ package Boundaries;
 import Controllere.Engine;
 import Entities.Country;
 import Entities.Product;
-import Entities.Event;
 import Entities.Medicin;
 import Interfaces.EngineInterface;
 import java.awt.Color;
 import java.text.DecimalFormat;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
-import javax.swing.JScrollBar;
 import javax.swing.table.DefaultTableModel;
 
 public class GUI_Main extends javax.swing.JFrame {
 
     private Map<String, Product> marketMap;
-    private Map<String, Medicin> medicinMap;
+    private final Map<String, Medicin> medicinMap;
+    private Map<String,String> purchasedMedicin; 
 
     private final int typeColumn = 0;
     private final int nameColumn = 1;
@@ -48,9 +48,8 @@ public class GUI_Main extends javax.swing.JFrame {
     private int avail;
     private double MarketPrice;
 
-    private EngineInterface engine;
-    private DefaultListModel listmodel = new DefaultListModel();
-    private DecimalFormat doubleCreditFormat;
+    private final EngineInterface engine;
+    private final DecimalFormat doubleCreditFormat;
 
     public GUI_Main() {
         initComponents();
@@ -59,6 +58,7 @@ public class GUI_Main extends javax.swing.JFrame {
         engine.createPlayer("", 0.00);
         marketMap = engine.travel();
         medicinMap = engine.getMedicin();
+        purchasedMedicin = new HashMap<>();
         //prepareRound();
         setLocationText();
         formatTables();
@@ -93,6 +93,7 @@ public class GUI_Main extends javax.swing.JFrame {
         //deactivate buttons
         jButton_travel.setEnabled(false);
         jButton_buy.setEnabled(false);
+        jButton_buyMedicin.setEnabled(false);
         jButton_sell.setEnabled(false);
         jButton_bulkBuy.setEnabled(false);
         jButton_bulkSell.setEnabled(false);
@@ -116,14 +117,14 @@ public class GUI_Main extends javax.swing.JFrame {
         //Fill [jList_countries]-list with countries 
         //fill [jTable_market]-table with drugs
         //---------------------------------------------
+        purchasedMedicin.clear();
         marketMap = engine.travel();
         List<String> eventList = engine.getEvents();
 
         if (eventList.size() > 0) {
             for (String eventDescrip : eventList) {
                 String descrip = eventDescrip;
-                listmodel.addElement(descrip);
-                jTextArea_eventMessage.append("\n" + descrip);
+                jTextArea_eventMessage.append(descrip+"\n");
                 jTextArea_eventMessage.setCaretPosition(jTextArea_eventMessage.getDocument().getLength());
                 updateLife();
             }
@@ -899,6 +900,7 @@ public class GUI_Main extends javax.swing.JFrame {
             jButton_bulkBuy.setEnabled(true);
             jButton_bulkSell.setEnabled(true);
             jButton_travel.setEnabled(true);
+            jButton_buyMedicin.setEnabled(true);
             jLabel_name.setText(name);
             jLabel_name.setVisible(true);
             jLabel_money.setText(doubleCreditFormat.format(engine.getCredits()) + " $");
@@ -1036,16 +1038,21 @@ public class GUI_Main extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton_bulkBuyActionPerformed
 
     private void jButton_buyMedicinActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_buyMedicinActionPerformed
-      String medicinName = (String) jTable_hospital.getValueAt(jTable_hospital.getSelectedRow(), 0);
-        System.out.println(medicinName);
-      double medicinPrice = (double) jTable_hospital.getValueAt(jTable_hospital.getSelectedRow(), 1);
-      if(medicinPrice <= engine.getCredits()){
-          engine.calculateCredits(-medicinPrice);
-          jLabel_money.setText(doubleCreditFormat.format(engine.getCredits()) + " $");
-          int lifemodifier = medicinMap.get(medicinName).getHealing();
-          engine.getPlayer().setLife(lifemodifier);
-          updateLife();
-      }
+        String medicinName = (String) jTable_hospital.getValueAt(jTable_hospital.getSelectedRow(), 0);
+        double medicinPrice = (double) jTable_hospital.getValueAt(jTable_hospital.getSelectedRow(), 1);
+        if (medicinPrice <= engine.getCredits()) {
+            engine.calculateCredits(-medicinPrice);
+            jLabel_money.setText(doubleCreditFormat.format(engine.getCredits()) + " $");
+            if (!purchasedMedicin.containsKey(medicinName)) {
+                purchasedMedicin.put(medicinName, medicinName);
+                int lifemodifier = medicinMap.get(medicinName).getHealing();
+                engine.getPlayer().setLife(lifemodifier);
+                updateLife();
+                jTextArea_eventMessage.append("You bought some " + medicinName + " to eliviate your pains...\n");
+            } else {
+                jTextArea_eventMessage.append("You bought some more " + medicinName + " but it didnt seem to help ....\n");
+            }
+        }
     }//GEN-LAST:event_jButton_buyMedicinActionPerformed
 
     /**
