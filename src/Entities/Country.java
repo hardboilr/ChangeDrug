@@ -37,8 +37,8 @@ public class Country {
     private Product gun = new Product(weaponType, "Beretta92F", 8500, 0.0, 1, 0, 10);
     private Product highfriends = new Product(friendType, "High friends", 15000, 0.0, 1, 0, 15);
     private Product generous = new Product(behavoiurType, "Generous", 12000, 0.0, 1, 0, 15);
-    private Product niceclothes = new Product(clothingType, "Nice clothes", 30000, 0.0, 1, 0, 15);
-    
+    private Product niceclothes = new Product(clothingType, "Nice clothes", 30000, 0.0, 1, 0, 10);
+    private Product firstClass = new Product(behavoiurType, "Travel 1.Class", 20000, 0.0, 1, 0, 5);
     
     public Country(String nameInput, double ticketInput){
         this.name = nameInput;
@@ -58,6 +58,8 @@ public class Country {
         products.put(highfriends.getName(), highfriends);
         products.put(generous.getName(), generous);
         products.put(niceclothes.getName(), niceclothes);
+        products.put(firstClass.getName(), firstClass);
+        
         
            
     }
