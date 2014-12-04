@@ -25,21 +25,21 @@ public class PriceStrategy_tenPercent implements PriceStrategy {
 
     @Override
     public double calculateNewPrice() {
-        if (priceCount >= 1) {
+        if (priceCount == 1) {
             return basePrice * 1.1;
         }
-        priceCount++;
+        priceCount = 1;
         return basePrice;
 
     }
 
     @Override
     public int calculateNewAmount() {
-        if (amountCount >= 1) {
+        if (amountCount == 1) {
             baseAmount = (int) (baseAmount * 1.1);
             return baseAmount;
         }
-        amountCount++;
+        amountCount = 1;
         return baseAmount;
     }
 }
