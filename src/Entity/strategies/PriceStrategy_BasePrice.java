@@ -14,7 +14,7 @@ public class PriceStrategy_BasePrice implements PriceStrategy {
     private Random random;
 
     public PriceStrategy_BasePrice() {
-        basePrice = 1200;
+        basePrice = 3500;
         baseAmount = 20;
         random = new Random();
     }

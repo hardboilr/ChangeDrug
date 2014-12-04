@@ -1,9 +1,3 @@
-design class diagram
-beskrivelse af projekt
-loan shark disable ting og sager
-(implementering af prisstrategy: stock, exchange)
-eksport til jar
-zip af projekt
 
 
 

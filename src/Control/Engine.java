@@ -134,7 +134,6 @@ public class Engine implements EngineInterface {
             int goldenNumber = (int) ((Math.random() * 100) + 1);
             randomUpOrDown = random.nextInt(2);
             if (goldenNumber >= 1 && goldenNumber <= product.getGoldenNumber()) {
-                System.out.println("Rolled goldenNumber!");
                 if (randomUpOrDown == 1) {
                     product.setPrice(product.getPrice() * 10);
                 } else {
@@ -163,7 +162,6 @@ public class Engine implements EngineInterface {
             if (prob <= event.getProbability()) {
                 eventDescrp.add(event.getDescription());
                 player.setLife((int) -(player.getLife() * event.getLifeModifier()));
-                System.out.println("Credits before mafia: " + player.getCredits());
                 player.setCredits(player.getCredits() - (player.getCredits() * event.getCreditsModifier()));
                 for (Product product : inv.values()) {
                     product.setAmount((int) (product.getAmount() * event.getDrugModifier()));

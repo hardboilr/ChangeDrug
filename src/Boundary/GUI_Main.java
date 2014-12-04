@@ -1118,7 +1118,6 @@ public class GUI_Main extends javax.swing.JFrame {
             jButton_travel.setText("Cash in!");
         }
         if (currentDay == -1) {
-            System.out.println("We sell everything!");
             autoSell(); //sell everything in inventory
             engine.savePlayerToHighscore("players.txt"); //save player
             GUI_Highscore highscore = new GUI_Highscore((Engine) engine);
