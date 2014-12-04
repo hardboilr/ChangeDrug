@@ -1,11 +1,11 @@
 /**
  * @author Tobias & Sebastian
  */
-package Interfaces;
+package Interface;
 
-import Entities.Medicin;
-import Entities.Product;
-import Entities.Player;
+import Entity.Medicin;
+import Entity.Product;
+import Entity.Player;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;

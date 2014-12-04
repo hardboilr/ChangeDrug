@@ -1,13 +1,13 @@
 /**
  * @author Tobias & Sebastian
  */
-package Boundaries;
+package Boundary;
 
-import Controllere.Engine;
-import Entities.Country;
-import Entities.Product;
-import Entities.Medicin;
-import Interfaces.EngineInterface;
+import Control.Engine;
+import Entity.Country;
+import Entity.Product;
+import Entity.Medicin;
+import Interface.EngineInterface;
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.List;
@@ -79,10 +79,8 @@ public class GUI_Main extends javax.swing.JFrame {
         this.setLocationRelativeTo(null); //place window in center of screen
         engine = new Engine();
         engine.createPlayer("", 0.00);
-        marketMap = engine.travel();
         medicinMap = engine.getMedicin();
         purchasedMedicin = new HashMap<>();
-        //prepareRound();
         setLocationText();
         formatTables();
         engine.loadPlayers("players.txt");
@@ -193,8 +191,8 @@ public class GUI_Main extends javax.swing.JFrame {
         for (Product product : marketMap.values()) {
             String productType = product.getType();
             String name = product.getName();
-            Double price = product.getModifiedPrice();
-            avail = product.getModifiedAvail();
+            Double price = product.getPrice();
+            avail = product.getAmount();
             ((DefaultTableModel) jTable_market.getModel()).addRow(new Object[]{});
             jTable_market.setValueAt(productType, count, typeColumn);
             jTable_market.setValueAt(name, count, nameColumn);
@@ -272,10 +270,10 @@ public class GUI_Main extends javax.swing.JFrame {
             //-----------------------------------------------------------
             //update market table + create drug + add to player inv
             jTable_market.setValueAt(newMarketQty, selectedRow, qtyColumn);
-            Product drug = new Product(productType, selectedDrugName, 0, marketPrice, 0, add, 0);
-            engine.addToInventory(drug);
+            Product product = marketMap.get(selectedDrugName);
+            engine.addToInventory(product);
             checkInvForNonDrugs();
-            int newInvQty = engine.getInventoryDrug(selectedDrugName).getModifiedAvail();
+            int newInvQty = engine.getInventoryDrug(selectedDrugName).getAmount();
             //-----------------------------------------------------------
             Boolean isEligible = true;
             if (productType.equals("Friend") || productType.equals("Clothes") || productType.equals("Behaviour")) {
@@ -362,7 +360,7 @@ public class GUI_Main extends javax.swing.JFrame {
                 jTable_market.setValueAt(productType, rowIndex, typeColumn);
                 jTable_market.setValueAt(inventoryDrug, rowIndex, nameColumn);
                 jTable_market.setValueAt(1, rowIndex, qtyColumn);
-                jTable_market.setValueAt(marketMap.get(inventoryDrug).getModifiedPrice(), rowIndex, priceColumn);
+                jTable_market.setValueAt(marketMap.get(inventoryDrug).getPrice(), rowIndex, priceColumn);
             }
         }
         if (newInventoryQty == 0) {
@@ -441,7 +439,7 @@ public class GUI_Main extends javax.swing.JFrame {
         String relationship = "% prob to get a local boy or girlfriend\n";
 
         if (weapon != null) {
-            if (weapon.getModifiedAvail() == 1 && hasWeapon == false) {
+            if (weapon.getAmount() == 1 && hasWeapon == false) {
                 jLabel_weapon.setIcon(icon_weapon);
                 jTextArea_eventMessage.append("You bought a weapon for protection\n");
                 jTextArea_eventMessage.append(affects + "-2" + assaultPusher);
@@ -453,7 +451,7 @@ public class GUI_Main extends javax.swing.JFrame {
             hasWeapon = false;
         }
         if (friend != null) {
-            if (friend.getModifiedAvail() == 1 && hasFriends == false) {
+            if (friend.getAmount() == 1 && hasFriends == false) {
                 jLabel_friend.setIcon(icon_friend_vito);
                 jTextArea_eventMessage.append("You bribed some friends in high places\n");
                 jTextArea_eventMessage.append(affects + "-2" + captureAuthority);
@@ -463,7 +461,7 @@ public class GUI_Main extends javax.swing.JFrame {
             }
         }
         if (generous != null) {
-            if (generous.getModifiedAvail() == 1 && hasGenerous == false) {
+            if (generous.getAmount() == 1 && hasGenerous == false) {
                 jLabel_generous.setIcon(icon_jesus);
                 jTextArea_eventMessage.append("You decided to be generous and spent some money partying with your friends\n");
                 jTextArea_eventMessage.append(affects + "-1" + assaultPusher);
@@ -473,7 +471,7 @@ public class GUI_Main extends javax.swing.JFrame {
             }
         }
         if (niceclothes != null) {
-            if (niceclothes.getModifiedAvail() == 1 && hasClothes == false) {
+            if (niceclothes.getAmount() == 1 && hasClothes == false) {
                 jLabel_niceclothes.setIcon(icon_niceclothes);
                 jTextArea_eventMessage.append("You bought some nice clothes\n");
                 jTextArea_eventMessage.append(affects + "-1" + captureAuthority);
@@ -483,7 +481,7 @@ public class GUI_Main extends javax.swing.JFrame {
             }
         }
         if (firstclass != null) {
-            if (firstclass.getModifiedAvail() == 1 && hasFirstclass == false) {
+            if (firstclass.getAmount() == 1 && hasFirstclass == false) {
                 jLabel_firstclass.setIcon(icon_firstclass);
                 jTextArea_eventMessage.append("You bought a one-way ticket for first class\n");
                 jTextArea_eventMessage.append(affects + "-1" + captureAuthority);
@@ -561,9 +559,7 @@ public class GUI_Main extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Thug Life 0.1");
-        setMaximumSize(new java.awt.Dimension(800, 600));
         setMinimumSize(new java.awt.Dimension(800, 600));
-        setPreferredSize(new java.awt.Dimension(800, 600));
         setResizable(false);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 

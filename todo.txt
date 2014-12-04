@@ -1,8 +1,9 @@
-opdatere uml
-price strategy
-
-Nice to have:
-(4. Hvis inventory er tomt og han ikke har råd til at købe varer på markedet, så slutter spillet og man går videre til highscore)
+design class diagram
+beskrivelse af projekt
+loan shark disable ting og sager
+(implementering af prisstrategy: stock, exchange)
+eksport til jar
+zip af projekt
 
 
 

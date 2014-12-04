@@ -1,11 +1,11 @@
 /**
  * @author Tobias & Sebastian
  */
-package Boundaries;
+package Boundary;
 
-import Controllere.Engine;
-import Entities.Player;
-import Interfaces.EngineInterface;
+import Control.Engine;
+import Entity.Player;
+import Interface.EngineInterface;
 import java.util.List;
 
 public class GUI_Highscore extends javax.swing.JFrame {

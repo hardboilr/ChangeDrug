@@ -1,7 +1,7 @@
 /**
  * @author Tobias & Sebastian
  */
-package Entities;
+package Entity;
 
 public class Event {
 

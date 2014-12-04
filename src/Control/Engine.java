@@ -1,16 +1,16 @@
 /**
  * @author Tobias & Sebastian
  */
-package Controllere;
+package Control;
 
-import Entities.Player;
-import Entities.World;
-import Entities.Country;
-import Entities.Product;
-import Entities.Event;
-import Entities.FileHandler;
-import Entities.Medicin;
-import Interfaces.EngineInterface;
+import Entity.Player;
+import Entity.World;
+import Entity.Country;
+import Entity.Product;
+import Entity.Event;
+import Entity.FileHandler;
+import Entity.Medicin;
+import Interface.EngineInterface;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -78,12 +78,11 @@ public class Engine implements EngineInterface {
         if (inv.containsKey(key)) {
             Product temp = inv.get(key);
             inv.remove(key);
-            temp.setModifiedAvail(temp.getModifiedAvail() + 1);
+            temp.setAmount(temp.getAmount() + 1);
             inv.put(temp.getName(), temp);
         } else {
+            drug.setAmount(1);
             inv.put(key, drug);
-            if (key.equals("Beretta92F")) {
-            }
         }
     }
 
@@ -93,9 +92,9 @@ public class Engine implements EngineInterface {
         if (inv.containsKey(key)) {
             Product temp = inv.get(key);
             inv.remove(key);
-            temp.setModifiedAvail(temp.getModifiedAvail() - 1);
+            temp.setAmount(temp.getAmount() - 1);
             inv.put(key, temp);
-            if (temp.getModifiedAvail() == 0) {
+            if (temp.getAmount() == 0) {
                 inv.remove(key);
             }
         }
@@ -129,18 +128,20 @@ public class Engine implements EngineInterface {
         if (player.getDays() != player.getDayCycle()) {
             createEvents();
         }
-        for (Product drug : tempMap.values()) {
-            drug.setModifiedPrice(calculatePrice(drug.getBasePrice()));
+        for (Product product : tempMap.values()) {
+            product.calculateNewAmount_forThisProduct();
+            product.calculateNewPrice_forThisProduct();
+            
+            
             int goldenNumber = (int) ((Math.random() * 100) + 1);
             randomUpOrDown = random.nextInt(2);
-            if (goldenNumber >= 1 && goldenNumber <= drug.getGoldenNumber()) {
+            if (goldenNumber >= 1 && goldenNumber <= product.getGoldenNumber()) {
                 if (randomUpOrDown == 1) {
-                    drug.setModifiedPrice(drug.getModifiedPrice() * 10);
+                    product.setPrice(product.getPrice() * 10);
                 } else {
-                    drug.setModifiedPrice(drug.getModifiedPrice() / 10);
+                    product.setPrice(product.getPrice() / 10);
                 }
             }
-            drug.setModifiedAvail(calculateAvailability(drug.getBaseAvail()));
         }
         countries.put(tempCountry.getName(), tempCountry);
         return tempMap;
@@ -163,7 +164,7 @@ public class Engine implements EngineInterface {
                 System.out.println("Credits before mafia: " + player.getCredits());
                 player.setCredits(player.getCredits() - (player.getCredits() * event.getCreditsModifier()));
                 for (Product product : inv.values()) {
-                    product.setModifiedAvail((int) (product.getModifiedAvail() * event.getDrugModifier()));
+                    product.setAmount((int) (product.getAmount() * event.getDrugModifier()));
                 }
             }
         }
@@ -173,7 +174,7 @@ public class Engine implements EngineInterface {
     private void createEvents() {
         Event event1 = new Event("customAuthority", "You are captured by the Custom Authority and lost half of your drugs", 10, 0.10, 0.00, 0.50);
         Event event2 = new Event("angryPusher", "You met an angry Pusher", 10, 0.20, 0.00, 1);
-        Event event3 = new Event("mafiaTerritory", "You have entered the local mafias territory and lost all your money and half of your drugs", 80, 0.10, 1.00, 0.50);
+        Event event3 = new Event("mafiaTerritory", "You have entered the local mafias territory and lost all your money and half of your drugs", 1, 0.10, 1.00, 0.50);
         Event event4 = new Event("hospital", "You have been injured, and you need to go to the hospital", 5, 0.40, 0.00, 1);
         Event event5 = new Event("minionPusher", "You assault a local pusher, and gets his profits", 5, 0.00, -0.15, 1);
         Event event6 = new Event("girlfriend", "You are lucky and got a new Girlfriend", 5, 0.00, -0.5, 1);

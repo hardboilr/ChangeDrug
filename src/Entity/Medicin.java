@@ -1,7 +1,7 @@
 /**
  * @author sebastiannielsen
  */
-package Entities;
+package Entity;
 
 public class Medicin {
 
