@@ -81,7 +81,6 @@ public class Player implements Comparable {
 
     public void setLoan(double loan) {
         this.loan = loan;
-        this.credits += loan;
     }
 
     @Override

@@ -1220,11 +1220,12 @@ public class GUI_Main extends javax.swing.JFrame {
 
     private void jButton_loan1DayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_loan1DayActionPerformed
         double loanAmount = Double.parseDouble(jTextfield_loanAmount.getText());
-        double maxLoan = 10001.00;
+        double maxLoan = 10000.00;
         double existingLoan = engine.getPlayer().getLoan();
         int existingLoanDays = engine.getPlayer().getLoanDays();
-        if (loanAmount > -1 && loanAmount < maxLoan && (existingLoan + loanAmount) <= maxLoan) {
+        if (loanAmount > -1 && loanAmount <= maxLoan && (existingLoan + loanAmount) <= maxLoan) {
             engine.getPlayer().setLoan(existingLoan + loanAmount);
+            engine.calculateCredits(loanAmount);
             engine.getPlayer().setLoanDays(existingLoanDays + 1);
             jLabel_money.setText(doubleCreditFormat.format(engine.getCredits()) + " $");
             jLabel_loan.setText(doubleCreditFormat.format(engine.getPlayer().getLoan()) + " $");
@@ -1235,11 +1236,12 @@ public class GUI_Main extends javax.swing.JFrame {
 
     private void jButton_loan1WeekActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_loan1WeekActionPerformed
         double loanAmount = Double.parseDouble(jTextfield_loanAmount.getText());
-        double maxLoan = 10001.00;
+        double maxLoan = 10000.00;
         double existingLoan = engine.getPlayer().getLoan();
         int existingLoanDays = engine.getPlayer().getLoanDays();
-        if (loanAmount > -1 && loanAmount < maxLoan && (existingLoan + loanAmount) <= maxLoan) {
+        if (loanAmount > -1 && loanAmount <= maxLoan && (existingLoan + loanAmount) <= maxLoan) {
             engine.getPlayer().setLoan(existingLoan + loanAmount);
+            engine.calculateCredits(loanAmount);
             engine.getPlayer().setLoanDays(existingLoanDays + 7);
             jLabel_money.setText(doubleCreditFormat.format(engine.getCredits()) + " $");
             jLabel_loan.setText(doubleCreditFormat.format(engine.getPlayer().getLoan()) + " $");
