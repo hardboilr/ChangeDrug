@@ -1198,9 +1198,15 @@ public class GUI_Main extends javax.swing.JFrame {
         if (medicinPrice <= engine.getCredits()) {
             engine.calculateCredits(-medicinPrice);
             jLabel_money.setText(doubleCreditFormat.format(engine.getCredits()) + " $");
-            int lifemodifier = medicinMap.get(medicinName).getHealing();
-            engine.getPlayer().setLife(lifemodifier);
-            updateLife();
+            if (!purchasedMedicin.containsKey(medicinName)) {
+                purchasedMedicin.put(medicinName, medicinName);
+                int lifemodifier = medicinMap.get(medicinName).getHealing();
+                engine.getPlayer().setLife(lifemodifier);
+                updateLife();
+                jTextArea_eventMessage.append("You bought some " + medicinName + " to eliviate your pains...\n");
+            } else {
+                jTextArea_eventMessage.append("You bought some more " + medicinName + " but it didnt seem to help ....\n");
+            }
         }
     }//GEN-LAST:event_jButton_buyMedicinActionPerformed
 
