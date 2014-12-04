@@ -523,6 +523,7 @@ public class GUI_Main extends javax.swing.JFrame {
         jLabel_generous = new javax.swing.JLabel();
         jLabel_firstclass = new javax.swing.JLabel();
         jLabel_niceclothes = new javax.swing.JLabel();
+        jLabel_loan = new javax.swing.JLabel();
         jButton_newGame = new javax.swing.JButton();
         jPanel_market = new javax.swing.JPanel();
         jScrollPane_market = new javax.swing.JScrollPane();
@@ -557,7 +558,6 @@ public class GUI_Main extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         jButton_loan1Week = new javax.swing.JButton();
         jButton_loanRefund = new javax.swing.JButton();
-        jLabel_loan = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Thug Life 0.1");
@@ -609,10 +609,10 @@ public class GUI_Main extends javax.swing.JFrame {
         jLabel_name.setPreferredSize(new java.awt.Dimension(70, 20));
         jPanel_player.add(jLabel_name, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 23, 100, 30));
 
-        jLabel_money.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
+        jLabel_money.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel_money.setText("5000");
         jLabel_money.setToolTipText("");
-        jPanel_player.add(jLabel_money, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 140, -1, 30));
+        jPanel_player.add(jLabel_money, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 130, -1, 30));
 
         jLabel_selectionRight.setIcon(new javax.swing.ImageIcon(getClass().getResource("/art/gui/selectionArrow_right.png"))); // NOI18N
         jLabel_selectionRight.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -669,6 +669,10 @@ public class GUI_Main extends javax.swing.JFrame {
 
         jLabel_niceclothes.setIcon(new javax.swing.ImageIcon(getClass().getResource("/art/items/clothes_niceclothes_empty.png"))); // NOI18N
         jPanel_player.add(jLabel_niceclothes, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 114, -1, -1));
+
+        jLabel_loan.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel_loan.setText("debt");
+        jPanel_player.add(jLabel_loan, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 158, -1, -1));
 
         getContentPane().add(jPanel_player, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 30, -1, 180));
 
@@ -815,7 +819,7 @@ public class GUI_Main extends javax.swing.JFrame {
                 jButton_bulkSellActionPerformed(evt);
             }
         });
-        jPanel2.add(jButton_bulkSell, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, -1, 40));
+        jPanel2.add(jButton_bulkSell, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 60, -1, 40));
 
         jButton_bulkBuy.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jButton_bulkBuy.setText("x10 >>");
@@ -824,7 +828,7 @@ public class GUI_Main extends javax.swing.JFrame {
                 jButton_bulkBuyActionPerformed(evt);
             }
         });
-        jPanel2.add(jButton_bulkBuy, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 60, -1, 40));
+        jPanel2.add(jButton_bulkBuy, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, -1, 40));
 
         getContentPane().add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 450, 100, 110));
 
@@ -996,8 +1000,6 @@ public class GUI_Main extends javax.swing.JFrame {
             }
         });
 
-        jLabel_loan.setText("jLabel2");
-
         javax.swing.GroupLayout jPanel_bankLayout = new javax.swing.GroupLayout(jPanel_bank);
         jPanel_bank.setLayout(jPanel_bankLayout);
         jPanel_bankLayout.setHorizontalGroup(
@@ -1014,25 +1016,16 @@ public class GUI_Main extends javax.swing.JFrame {
                     .addGroup(jPanel_bankLayout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(jPanel_bankLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel_bankLayout.createSequentialGroup()
-                                .addComponent(jLabel1)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel_loan))
+                            .addComponent(jLabel1)
                             .addComponent(jLabel3))))
                 .addContainerGap(31, Short.MAX_VALUE))
         );
         jPanel_bankLayout.setVerticalGroup(
             jPanel_bankLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel_bankLayout.createSequentialGroup()
-                .addGroup(jPanel_bankLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel_bankLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel_bankLayout.createSequentialGroup()
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel_loan)
-                        .addGap(5, 5, 5)))
+                .addContainerGap()
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jTextfield_loanAmount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1112,8 +1105,8 @@ public class GUI_Main extends javax.swing.JFrame {
             updateDays();
             engine.setActiveCountry((String) jTable_airport.getValueAt(jTable_airport.getSelectedRow(), 0));
             setLocationText();
-            prepareRound();
             engine.calculateCredits(-ticketPrice);
+            prepareRound();
             jLabel_money.setText(doubleCreditFormat.format(engine.getCredits()) + " $");
             jLabel_loan.setText(doubleCreditFormat.format(engine.getPlayer().getLoan()) + " $");
         }

@@ -160,6 +160,7 @@ public class Engine implements EngineInterface {
             if (prob <= event.getProbability()) {
                 eventDescrp.add(event.getDescription());
                 player.setLife((int) -(player.getLife() * event.getLifeModifier()));
+                System.out.println("Credits before mafia: " + player.getCredits());
                 player.setCredits(player.getCredits() - (player.getCredits() * event.getCreditsModifier()));
                 for (Product product : inv.values()) {
                     product.setModifiedAvail((int) (product.getModifiedAvail() * event.getDrugModifier()));
@@ -172,9 +173,9 @@ public class Engine implements EngineInterface {
     private void createEvents() {
         Event event1 = new Event("customAuthority", "You are captured by the Custom Authority and lost half of your drugs", 10, 0.10, 0.00, 0.50);
         Event event2 = new Event("angryPusher", "You met an angry Pusher", 10, 0.20, 0.00, 1);
-        Event event3 = new Event("mafiaTerritory", "You have entered the local mafias territory and lost all your money and half of your drugs", 10, 0.10, 1.00, 0.50);
+        Event event3 = new Event("mafiaTerritory", "You have entered the local mafias territory and lost all your money and half of your drugs", 80, 0.10, 1.00, 0.50);
         Event event4 = new Event("hospital", "You have been injured, and you need to go to the hospital", 5, 0.40, 0.00, 1);
-        Event event5 = new Event("minionPusher", "You have hired a local pusher, and gets his profits", 5, 0.00, -0.15, 1);
+        Event event5 = new Event("minionPusher", "You assault a local pusher, and gets his profits", 5, 0.00, -0.15, 1);
         Event event6 = new Event("girlfriend", "You are lucky and got a new Girlfriend", 5, 0.00, -0.5, 1);
         Event event7 = new Event("loanShark", "You were beaten by the loan shark, because you have an unpaid deposit", 0, .40, 0.00, 1);
         eventMap.put(event1.getName(), event1);

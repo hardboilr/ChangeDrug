@@ -26,7 +26,7 @@ public class Country {
     private Product weed = new Product(drugType, "Weed", 150, 0.0, 115, 0, 5);
     private Product mushrooms = new Product(drugType, "Mushrooms", 120, 0.0, 95, 0, 7);
     private Product valium = new Product(drugType, "Valium", 290, 0.0, 80, 0, 7);
-    private Product gun = new Product(weaponType, "Beretta92F", 8500, 0.0, 1, 0, 10);
+    private Product gun = new Product(weaponType, "Beretta92F", 10500, 0.0, 5, 0, 10);
     private Product highfriends = new Product(friendType, "High friends", 15000, 0.0, 1, 0, 15);
     private Product generous = new Product(behavoiurType, "Generous", 12000, 0.0, 1, 0, 15);
     private Product niceclothes = new Product(clothingType, "Nice clothes", 30000, 0.0, 1, 0, 10);
