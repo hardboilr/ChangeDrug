@@ -19,8 +19,8 @@ public class PriceStrategy_OldMemory implements PriceStrategy {
     
     public PriceStrategy_OldMemory() {
         random = new Random();
-        priceCount = -1;
-        amountCount = -1;
+        priceCount = 0;
+        amountCount = 0;
         baseAmount = 100;
         basePrice = 1000;
     }

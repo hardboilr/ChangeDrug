@@ -18,8 +18,8 @@ public class PriceStrategy_tenPercent implements PriceStrategy {
 
         baseAmount = 40;
         basePrice = 180;
-        priceCount = -1;
-        amountCount = -1;
+        priceCount = 0;
+        amountCount = 0;
 
     }
 
