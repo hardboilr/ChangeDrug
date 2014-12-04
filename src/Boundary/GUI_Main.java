@@ -21,10 +21,10 @@ public class GUI_Main extends javax.swing.JFrame {
     private final Map<String, Medicin> medicinMap;
     private Map<String, String> purchasedMedicin;
 
-    private final int typeColumn = 0;
-    private final int nameColumn = 1;
-    private final int qtyColumn = 2;
-    private final int priceColumn = 3;
+    private final int column_type = 0;
+    private final int column_name = 1;
+    private final int column_qty = 2;
+    private final int column_price = 3;
 
     //Images
     private ImageIcon icon_selectionArrow_right_pressed = null;
@@ -129,6 +129,7 @@ public class GUI_Main extends javax.swing.JFrame {
         jButton_sell.setEnabled(false);
         jButton_bulkBuy.setEnabled(false);
         jButton_bulkSell.setEnabled(false);
+        jTabbedPane1.setEnabled(false);
 
         //setup progressBars
         jProgressBar_days.setVisible(false);
@@ -194,10 +195,10 @@ public class GUI_Main extends javax.swing.JFrame {
             Double price = product.getPrice();
             avail = product.getAmount();
             ((DefaultTableModel) jTable_market.getModel()).addRow(new Object[]{});
-            jTable_market.setValueAt(productType, count, typeColumn);
-            jTable_market.setValueAt(name, count, nameColumn);
-            jTable_market.setValueAt(avail, count, qtyColumn);
-            jTable_market.setValueAt(price, count, priceColumn);
+            jTable_market.setValueAt(productType, count, column_type);
+            jTable_market.setValueAt(name, count, column_name);
+            jTable_market.setValueAt(avail, count, column_qty);
+            jTable_market.setValueAt(price, count, column_price);
             count++;
         }
     }
@@ -250,17 +251,18 @@ public class GUI_Main extends javax.swing.JFrame {
         String productType = "";
         String selectedDrugName = "";
         int newMarketQty = 0;
-        double sufficiantCredits = engine.getCredits() - marketPrice;;
+        double sufficiantCredits;
         marketPrice = 0;
         int add = 1;
         Product marketDrug;
         try {
             //-------------------------------------------------------------------
             //get drug name + price from market table + calculate new qty
-            productType = (String) jTable_market.getValueAt(selectedRow, typeColumn);
-            selectedDrugName = (String) jTable_market.getValueAt(selectedRow, nameColumn);
-            newMarketQty = (int) jTable_market.getValueAt(selectedRow, qtyColumn) - 1;
-            marketPrice = (double) jTable_market.getValueAt(selectedRow, priceColumn);
+            productType = (String) jTable_market.getValueAt(selectedRow, column_type);
+            selectedDrugName = (String) jTable_market.getValueAt(selectedRow, column_name);
+            newMarketQty = (int) jTable_market.getValueAt(selectedRow, column_qty) - 1;
+            marketPrice = (double) jTable_market.getValueAt(selectedRow, column_price);
+            sufficiantCredits = engine.getCredits() - marketPrice;
             //-------------------------------------------------------------------
         } catch (ArrayIndexOutOfBoundsException ex) {
             sufficiantCredits = -1.00;
@@ -269,7 +271,7 @@ public class GUI_Main extends javax.swing.JFrame {
         if ((sufficiantCredits >= 0)) { //if we have sufficiant credits
             //-----------------------------------------------------------
             //update market table + create drug + add to player inv
-            jTable_market.setValueAt(newMarketQty, selectedRow, qtyColumn);
+            jTable_market.setValueAt(newMarketQty, selectedRow, column_qty);
             Product product = marketMap.get(selectedDrugName);
             engine.addToInventory(product);
             checkInvForNonDrugs();
@@ -282,33 +284,33 @@ public class GUI_Main extends javax.swing.JFrame {
             if (isEligible == true) {
                 if (jTable_inventory.getRowCount() == 0) { //is table is empty?
                     ((DefaultTableModel) jTable_inventory.getModel()).addRow(new Object[]{});
-                    jTable_inventory.setValueAt(productType, 0, typeColumn);
-                    jTable_inventory.setValueAt(selectedDrugName, 0, nameColumn);
-                    jTable_inventory.setValueAt(newInvQty, 0, qtyColumn);
-                    jTable_inventory.setValueAt(marketPrice, 0, priceColumn);
+                    jTable_inventory.setValueAt(productType, 0, column_type);
+                    jTable_inventory.setValueAt(selectedDrugName, 0, column_name);
+                    jTable_inventory.setValueAt(newInvQty, 0, column_qty);
+                    jTable_inventory.setValueAt(marketPrice, 0, column_price);
                 } else {
                     boolean drugExist = false; //we have drug 
                     for (int i = 0; i < jTable_inventory.getRowCount(); i++) {
-                        String inventoryDrug = (String) jTable_inventory.getValueAt(i, nameColumn);
+                        String inventoryDrug = (String) jTable_inventory.getValueAt(i, column_name);
                         if (selectedDrugName.equals(inventoryDrug)) { //do we already have the drug in the table?
                             drugExist = true;
-                            jTable_inventory.setValueAt(newInvQty, i, qtyColumn);
+                            jTable_inventory.setValueAt(newInvQty, i, column_qty);
                             //set new average price
-                            double currentInventoryPrice = (double) jTable_inventory.getValueAt(i, priceColumn);
-                            int currentQuantity = (int) jTable_inventory.getValueAt(i, qtyColumn);
+                            double currentInventoryPrice = (double) jTable_inventory.getValueAt(i, column_price);
+                            int currentQuantity = (int) jTable_inventory.getValueAt(i, column_qty);
                             double newAveragePrice = ((currentInventoryPrice * currentQuantity)
                                     + (marketPrice)) / (currentQuantity + add);
-                            jTable_inventory.setValueAt(newAveragePrice, i, priceColumn);
+                            jTable_inventory.setValueAt(newAveragePrice, i, column_price);
                             break;
                         }
                     }
                     if (drugExist == false) { //we do not have the drug in the table);
                         int rowPosition = jTable_inventory.getRowCount();
                         ((DefaultTableModel) jTable_inventory.getModel()).addRow(new Object[]{});
-                        jTable_inventory.setValueAt(productType, rowPosition, typeColumn);
-                        jTable_inventory.setValueAt(selectedDrugName, rowPosition, nameColumn);
-                        jTable_inventory.setValueAt(newInvQty, rowPosition, qtyColumn);
-                        jTable_inventory.setValueAt(marketPrice, rowPosition, priceColumn);
+                        jTable_inventory.setValueAt(productType, rowPosition, column_type);
+                        jTable_inventory.setValueAt(selectedDrugName, rowPosition, column_name);
+                        jTable_inventory.setValueAt(newInvQty, rowPosition, column_qty);
+                        jTable_inventory.setValueAt(marketPrice, rowPosition, column_price);
                     }
                 }
             }
@@ -332,9 +334,9 @@ public class GUI_Main extends javax.swing.JFrame {
         String inventoryDrug = "";
         int newInventoryQty;
         try {
-            productType = (String) jTable_inventory.getValueAt(row, typeColumn);
-            inventoryDrug = (String) jTable_inventory.getValueAt(row, nameColumn);
-            newInventoryQty = (int) jTable_inventory.getValueAt(row, qtyColumn) - 1;
+            productType = (String) jTable_inventory.getValueAt(row, column_type);
+            inventoryDrug = (String) jTable_inventory.getValueAt(row, column_name);
+            newInventoryQty = (int) jTable_inventory.getValueAt(row, column_qty) - 1;
         } catch (ArrayIndexOutOfBoundsException ex) {
             newInventoryQty = -1;
             return false;
@@ -343,13 +345,13 @@ public class GUI_Main extends javax.swing.JFrame {
             Boolean productExists = false;
             engine.subtractFromInventory(inventoryDrug);
             checkInvForNonDrugs();
-            jTable_inventory.setValueAt(newInventoryQty, row, qtyColumn);
+            jTable_inventory.setValueAt(newInventoryQty, row, column_qty);
             for (int i = 0; i < jTable_market.getRowCount(); i++) {
-                String marketDrug = (String) jTable_market.getValueAt(i, nameColumn);
+                String marketDrug = (String) jTable_market.getValueAt(i, column_name);
                 if (inventoryDrug.equals(marketDrug)) {
-                    int newQty = (int) jTable_market.getValueAt(i, qtyColumn) + 1;
-                    marketPrice = (double) jTable_market.getValueAt(i, priceColumn);
-                    jTable_market.setValueAt(newQty, i, qtyColumn);
+                    int newQty = (int) jTable_market.getValueAt(i, column_qty) + 1;
+                    marketPrice = (double) jTable_market.getValueAt(i, column_price);
+                    jTable_market.setValueAt(newQty, i, column_qty);
                     productExists = true;
                     break;
                 }
@@ -357,10 +359,10 @@ public class GUI_Main extends javax.swing.JFrame {
             if (productExists == false) {
                 int rowIndex = jTable_market.getRowCount();
                 ((DefaultTableModel) jTable_market.getModel()).addRow(new Object[]{});
-                jTable_market.setValueAt(productType, rowIndex, typeColumn);
-                jTable_market.setValueAt(inventoryDrug, rowIndex, nameColumn);
-                jTable_market.setValueAt(1, rowIndex, qtyColumn);
-                jTable_market.setValueAt(marketMap.get(inventoryDrug).getPrice(), rowIndex, priceColumn);
+                jTable_market.setValueAt(productType, rowIndex, column_type);
+                jTable_market.setValueAt(inventoryDrug, rowIndex, column_name);
+                jTable_market.setValueAt(1, rowIndex, column_qty);
+                jTable_market.setValueAt(marketMap.get(inventoryDrug).getPrice(), rowIndex, column_price);
             }
         }
         if (newInventoryQty == 0) {
@@ -372,19 +374,18 @@ public class GUI_Main extends javax.swing.JFrame {
     private void autoSell() {
         //---------------------------------------------------
         //Runs through all rows in [jTable_inventory]-table
-        //Sell every drug in each row to market
+        //Sell all drugs
         //Add profit to credits
         //---------------------------------------------------
         for (int i = 0; i < jTable_inventory.getRowCount(); i++) {
-            String inventoryDrug = (String) jTable_inventory.getValueAt(i, 0);
-            int inventoryQty = (int) jTable_inventory.getValueAt(i, 1);
+            String inventoryDrug = (String) jTable_inventory.getValueAt(i, column_name);
+            int inventoryQty = (int) jTable_inventory.getValueAt(i, column_qty);
             for (int j = 0; j < jTable_market.getRowCount(); j++) {
-                String marketDrug = (String) jTable_market.getValueAt(j, 0);
+                String marketDrug = marketMap.get(inventoryDrug).getName();
                 if (inventoryDrug.equals(marketDrug)) {
-                    double marketPrice = (double) jTable_market.getValueAt(j, 2);
-                    int newQty = (int) jTable_market.getValueAt(i, 1) + 1;
-                    this.marketPrice = inventoryQty * marketPrice;
-                    engine.calculateCredits(this.marketPrice);
+                    double marketPrice = marketMap.get(inventoryDrug).getPrice();
+                    marketPrice = inventoryQty * marketPrice;
+                    engine.calculateCredits(marketPrice);
                     break;
                 }
             }
@@ -550,10 +551,10 @@ public class GUI_Main extends javax.swing.JFrame {
         jTable_hospital = new javax.swing.JTable();
         jButton_buyMedicin = new javax.swing.JButton();
         jPanel_bank = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
+        jLabel_TEXT_borrow = new javax.swing.JLabel();
         jTextfield_loanAmount = new javax.swing.JTextField();
         jButton_loan1Day = new javax.swing.JButton();
-        jLabel3 = new javax.swing.JLabel();
+        jLabel_TEXT_interestRate = new javax.swing.JLabel();
         jButton_loan1Week = new javax.swing.JButton();
         jButton_loanRefund = new javax.swing.JButton();
 
@@ -971,7 +972,7 @@ public class GUI_Main extends javax.swing.JFrame {
 
         jPanel_bank.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        jLabel1.setText("Borrow some cash max 10.000$");
+        jLabel_TEXT_borrow.setText("Borrow some cash max 10.000$");
 
         jButton_loan1Day.setText("1 Day ");
         jButton_loan1Day.addActionListener(new java.awt.event.ActionListener() {
@@ -980,7 +981,7 @@ public class GUI_Main extends javax.swing.JFrame {
             }
         });
 
-        jLabel3.setText("35% interest rate");
+        jLabel_TEXT_interestRate.setText("35% interest rate");
 
         jButton_loan1Week.setText("1 Week");
         jButton_loan1Week.addActionListener(new java.awt.event.ActionListener() {
@@ -1012,17 +1013,17 @@ public class GUI_Main extends javax.swing.JFrame {
                     .addGroup(jPanel_bankLayout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(jPanel_bankLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1)
-                            .addComponent(jLabel3))))
+                            .addComponent(jLabel_TEXT_borrow)
+                            .addComponent(jLabel_TEXT_interestRate))))
                 .addContainerGap(31, Short.MAX_VALUE))
         );
         jPanel_bankLayout.setVerticalGroup(
             jPanel_bankLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel_bankLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jLabel_TEXT_borrow, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel3)
+                .addComponent(jLabel_TEXT_interestRate)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jTextfield_loanAmount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -1045,11 +1046,10 @@ public class GUI_Main extends javax.swing.JFrame {
         name = name.replaceAll(" ", "").toLowerCase();
 
         if (!name.isEmpty()) {
-
-            //engine.createPlayer(name, engine.getStartCredits());
+            jTabbedPane1.setEnabled(true);
             jLabel_TEXT_info.setText("Info");
             engine.getPlayer().setName(name);
-            engine.getPlayer().setCredits(500000.00);
+            engine.getPlayer().setCredits(5000.00);
             prepareRound();
             jButton_buy.setEnabled(true);
             jButton_sell.setEnabled(true);
@@ -1094,7 +1094,13 @@ public class GUI_Main extends javax.swing.JFrame {
 
     private void jButton_travelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_travelActionPerformed
         int currentDay = engine.getPlayer().getDays();
-        double ticketPrice = (double) jTable_airport.getValueAt(jTable_airport.getSelectedRow(), 1);
+        double ticketPrice = 0;
+        try {
+        ticketPrice = (double) jTable_airport.getValueAt(jTable_airport.getSelectedRow(), 1);
+        } catch (ArrayIndexOutOfBoundsException ai) {
+            //Probably nothing selected...
+            ticketPrice = engine.getCredits()+1;
+        }
         if (currentDay >= 0 && ticketPrice <= engine.getCredits()) {
             engine.getPlayer().setDays(-1);
             engine.getPlayer().setLoanDays(-1);
@@ -1105,11 +1111,14 @@ public class GUI_Main extends javax.swing.JFrame {
             prepareRound();
             jLabel_money.setText(doubleCreditFormat.format(engine.getCredits()) + " $");
             jLabel_loan.setText(doubleCreditFormat.format(engine.getPlayer().getLoan()) + " $");
+            currentDay = engine.getPlayer().getDays();
         }
         if (currentDay == 0) {
+            engine.getPlayer().setDays(-1);
             jButton_travel.setText("Cash in!");
         }
         if (currentDay == -1) {
+            System.out.println("We sell everything!");
             autoSell(); //sell everything in inventory
             engine.savePlayerToHighscore("players.txt"); //save player
             GUI_Highscore highscore = new GUI_Highscore((Engine) engine);
@@ -1310,9 +1319,9 @@ public class GUI_Main extends javax.swing.JFrame {
     private javax.swing.JButton jButton_newGame;
     private javax.swing.JButton jButton_sell;
     private javax.swing.JButton jButton_travel;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel_TEXT_borrow;
     private javax.swing.JLabel jLabel_TEXT_info;
+    private javax.swing.JLabel jLabel_TEXT_interestRate;
     private javax.swing.JLabel jLabel_TEXT_market;
     private javax.swing.JLabel jLabel_TEXT_market1;
     private javax.swing.JLabel jLabel_TEXT_name;

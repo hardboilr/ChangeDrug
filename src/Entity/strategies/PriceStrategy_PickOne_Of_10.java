@@ -43,12 +43,13 @@ public class PriceStrategy_PickOne_Of_10 implements PriceStrategy
 
     @Override
     public double calculateNewPrice() {
-        return allPrices[ gen.nextInt( allPrices.length)];    
+        
+        return allPrices[gen.nextInt(allPrices.length)];    
     }
 
     @Override
     public int calculateNewAmount() {
-        return allAmounts[ gen.nextInt( allAmounts.length)]; 
+        return allAmounts[gen.nextInt(allAmounts.length)]; 
     }
     
 }

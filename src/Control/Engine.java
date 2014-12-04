@@ -43,7 +43,7 @@ public class Engine implements EngineInterface {
         inv = new HashMap();
         day = DAY_CYCLE;
     }
-
+    
     @Override
     public ArrayList<Country> getCountries() {
         ArrayList<Country> possibleTravelDestinations = new ArrayList<>();
@@ -117,7 +117,7 @@ public class Engine implements EngineInterface {
         }
         return "";
     }
-
+    
     @Override
     public Map travel() {
         tempCountry = (Country) countries.get(activeCountry);
@@ -131,15 +131,17 @@ public class Engine implements EngineInterface {
         for (Product product : tempMap.values()) {
             product.calculateNewAmount_forThisProduct();
             product.calculateNewPrice_forThisProduct();
-            
-            
             int goldenNumber = (int) ((Math.random() * 100) + 1);
             randomUpOrDown = random.nextInt(2);
             if (goldenNumber >= 1 && goldenNumber <= product.getGoldenNumber()) {
+                System.out.println("Rolled goldenNumber!");
                 if (randomUpOrDown == 1) {
                     product.setPrice(product.getPrice() * 10);
                 } else {
                     product.setPrice(product.getPrice() / 10);
+                    if (product.getPrice() < 1) {
+                        product.setPrice(1);
+                    }
                 }
             }
         }

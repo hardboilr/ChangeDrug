@@ -47,5 +47,4 @@ public interface EngineInterface {
     public void savePlayerToHighscore(String filename);
 
     public List<Player> loadPlayers(String filename);
-
 }

@@ -65,9 +65,7 @@ public class PriceStrategy_OldMemory implements PriceStrategy {
         if (amountCount >= 2) {
             baseAmount+= 13;
         }
-        System.out.println("1. amountcount is: " + amountCount);
         amountCount++;
-        System.out.println("2. amountcount is: " + amountCount);
         return baseAmount;
     }
 }
